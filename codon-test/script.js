@@ -5,31 +5,31 @@ document.addEventListener('DOMContentLoaded', () => {
         [['UUU', 'UUC'], '페닐알라닌', 'F'],
         [['UUA', 'UUG'], '류신', 'L'],
         [['UCU', 'UCC', 'UCA', 'UCG'], '세린', 'S'],
-        [['UAU', 'UAC'], '타이로신', 'Y'], // 티로신 -> 타이로신
-        [['UAA', 'UAG'], '종결코돈', 'STOP'], // 종결 -> 종결코돈
+        [['UAU', 'UAC'], '타이로신', 'Y'],
+        [['UAA', 'UAG'], '종결코돈', 'STOP'],
         [['UGU', 'UGC'], '시스테인', 'C'],
-        [['UGA'], '종결코돈', 'STOP'], // 종결 -> 종결코돈
+        [['UGA'], '종결코돈', 'STOP'],
         [['UGG'], '트립토판', 'W'],
 
         [['CUU', 'CUC', 'CUA', 'CUG'], '류신', 'L'],
         [['CCU', 'CCC', 'CCA', 'CCG'], '프롤린', 'P'],
         [['CAU', 'CAC'], '히스티딘', 'H'],
         [['CAA', 'CAG'], '글루타민', 'Q'],
-        [['CGU', 'CGC', 'CGA', 'CGG'], '아르지닌', 'R'], // 아르기닌 -> 아르지닌
+        [['CGU', 'CGC', 'CGA', 'CGG'], '아르지닌', 'R'],
 
-        [['AUU', 'AUC', 'AUA'], '이소류신', 'I'],
-        [['AUG'], '메싸이오닌', 'M'], // 메티오닌 -> 메싸이오닌
+        [['AUU', 'AUC', 'AUA'], '아이소류신', 'I'], // 이소류신 -> 아이소류신
+        [['AUG'], '메싸이오닌', 'M'],
         [['ACU', 'ACC', 'ACA', 'ACG'], '트레오닌', 'T'],
         [['AAU', 'AAC'], '아스파라진', 'N'],
-        [['AAA', 'AAG'], '류신', 'K'], // 리신 -> 류신 (주의: 류신이 중복됨)
+        [['AAA', 'AAG'], '류신', 'K'],
         [['AGU', 'AGC'], '세린', 'S'],
-        [['AGA', 'AGG'], '아르지닌', 'R'], // 아르기닌 -> 아르지닌
+        [['AGA', 'AGG'], '아르지닌', 'R'],
 
         [['GUU', 'GUC', 'GUA', 'GUG'], '발린', 'V'],
         [['GCU', 'GCC', 'GCA', 'GCG'], '알라닌', 'A'],
-        [['GAU', 'GAC'], '아스파트산', 'D'], // 아스파르트산 -> 아스파트산
+        [['GAU', 'GAC'], '아스파트산', 'D'],
         [['GAA', 'GAG'], '글루탐산', 'E'],
-        [['GGU', 'GGC', 'GGA', 'GGG'], '글리신', 'G'] // 글라이신 -> 글리신
+        [['GGU', 'GGC', 'GGA', 'GGG'], '글리신', 'G']
     ];
 
     // 코돈 데이터를 앞 두 글자 기준으로 그룹화 (이전과 동일)
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggleAminoAcidDisplayModeBtn = document.getElementById('toggle-amino-acid-display-mode');
 
     // 3. 게임 상태 변수 (이전과 동일)
-    let currentMode = null; // 'setup', 'game1', 'game2', 'end'
+    let currentMode = null;
     let selectedCodonGroupIndices = new Set();
     let questionQueue = [];
     let wrongAnswers = [];
@@ -117,14 +117,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 5. 코돈표 동적 생성 및 업데이트 함수 (수정)
+    // 5. 코돈표 동적 생성 및 업데이트 함수 (이전과 동일)
     function updateCodonTable() {
         codonTableContainer.innerHTML = '';
         const firstBases = ['U', 'C', 'A', 'G'];
         const secondBases = ['U', 'C', 'A', 'G'];
 
-        // 각 codon-block의 기본 높이 (600px / 4 = 150px)
-        const baseBlockHeight = 600 / 4;
+        const baseBlockHeight = 600 / 4; // 각 4x4 그리드 셀의 기본 높이 (150px)
 
         for (let i = 0; i < firstBases.length; i++) {
             for (let j = 0; j < secondBases.length; j++) {
@@ -139,45 +138,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 codonBlock.classList.add('codon-block');
 
                 if (blockInfo) {
-                    // 이 블록에 포함될 codon-group-cell들의 총 코돈 개수를 계산
-                    let totalCodonsInBlock = 0;
-                    blockInfo[2].forEach(dataIndex => {
-                        totalCodonsInBlock += codonData[dataIndex][0].length;
-                    });
-
-                    // 각 codon-group-cell의 높이를 설정
                     blockInfo[2].forEach(dataIndex => {
                         const group = codonData[dataIndex];
                         const [codons, aminoAcidName, aminoAcidAbbr] = group;
-                        const numCodonsInGroup = codons.length; // 현재 그룹의 코돈 개수
+                        const numCodonsInGroup = codons.length;
 
                         const cell = document.createElement('div');
                         cell.classList.add('codon-group-cell');
                         cell.dataset.index = dataIndex;
 
-                        // 높이 계산: (현재 그룹의 코돈 개수 / 4) * baseBlockHeight
-                        // 4는 한 칸에 들어갈 수 있는 최대 코돈 개수 (예: UCU, UCC, UCA, UCG)
-                        // baseBlockHeight는 codon-block의 총 높이 (150px)
-                        // 예를 들어, 1개 코돈은 (1/4) * 150px = 37.5px
-                        // 2개 코돈은 (2/4) * 150px = 75px
-                        // 3개 코돈은 (3/4) * 150px = 112.5px
-                        // 4개 코돈은 (4/4) * 150px = 150px
-                        // 하지만, 한 블록에 여러 그룹이 들어갈 수 있으므로, 해당 블록의 총 높이(150px)를
-                        // 각 그룹의 코돈 개수 비율로 나누어 할당해야 합니다.
-                        // 이전에 'min-height'를 사용했으나, 이제는 정확한 비율로 할당합니다.
-                        // 각 블록 내에서 각 셀의 높이는 (해당 셀의 코돈 개수 / 해당 블록 내 총 코돈 개수) * baseBlockHeight 로 계산하는 것이 더 정확합니다.
-                        // 하지만 요청은 "한칸 높이의 25%에 해당하는 만큼의 높이를 가지고" 이므로,
-                        // '한칸'을 4코돈짜리 셀로 보고, 1코돈=1/4, 2코돈=2/4 등으로 계산합니다.
-                        // 이 경우, 한 codon-block의 총 높이 150px를 넘을 수 있으므로,
-                        // 각 codon-group-cell의 높이를 유동적으로 설정하기 보다는,
-                        // codon-block 내에서 flex-grow를 사용하거나,
-                        // 각 codon-group-cell의 min-height를 설정하고,
-                        // codon-block의 height를 flex-basis로 설정하는 방법이 있습니다.
-                        // 여기서는 요청에 따라 각 codon-group-cell의 높이를 직접 계산하여 적용합니다.
-                        // 이 방식은 한 codon-block의 총 높이 150px를 초과할 수 있습니다.
-                        // 만약 정확히 150px에 맞춰야 한다면, 각 블록에 들어가는 그룹들의 코돈 개수 합계를 기준으로 비율을 재조정해야 합니다.
-                        // 현재 요청은 "한칸 높이의 25%에 해당하는 만큼의 높이를 가질 수 있도록" 이므로,
-                        // '한칸'을 150px (4코돈 기준)으로 보고, 1코돈=37.5px, 2코돈=75px 등으로 설정하겠습니다.
                         const heightPerCodon = baseBlockHeight / 4; // 1코돈 당 37.5px
                         cell.style.height = `${numCodonsInGroup * heightPerCodon}px`;
 
