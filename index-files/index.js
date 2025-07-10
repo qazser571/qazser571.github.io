@@ -1,4 +1,4 @@
 function goToCodonPage() {
-    window.location.href = "./main/codon.html";
+    window.location.href = "./codon/codon-main.html";
 }
 
