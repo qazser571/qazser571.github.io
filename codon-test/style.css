@@ -56,25 +56,29 @@ body {
 
 .button-group {
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* 기본 세로 정렬 */
     gap: 10px;
 }
 
-#mode-selection-buttons button {
-    background-color: #3498db;
+.button-group.horizontal { /* 가로 정렬 클래스 */
+    flex-direction: row;
+    justify-content: space-between; /* 버튼 사이 공간 균등 배분 */
+    flex-wrap: wrap; /* 공간 부족 시 줄바꿈 */
 }
 
-#mode-selection-buttons button.active {
-    background-color: #2980b9;
+.button-group.horizontal button {
+    flex: 1; /* 가로 공간 균등 분배 */
+    min-width: 120px; /* 최소 너비 지정 */
 }
 
+/* 일반 버튼 스타일 */
 button {
     padding: 12px 15px;
     font-size: 16px;
     cursor: pointer;
     border: none;
     border-radius: 5px;
-    background-color: #6c757d;
+    background-color: #6c757d; /* 기본 회색 */
     color: white;
     transition: background-color 0.3s ease, transform 0.1s ease;
     width: 100%;
@@ -89,9 +93,31 @@ button:active {
     transform: translateY(0);
 }
 
+/* 활성화된 버튼 색상 */
 button.active {
     background-color: #28a745;
 }
+
+/* 모드 선택 버튼의 초기 상태 (비활성화) */
+#mode-selection-buttons button {
+    background-color: #cccccc; /* 비활성화 회색 */
+    color: #666666;
+    cursor: not-allowed;
+}
+#mode-selection-buttons button:hover {
+    background-color: #cccccc; /* 호버 시에도 비활성화 색상 유지 */
+    transform: none;
+}
+#mode-selection-buttons button.active {
+    background-color: #3498db; /* 활성화된 모드 버튼 색상 */
+    color: white;
+    cursor: pointer;
+}
+#mode-selection-buttons button.active:hover {
+    background-color: #2980b9;
+    transform: translateY(-1px);
+}
+
 
 button.start-btn {
     background-color: #28a745;
@@ -99,6 +125,53 @@ button.start-btn {
 }
 button.start-btn:hover {
     background-color: #218838;
+}
+
+/* 표시 모드 버튼 (배경색 변경 없음) */
+button.no-bg-change {
+    background-color: #6c757d; /* 기본 회색 유지 */
+    color: white;
+}
+button.no-bg-change:hover {
+    background-color: #5a6268;
+}
+button.no-bg-change.active { /* active 클래스 있어도 배경색 변경 안함 */
+    background-color: #6c757d;
+}
+
+
+/* 스위치 버튼 스타일 */
+button.switch-btn {
+    position: relative;
+    padding-left: 20px; /* 스위치 썸 공간 확보 */
+    text-align: left;
+    background-color: #cccccc; /* 비활성화 회색 */
+    color: #666666;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button.switch-btn::before { /* 스위치 썸 (원) */
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #999999; /* 비활성화 썸 색상 */
+    transition: background-color 0.3s ease, left 0.3s ease;
+}
+
+button.switch-btn.active { /* 활성화된 스위치 버튼 */
+    background-color: #28a745; /* 활성화 녹색 */
+    color: white;
+}
+
+button.switch-btn.active::before { /* 활성화된 스위치 썸 */
+    background-color: white;
+    left: calc(100% - 15px); /* 오른쪽으로 이동 */
 }
 
 /* 코돈표 스타일 */
@@ -164,7 +237,10 @@ button.start-btn:hover {
 }
 
 .codons {
-    width: 45px;
+    /* width 제거, auto로 글씨 크기만큼 너비 자동 조절 */
+    /* flex-basis 대신 min-content를 사용하거나, flex-shrink를 0으로 설정하여 내용물 너비 유지 */
+    width: auto; /* width auto로 설정하여 내용물에 맞게 */
+    flex-shrink: 0; /* 내용물이 줄어들지 않도록 */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -179,7 +255,7 @@ button.start-btn:hover {
     margin: 1px 0;
     color: #555;
     transition: opacity 0.3s ease;
-    font-size: 0.9em;
+    font-size: 1.1em; /* 폰트 크기 키움 */
 }
 
 .amino-acid {
