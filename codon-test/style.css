@@ -1,107 +1,75 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    justify-content: center;
+    align-items: flex-start; /* 상단 정렬 */
     padding: 20px;
     background-color: #f4f7f6;
     color: #333;
+    min-height: 100vh; /* 최소 높이 설정 */
+    box-sizing: border-box;
 }
 
-h1 {
-    color: #2c3e50;
-    margin-bottom: 30px;
+#game-container {
+    display: flex;
+    gap: 30px; /* 컨트롤과 테이블 사이 간격 */
+    width: 100%;
+    max-width: 1200px; /* 전체 최대 너비 */
 }
 
-#codon-table-container {
-    display: grid;
-    /* 4x4 그리드 유지 */
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(4, 1fr); /* 4행으로 명시 */
-    gap: 1px; /* 셀 사이의 간격 */
-    border: 1px solid #ccc;
-    background-color: #ccc; /* 그리드 라인처럼 보이게 */
-    width: 90%; /* 너비 조정 */
-    max-width: 900px; /* 최대 너비 */
-    margin-bottom: 30px;
+#game-controls {
+    flex: 0 0 280px; /* 고정 너비 */
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-/* 새로운 셀: 앞 두 글자가 같은 코돈 그룹들을 담는 컨테이너 */
-.codon-block {
-    background-color: #fff;
-    display: flex;
-    flex-direction: column; /* 코돈 그룹들을 세로로 배치 */
-    border: 1px solid #eee; /* 개별 블록 테두리 */
-}
-
-/* 각 코돈 그룹 (예: UUU, UUC + 페닐알라닌) */
-.codon-group-cell {
-    display: flex;
-    align-items: center;
-    padding: 5px; /* 내부 패딩 조정 */
-    min-height: 50px; /* 최소 높이 설정 */
-    border-bottom: 1px solid #f0f0f0; /* 그룹 간 구분선 */
-}
-
-.codon-group-cell:last-child {
-    border-bottom: none; /* 마지막 그룹은 구분선 없음 */
-}
-
-
-.codons {
-    flex: 1; /* 왼쪽 코돈 영역 */
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    padding-right: 5px; /* 패딩 조정 */
-    border-right: 1px solid #eee; /* 코돈과 아미노산 구분선 */
+    gap: 20px;
 }
 
-.codon-item {
-    font-family: 'Courier New', Courier, monospace;
-    font-weight: bold;
-    margin: 1px 0; /* 마진 조정 */
-    color: #555;
-    transition: opacity 0.3s ease;
-    font-size: 0.9em; /* 폰트 크기 조정 */
-}
-
-.amino-acid {
-    flex: 1; /* 오른쪽 아미노산 영역 */
+#game-controls h2, #game-controls h3 {
+    color: #2c3e50;
+    margin-top: 0;
+    margin-bottom: 15px;
     text-align: center;
+}
+
+#current-question {
+    font-size: 1.8em;
     font-weight: bold;
-    color: #007bff;
-    transition: opacity 0.3s ease;
-    font-size: 0.9em; /* 폰트 크기 조정 */
+    color: #e74c3c; /* 문제 색상 */
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 2px dashed #e74c3c;
+    border-radius: 5px;
 }
 
-/* 숨기기 클래스 */
-.hidden-codon .codon-item {
-    opacity: 0;
-}
-
-.hidden-amino-acid .amino-acid {
-    opacity: 0;
-}
-
-/* 컨트롤 버튼 스타일 */
-.controls {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-    margin-top: 20px;
+#score-display {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #3498db;
+    text-align: center;
+    margin-bottom: 15px;
 }
 
 .button-group {
     display: flex;
+    flex-direction: column; /* 세로 정렬 */
     gap: 10px;
 }
 
+.button-group.mode-selection button {
+    background-color: #3498db;
+}
+
+.button-group.mode-selection button.active {
+    background-color: #2980b9;
+}
+
 button {
-    padding: 10px 20px;
+    padding: 12px 15px;
     font-size: 16px;
     cursor: pointer;
     border: none;
@@ -109,7 +77,7 @@ button {
     background-color: #6c757d;
     color: white;
     transition: background-color 0.3s ease, transform 0.1s ease;
-    min-width: 150px; /* 버튼 최소 너비 */
+    width: 100%; /* 너비 100% */
 }
 
 button:hover {
@@ -121,7 +89,119 @@ button:active {
     transform: translateY(0);
 }
 
-/* 토글 상태에 따른 버튼 색상 */
 button.active {
     background-color: #28a745; /* 활성화 시 녹색 */
+}
+
+button.start-btn {
+    background-color: #28a745;
+    font-weight: bold;
+}
+button.start-btn:hover {
+    background-color: #218838;
+}
+
+/* 코돈표 스타일 */
+#codon-table-wrapper {
+    flex: 1; /* 남은 공간 모두 사용 */
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+#codon-table-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 1px;
+    border: 1px solid #ccc;
+    background-color: #ccc;
+    height: 100%; /* 부모 높이에 맞춤 */
+    min-height: 600px; /* 최소 높이 */
+}
+
+.codon-block {
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #eee;
+}
+
+.codon-group-cell {
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    min-height: 50px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer; /* 클릭 가능하도록 커서 변경 */
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.codon-group-cell:last-child {
+    border-bottom: none;
+}
+
+/* 선택 모드에서 선택된 셀 스타일 */
+.codon-group-cell.selected-for-game {
+    background-color: #e0f7fa; /* 연한 파란색 */
+    border-color: #00bcd4;
+}
+
+/* 게임 중 정답 셀 스타일 */
+.codon-group-cell.correct-answer {
+    background-color: #d4edda; /* 연한 녹색 */
+    border-color: #28a745;
+}
+
+/* 오답 시 깜빡이는 애니메이션 */
+@keyframes flash-red {
+    0%, 100% { border-color: red; }
+    50% { border-color: transparent; }
+}
+
+.codon-group-cell.wrong-answer-flash {
+    animation: flash-red 0.5s 3; /* 0.5초 동안 3번 깜빡임 */
+}
+
+
+.codons {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding-right: 5px;
+    border-right: 1px solid #eee;
+}
+
+.codon-item {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    margin: 1px 0;
+    color: #555;
+    transition: opacity 0.3s ease;
+    font-size: 0.9em;
+}
+
+.amino-acid {
+    flex: 1;
+    text-align: center;
+    font-weight: bold;
+    color: #007bff;
+    transition: opacity 0.3s ease;
+    font-size: 0.9em;
+}
+
+/* 숨기기 클래스 */
+.hidden {
+    display: none !important;
+}
+
+.hidden-codon .codon-item {
+    opacity: 0;
+}
+
+.hidden-amino-acid .amino-acid {
+    opacity: 0;
 }
