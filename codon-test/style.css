@@ -1,31 +1,31 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start; /* 왼쪽으로 정렬 */
     align-items: flex-start; /* 상단 정렬 */
     padding: 20px;
     background-color: #f4f7f6;
     color: #333;
-    min-height: 100vh; /* 최소 높이 설정 */
+    min-height: 100vh;
     box-sizing: border-box;
 }
 
 #game-container {
     display: flex;
-    gap: 30px; /* 컨트롤과 테이블 사이 간격 */
+    gap: 30px;
     width: 100%;
-    max-width: 1200px; /* 전체 최대 너비 */
+    max-width: 1200px;
 }
 
 #game-controls {
-    flex: 0 0 280px; /* 고정 너비 */
+    flex: 0 0 280px;
     background-color: #ffffff;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 20px; /* 섹션 간 간격 */
 }
 
 #game-controls h2, #game-controls h3 {
@@ -38,7 +38,7 @@ body {
 #current-question {
     font-size: 1.8em;
     font-weight: bold;
-    color: #e74c3c; /* 문제 색상 */
+    color: #e74c3c;
     text-align: center;
     margin-bottom: 20px;
     padding: 10px;
@@ -56,15 +56,15 @@ body {
 
 .button-group {
     display: flex;
-    flex-direction: column; /* 세로 정렬 */
+    flex-direction: column;
     gap: 10px;
 }
 
-.button-group.mode-selection button {
+#mode-selection-buttons button { /* 모드 선택 버튼 색상 */
     background-color: #3498db;
 }
 
-.button-group.mode-selection button.active {
+#mode-selection-buttons button.active {
     background-color: #2980b9;
 }
 
@@ -77,7 +77,7 @@ button {
     background-color: #6c757d;
     color: white;
     transition: background-color 0.3s ease, transform 0.1s ease;
-    width: 100%; /* 너비 100% */
+    width: 100%;
 }
 
 button:hover {
@@ -90,7 +90,7 @@ button:active {
 }
 
 button.active {
-    background-color: #28a745; /* 활성화 시 녹색 */
+    background-color: #28a745;
 }
 
 button.start-btn {
@@ -103,7 +103,7 @@ button.start-btn:hover {
 
 /* 코돈표 스타일 */
 #codon-table-wrapper {
-    flex: 1; /* 남은 공간 모두 사용 */
+    flex: 1;
     background-color: #ffffff;
     padding: 20px;
     border-radius: 8px;
@@ -117,8 +117,8 @@ button.start-btn:hover {
     gap: 1px;
     border: 1px solid #ccc;
     background-color: #ccc;
-    height: 100%; /* 부모 높이에 맞춤 */
-    min-height: 600px; /* 최소 높이 */
+    height: 100%;
+    min-height: 600px;
 }
 
 .codon-block {
@@ -134,7 +134,7 @@ button.start-btn:hover {
     padding: 5px;
     min-height: 50px;
     border-bottom: 1px solid #f0f0f0;
-    cursor: pointer; /* 클릭 가능하도록 커서 변경 */
+    cursor: pointer;
     transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
@@ -144,13 +144,13 @@ button.start-btn:hover {
 
 /* 선택 모드에서 선택된 셀 스타일 */
 .codon-group-cell.selected-for-game {
-    background-color: #e0f7fa; /* 연한 파란색 */
+    background-color: #e0f7fa;
     border-color: #00bcd4;
 }
 
 /* 게임 중 정답 셀 스타일 */
 .codon-group-cell.correct-answer {
-    background-color: #d4edda; /* 연한 녹색 */
+    background-color: #d4edda;
     border-color: #28a745;
 }
 
@@ -161,9 +161,8 @@ button.start-btn:hover {
 }
 
 .codon-group-cell.wrong-answer-flash {
-    animation: flash-red 0.5s 3; /* 0.5초 동안 3번 깜빡임 */
+    animation: flash-red 0.5s 3;
 }
-
 
 .codons {
     flex: 1;
