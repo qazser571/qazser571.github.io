@@ -12,16 +12,16 @@
         <div id="game-controls">
             <h2>게임 설정</h2>
             
-            <!-- 게임 모드 선택 버튼 그룹 (초기 상태에서만 보임) -->
+            <!-- 게임 모드 선택 버튼 그룹 (항상 보임) -->
             <div id="mode-selection-buttons" class="button-group">
                 <button id="mode1-btn">모드 1: 코돈 → 아미노산</button>
                 <button id="mode2-btn">모드 2: 아미노산 → 코돈</button>
             </div>
 
-            <!-- 학습 범위 선택 영역 (모드 선택 후 보임) -->
-            <div id="selection-area" class="hidden">
+            <!-- 학습 범위 선택 영역 (항상 보임) -->
+            <div id="selection-area">
                 <h3>학습 범위 선택</h3>
-                <button id="select-all-btn">전부 선택</button>
+                <button id="select-all-btn">모두 선택</button>
                 <p>또는 표에서 직접 선택하세요.</p>
                 <button id="start-game-btn" class="start-btn">게임 시작</button>
             </div>
@@ -30,6 +30,7 @@
             <div id="game-info-area" class="hidden">
                 <h3>현재 문제</h3>
                 <div id="current-question"></div>
+                <button id="next-question-btn" class="hidden">다음 문제</button> <!-- 다음 문제 버튼 추가 -->
             </div>
 
             <!-- 게임 종료 영역 (게임 종료 후 보임) -->
