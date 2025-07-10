@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const startGameBtn = document.getElementById('start-game-btn');
     const gameInfoArea = document.getElementById('game-info-area');
     const currentQuestionDisplay = document.getElementById('current-question');
-    const nextQuestionBtn = document.getElementById('next-question-btn'); // 다음 문제 버튼 참조
+    const nextQuestionBtn = document.getElementById('next-question-btn');
     const gameEndArea = document.getElementById('game-end-area');
     const scoreDisplay = document.getElementById('score-display');
     const retryWrongBtn = document.getElementById('retry-wrong-btn');
@@ -72,24 +72,26 @@ document.addEventListener('DOMContentLoaded', () => {
     let showCodons = true;
     let showAminoAcids = true;
     let aminoAcidDisplayMode = 0;
-    let isWaitingForNextQuestion = false; // 다음 문제 대기 상태 플래그
+    let isWaitingForNextQuestion = false;
 
     // 4. UI 상태 관리 함수
     function updateUI(state) {
+        // 모든 조건부 영역 숨기기
         modeSelectionButtons.classList.add('hidden');
         selectionArea.classList.add('hidden');
         gameInfoArea.classList.add('hidden');
         gameEndArea.classList.add('hidden');
-        nextQuestionBtn.classList.add('hidden'); // 다음 문제 버튼 숨기기
+        nextQuestionBtn.classList.add('hidden');
 
+        // 모드 선택 버튼의 active 클래스 초기화
         mode1Btn.classList.remove('active');
         mode2Btn.classList.remove('active');
 
-        // 모든 셀의 이벤트 리스너 제거 및 클래스 초기화
+        // 코돈표 셀의 클릭 이벤트 리스너 제거 및 클래스 초기화
         document.querySelectorAll('.codon-group-cell').forEach(cell => {
             cell.removeEventListener('click', handleSelectionClick);
             cell.removeEventListener('click', handleCellClick);
-            cell.classList.remove('selected-for-game', 'correct-answer-bg', 'incorrect-answer-bg'); // 배경색 클래스 제거
+            cell.classList.remove('selected-for-game', 'correct-answer-bg', 'incorrect-answer-bg');
             cell.style.backgroundColor = ''; // 인라인 스타일로 설정된 배경색도 초기화
         });
 
@@ -110,10 +112,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
             case 'game':
                 gameInfoArea.classList.remove('hidden');
-                // 게임 중에는 코돈표 셀이 클릭되면 정오답 확인
+                // currentQuestionDisplay가 확실히 보이도록
+                currentQuestionDisplay.classList.remove('hidden'); 
+                
                 document.querySelectorAll('.codon-group-cell').forEach(cell => {
                     cell.addEventListener('click', handleCellClick);
-                    cell.classList.remove('selected-for-game'); // 게임 시작 시 선택 표시 제거
+                    cell.classList.remove('selected-for-game');
                 });
                 break;
             case 'end':
@@ -216,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         updateUI('game');
-        isWaitingForNextQuestion = false; // 게임 시작 시 초기화
+        isWaitingForNextQuestion = false;
         nextQuestion();
     }
 
@@ -224,10 +228,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // 모든 셀의 배경색 초기화
         document.querySelectorAll('.codon-group-cell').forEach(cell => {
             cell.classList.remove('correct-answer-bg', 'incorrect-answer-bg');
-            cell.style.backgroundColor = ''; // 인라인 스타일 제거
+            cell.style.backgroundColor = '';
         });
-        nextQuestionBtn.classList.add('hidden'); // 다음 문제 버튼 숨기기
-        isWaitingForNextQuestion = false; // 다음 문제 대기 상태 해제
+        nextQuestionBtn.classList.add('hidden');
+        isWaitingForNextQuestion = false;
 
         if (questionQueue.length === 0) {
             endGame();
@@ -252,11 +256,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 return codonData[parseInt(cell.dataset.index)][1] === aminoAcidName;
             });
         }
+        // 문제 텍스트가 설정된 후, 혹시 숨겨져 있다면 보이게 처리
+        currentQuestionDisplay.classList.remove('hidden');
     }
 
     function checkAnswer(clickedCell) {
-        if (isWaitingForNextQuestion) return; // 다음 문제 대기 중에는 클릭 무시
-        isWaitingForNextQuestion = true; // 다음 문제 대기 상태로 설정
+        if (isWaitingForNextQuestion) return;
+        isWaitingForNextQuestion = true;
 
         const clickedIndex = parseInt(clickedCell.dataset.index);
         let isCorrect = false;
@@ -268,33 +274,31 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (currentMode === 'game2') {
             const isAnyCorrect = currentCorrectCells.some(cell => parseInt(cell.dataset.index) === clickedIndex);
             if (isAnyCorrect) {
-                clickedCell.classList.add('correct-answer-bg'); // 클릭된 셀은 초록색으로 표시
+                clickedCell.classList.add('correct-answer-bg');
                 correctClicksCount++;
 
                 if (correctClicksCount === currentCorrectCells.length) {
                     isCorrect = true;
                 } else {
-                    isWaitingForNextQuestion = false; // 아직 모든 정답을 찾지 못했으므로 다음 클릭 허용
-                    return; // 다음 문제 버튼을 표시하지 않고 기다림
+                    isWaitingForNextQuestion = false;
+                    return;
                 }
             }
         }
 
         if (isCorrect) {
             correctAnswersCount++;
-            // 모드 1의 경우 정답 셀에 초록색 배경 적용 (이미 클릭된 셀이 정답이므로)
             if (currentMode === 'game1') {
                 currentCorrectCells[0].classList.add('correct-answer-bg');
             }
-            nextQuestionBtn.classList.remove('hidden'); // 다음 문제 버튼 표시
+            nextQuestionBtn.classList.remove('hidden');
         } else {
             wrongAnswers.push(currentQuestion);
-            clickedCell.classList.add('incorrect-answer-bg'); // 틀린 셀은 빨간색 배경
-            // 모든 정답 셀에 초록색 배경 적용하여 올바른 위치를 알려줌
+            clickedCell.classList.add('incorrect-answer-bg');
             currentCorrectCells.forEach(cell => {
                 cell.classList.add('correct-answer-bg');
             });
-            nextQuestionBtn.classList.remove('hidden'); // 다음 문제 버튼 표시
+            nextQuestionBtn.classList.remove('hidden');
         }
     }
 
@@ -382,7 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     startGameBtn.addEventListener('click', startGame);
-    nextQuestionBtn.addEventListener('click', nextQuestion); // 다음 문제 버튼 이벤트 리스너 추가
+    nextQuestionBtn.addEventListener('click', nextQuestion);
 
     retryWrongBtn.addEventListener('click', () => {
         selectedCodonGroupIndices = new Set(wrongAnswers);
