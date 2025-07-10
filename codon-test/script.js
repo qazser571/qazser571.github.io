@@ -67,8 +67,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // 4. UI 상태 관리 함수
     function updateUI(state) {
         // 모든 조건부 영역 숨기기
-        modeSelectionButtons.classList.add('hidden'); // 일단 숨기고, setup에서 다시 보이게
-        selectionArea.classList.add('hidden'); // 일단 숨기고, setup에서 다시 보이게
+        modeSelectionButtons.classList.add('hidden');
+        selectionArea.classList.add('hidden');
         gameInfoArea.classList.add('hidden');
         gameEndArea.classList.add('hidden');
 
@@ -292,14 +292,14 @@ document.addEventListener('DOMContentLoaded', () => {
         currentMode = 'game1';
         mode1Btn.classList.add('active');
         mode2Btn.classList.remove('active');
-        updateUI('setup'); // 모드 변경 후 UI 업데이트 (버튼 활성화 상태 반영)
+        updateUI('setup');
     });
 
     mode2Btn.addEventListener('click', () => {
         currentMode = 'game2';
         mode2Btn.classList.add('active');
         mode1Btn.classList.remove('active');
-        updateUI('setup'); // 모드 변경 후 UI 업데이트 (버튼 활성화 상태 반영)
+        updateUI('setup');
     });
 
     // 범위 선택 모드에서 셀 클릭 (선택/해제)
@@ -319,33 +319,47 @@ document.addEventListener('DOMContentLoaded', () => {
     // "모두 선택" 버튼 상태를 업데이트하는 함수
     function updateSelectAllButtonState() {
         const totalCodonGroups = codonData.length;
-        if (selectedCodonGroupIndices.size === totalCodonGroups) {
-            selectAllBtn.textContent = '모두 선택 해제';
-            selectAllBtn.dataset.toggleState = 'deselect-all';
+        const selectedCount = selectedCodonGroupIndices.size;
+
+        if (selectedCount === totalCodonGroups) {
+            // 모든 코돈이 선택된 경우
+            selectAllBtn.textContent = '전체 선택됨';
+            selectAllBtn.dataset.toggleAction = 'deselect-all'; // 클릭 시 모두 해제
+        } else if (selectedCount === 0) {
+            // 모든 코돈이 선택 해제된 경우
+            selectAllBtn.textContent = '전체 선택 해제됨';
+            selectAllBtn.dataset.toggleAction = 'select-all'; // 클릭 시 모두 선택
         } else {
-            selectAllBtn.textContent = '모두 선택';
-            selectAllBtn.dataset.toggleState = 'select-all';
+            // 일부만 선택된 경우
+            selectAllBtn.textContent = '전체 선택 해제하기';
+            selectAllBtn.dataset.toggleAction = 'deselect-all'; // 클릭 시 모두 해제
         }
     }
 
     // "모두 선택" 버튼 클릭 이벤트
     selectAllBtn.addEventListener('click', () => {
-        if (selectAllBtn.dataset.toggleState === 'select-all') {
+        const action = selectAllBtn.dataset.toggleAction;
+
+        if (action === 'select-all') {
             // 모든 코돈 그룹 선택
             selectedCodonGroupIndices.clear();
             for (let i = 0; i < codonData.length; i++) {
                 selectedCodonGroupIndices.add(i);
             }
-            document.querySelectorAll('.codon-group-cell').forEach(cell => {
-                cell.classList.add('selected-for-game');
-            });
-        } else {
+        } else { // action === 'deselect-all'
             // 모든 코돈 그룹 선택 해제
             selectedCodonGroupIndices.clear();
-            document.querySelectorAll('.codon-group-cell').forEach(cell => {
-                cell.classList.remove('selected-for-game');
-            });
         }
+        
+        // UI 업데이트
+        document.querySelectorAll('.codon-group-cell').forEach(cell => {
+            const index = parseInt(cell.dataset.index);
+            if (selectedCodonGroupIndices.has(index)) {
+                cell.classList.add('selected-for-game');
+            } else {
+                cell.classList.remove('selected-for-game');
+            }
+        });
         updateSelectAllButtonState(); // 버튼 상태 업데이트
     });
 
