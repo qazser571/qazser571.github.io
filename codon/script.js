@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // 버튼들도 초기화 시 모두 숨김
         startGameBtn.classList.add('hidden');
-        nextQuestionBtn.classList.add('hidden'); 
+        // nextQuestionBtn은 nextQuestion()과 checkAnswer()에서만 제어하도록 updateUI에서는 제거
 
         mode1Btn.classList.remove('active');
         mode2Btn.classList.remove('active');
@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 5. 코돈표 동적 생성 및 업데이트 함수
     function updateCodonTable() {
-        codonTableContainer.innerHTML = '';
+        codonTableContainer.innerHTML = ''; // 기존 테이블 내용 삭제
         const firstBases = ['U', 'C', 'A', 'G'];
         const secondBases = ['U', 'C', 'A', 'G'];
 
@@ -226,6 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         aminoAcidDiv.textContent = displayText;
                         cell.appendChild(aminoAcidDiv);
 
+                        // 숨기기 클래스 적용 (새로 생성할 때도 적용)
                         if (!showCodons) {
                             cell.classList.add('hidden-codon');
                         } else {
@@ -243,14 +244,78 @@ document.addEventListener('DOMContentLoaded', () => {
                 codonTableContainer.appendChild(codonBlock);
             }
         }
+        // 코돈표 재생성 후, 현재 게임 상태에 따라 정답/오답 표시를 재적용
+        if (isGameRunning && currentQuestion !== null) {
+            // 모든 셀에서 이전 정답/오답 표시 클래스 제거
+            document.querySelectorAll('.codon-group-cell').forEach(cell => {
+                cell.classList.remove('correct-answer-bg', 'incorrect-answer-bg');
+            });
+
+            // 현재 문제의 정답 셀에 correct-answer-bg 다시 적용
+            currentCorrectCells.forEach(cell => {
+                cell.classList.add('correct-answer-bg');
+            });
+
+            // 만약 오답인 경우, 클릭된 셀에 incorrect-answer-bg 다시 적용
+            // (이 로직은 checkAnswer에서만 발생하므로, 여기서는 모든 정답 셀만 다시 표시)
+            // isWaitingForNextQuestion이 true이면 nextQuestionBtn이 보여야 함
+            if (isWaitingForNextQuestion) {
+                 nextQuestionBtn.classList.remove('hidden');
+            } else {
+                 nextQuestionBtn.classList.add('hidden');
+            }
+        }
+
         // 코돈표 업데이트 후 현재 UI 상태를 유지하며 이벤트 리스너를 재부착
+        // 이 호출은 UI의 전체적인 상태를 재설정하므로, 마지막에 한 번만 호출하는 것이 좋음
         updateUI(currentPhase); 
     }
+
+    // 코돈/아미노산 셀의 가시성만 업데이트하는 함수
+    function updateCodonCellVisibility() {
+        document.querySelectorAll('.codon-group-cell').forEach(cell => {
+            if (!showCodons) {
+                cell.classList.add('hidden-codon');
+            } else {
+                cell.classList.remove('hidden-codon');
+            }
+
+            if (!showAminoAcids) {
+                cell.classList.add('hidden-amino-acid');
+            } else {
+                cell.classList.remove('hidden-amino-acid');
+            }
+        });
+        // 현재 게임 상태에 따라 정답/오답 표시를 재적용
+        if (isGameRunning && currentQuestion !== null) {
+            // 모든 셀에서 이전 정답/오답 표시 클래스 제거
+            document.querySelectorAll('.codon-group-cell').forEach(cell => {
+                cell.classList.remove('correct-answer-bg', 'incorrect-answer-bg');
+            });
+
+            // 현재 문제의 정답 셀에 correct-answer-bg 다시 적용
+            currentCorrectCells.forEach(cell => {
+                cell.classList.add('correct-answer-bg');
+            });
+
+            // isWaitingForNextQuestion이 true이면 nextQuestionBtn이 보여야 함
+            if (isWaitingForNextQuestion) {
+                 nextQuestionBtn.classList.remove('hidden');
+            } else {
+                 nextQuestionBtn.classList.add('hidden');
+            }
+        }
+    }
+
 
     // 6. 게임 로직 함수
     function startGame() {
         if (selectedGameMode === null) {
-            alert('게임을 시작하려면 먼저 모드를 설정해야 합니다.');
+            alert('게임을 시작하려면 먼저 모드를 선택해주세요.');
+            return;
+        }
+        if (selectedCodonGroupIndices.size === 0) {
+            alert('게임을 시작하려면 최소 하나 이상의 코돈 그룹을 선택해야 합니다.');
             return;
         }
 
@@ -277,8 +342,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 각 고유한 아미노산 이름에 대해 해당 아미노산을 대표하는 하나의 dataIndex만 큐에 추가
             uniqueAminoAcidNames.forEach(aminoAcidName => {
-                // 해당 아미노산 이름을 가진 첫 번째 dataIndex를 찾아서 큐에 추가
-                // (selectedCodonGroupIndices에 포함된 것 중에서)
                 const representativeDataIndex = codonData.findIndex((group, idx) => 
                     group[1] === aminoAcidName && selectedCodonGroupIndices.has(idx)
                 );
@@ -289,12 +352,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         shuffleArray(questionQueue); // 문제 큐 섞기
-
-        if (questionQueue.length === 0) {
-            alert('게임을 시작하려면 최소 하나 이상의 코돈 그룹을 선택해야 합니다.');
-            updateUI('setup');
-            return;
-        }
         
         updateUI('game_active');
         isWaitingForNextQuestion = false; // 게임 시작 시 다음 문제 대기 상태 초기화
@@ -568,7 +625,7 @@ document.addEventListener('DOMContentLoaded', () => {
              // Game 1에서는 틀린 문제 객체 {dataIndex, codon}들을 그대로 사용
              questionQueue = [...wrongAnswers];
         } else if (selectedGameMode === 'game2') {
-            // Game 2에서는 틀린 아미노산 이름들을 Set으로 변환하여 고유한 아미노산만 재시험 대상으로 함
+            // Game 2에서는 틀린 아미노산 이름(문자열)을 Set으로 변환하여 고유한 아미노산만 재시험 대상으로 함
             const uniqueWrongAminoAcids = Array.from(new Set(wrongAnswers));
             
             // 각 고유한 틀린 아미노산 이름에 대해 해당 아미노산을 대표하는 dataIndex를 찾아 questionQueue에 추가
@@ -605,20 +662,20 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleCodonsBtn.addEventListener('click', () => {
         showCodons = !showCodons;
         toggleCodonsBtn.classList.toggle('active', !showCodons);
-        updateCodonTable();
+        updateCodonCellVisibility(); // updateCodonTable 대신 호출
     });
 
     toggleAminoAcidsBtn.addEventListener('click', () => {
         showAminoAcids = !showAminoAcids;
         toggleAminoAcidsBtn.classList.toggle('active', !showAminoAcids);
-        updateCodonTable();
+        updateCodonCellVisibility(); // updateCodonTable 대신 호출
     });
 
     // 아미노산 표시 모드 토글 버튼 (배경색 변경 없음, 텍스트 변경)
     toggleAminoAcidDisplayModeBtn.addEventListener('click', () => {
         aminoAcidDisplayMode = (aminoAcidDisplayMode + 1) % 3;
         updateAminoAcidDisplayModeButtonText();
-        updateCodonTable();
+        updateCodonTable(); // 이 버튼은 코돈표를 재생성해야 함
     });
 
     // 표시 모드 버튼 텍스트를 업데이트하는 함수
