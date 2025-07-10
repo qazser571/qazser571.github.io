@@ -1,0 +1,110 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-color: #f4f7f6;
+    color: #333;
+}
+
+h1 {
+    color: #2c3e50;
+    margin-bottom: 30px;
+}
+
+#codon-table-container {
+    display: grid;
+    /* 표준 코돈표처럼 4x4 그리드를 만듭니다. */
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px; /* 셀 사이의 간격 */
+    border: 1px solid #ccc;
+    background-color: #ccc; /* 그리드 라인처럼 보이게 */
+    width: 90%; /* 너비 조정 */
+    max-width: 900px; /* 최대 너비 */
+    margin-bottom: 30px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.codon-group-cell {
+    background-color: #fff;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    border: 1px solid #eee; /* 개별 셀 테두리 */
+}
+
+.codons {
+    flex: 1; /* 왼쪽 코돈 영역 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding-right: 10px;
+    border-right: 1px solid #eee; /* 코돈과 아미노산 구분선 */
+}
+
+.codon-item {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    margin: 2px 0;
+    color: #555;
+    transition: opacity 0.3s ease;
+}
+
+.amino-acid {
+    flex: 1; /* 오른쪽 아미노산 영역 */
+    text-align: center;
+    font-weight: bold;
+    color: #007bff;
+    transition: opacity 0.3s ease;
+}
+
+/* 숨기기 클래스 */
+.hidden-codon .codon-item {
+    opacity: 0;
+}
+
+.hidden-amino-acid .amino-acid {
+    opacity: 0;
+}
+
+/* 컨트롤 버튼 스타일 */
+.controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #6c757d;
+    color: white;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    min-width: 150px; /* 버튼 최소 너비 */
+}
+
+button:hover {
+    background-color: #5a6268;
+    transform: translateY(-1px);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* 토글 상태에 따른 버튼 색상 */
+button.active {
+    background-color: #28a745; /* 활성화 시 녹색 */
+}
