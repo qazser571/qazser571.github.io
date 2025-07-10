@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 2. DOM 요소 참조
     const codonTableContainer = document.getElementById('codon-table-container');
+    const modeSelectionButtons = document.getElementById('mode-selection-buttons'); // 새로 추가된 모드 선택 버튼 컨테이너
     const mode1Btn = document.getElementById('mode1-btn');
     const mode2Btn = document.getElementById('mode2-btn');
     const selectionArea = document.getElementById('selection-area');
@@ -47,49 +48,54 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggleCodonsBtn = document.getElementById('toggle-codons');
     const toggleAminoAcidsBtn = document.getElementById('toggle-amino-acids');
     const toggleAminoAcidDisplayModeBtn = document.getElementById('toggle-amino-acid-display-mode');
+    // persistent-toggle-buttons는 항상 보이기 때문에 별도의 숨김/보임 처리가 필요 없음
 
     // 3. 게임 상태 변수
-    let currentMode = null; // 'selection', 'game1', 'game2', 'end'
-    let selectedCodonGroupIndices = new Set(); // 게임에 사용될 codonData 인덱스
-    let questionQueue = []; // 현재 게임 문제 큐 (codonData 인덱스)
-    let wrongAnswers = []; // 틀린 문제 (codonData 인덱스)
-    let currentQuestion = null; // 현재 출제된 문제 (codonData 인덱스 또는 아미노산 이름)
-    let currentCorrectCells = []; // 현재 문제의 정답 셀 (DOM 요소)
-    let correctClicksCount = 0; // 모드2에서 필요한 클릭 횟수 (다중 정답 처리)
+    let currentMode = null; // 'mode_selection', 'selection', 'game1', 'game2', 'end'
+    let selectedCodonGroupIndices = new Set();
+    let questionQueue = [];
+    let wrongAnswers = [];
+    let currentQuestion = null;
+    let currentCorrectCells = [];
+    let correctClicksCount = 0;
     let totalQuestions = 0;
     let correctAnswersCount = 0;
 
     let showCodons = true;
     let showAminoAcids = true;
-    let aminoAcidDisplayMode = 0; // 0: 세린(S), 1: 세린, 2: S
+    let aminoAcidDisplayMode = 0;
 
     // 4. UI 상태 관리 함수
     function updateUI(state) {
-        // 모든 게임 관련 영역 숨기기
+        // 모든 조건부 영역 숨기기
+        modeSelectionButtons.classList.add('hidden');
         selectionArea.classList.add('hidden');
         gameInfoArea.classList.add('hidden');
         gameEndArea.classList.add('hidden');
+
+        // 모드 선택 버튼의 active 클래스 초기화
         mode1Btn.classList.remove('active');
         mode2Btn.classList.remove('active');
 
         // 코돈표 셀의 클릭 이벤트 리스너 제거 및 초기화
         document.querySelectorAll('.codon-group-cell').forEach(cell => {
+            cell.removeEventListener('click', handleSelectionClick);
             cell.removeEventListener('click', handleCellClick);
             cell.classList.remove('selected-for-game', 'correct-answer', 'wrong-answer-flash');
         });
 
+        // 상태에 따라 특정 영역 표시 및 이벤트 리스너 설정
         switch (state) {
             case 'mode_selection':
-                // 초기 상태: 게임 모드 선택 버튼만 활성화
+                modeSelectionButtons.classList.remove('hidden');
+                // 현재 선택된 모드가 있다면 active 클래스 유지
                 if (currentMode === 'game1') mode1Btn.classList.add('active');
                 if (currentMode === 'game2') mode2Btn.classList.add('active');
                 break;
             case 'selection':
                 selectionArea.classList.remove('hidden');
-                // 모든 셀에 선택 가능 이벤트 리스너 추가
                 document.querySelectorAll('.codon-group-cell').forEach(cell => {
                     cell.addEventListener('click', handleSelectionClick);
-                    // 이전에 선택된 셀은 selected-for-game 클래스 유지
                     if (selectedCodonGroupIndices.has(parseInt(cell.dataset.index))) {
                         cell.classList.add('selected-for-game');
                     }
@@ -97,10 +103,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
             case 'game':
                 gameInfoArea.classList.remove('hidden');
-                // 모든 셀에 게임 클릭 이벤트 리스너 추가
                 document.querySelectorAll('.codon-group-cell').forEach(cell => {
                     cell.addEventListener('click', handleCellClick);
-                    cell.classList.remove('selected-for-game'); // 선택 표시 제거
                 });
                 break;
             case 'end':
@@ -109,13 +113,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 5. 코돈표 동적 생성 및 업데이트 함수 (이전과 거의 동일, 데이터 인덱스 추가)
+    // 5. 코돈표 동적 생성 및 업데이트 함수 (이전과 동일)
     function updateCodonTable() {
         codonTableContainer.innerHTML = '';
         const firstBases = ['U', 'C', 'A', 'G'];
         const secondBases = ['U', 'C', 'A', 'G'];
-
-        let globalCellIndex = 0; // codonData의 인덱스를 추적
 
         for (let i = 0; i < firstBases.length; i++) {
             for (let j = 0; j < secondBases.length; j++) {
@@ -136,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         const cell = document.createElement('div');
                         cell.classList.add('codon-group-cell');
-                        cell.dataset.index = dataIndex; // codonData의 인덱스 저장
+                        cell.dataset.index = dataIndex;
 
                         const codonsDiv = document.createElement('div');
                         codonsDiv.classList.add('codons');
@@ -182,22 +184,22 @@ document.addEventListener('DOMContentLoaded', () => {
         updateUI(currentMode); // UI 상태를 다시 적용하여 이벤트 리스너 등 업데이트
     }
 
-    // 6. 게임 로직 함수
+    // 6. 게임 로직 함수 (이전과 동일)
     function startGame() {
         totalQuestions = 0;
         correctAnswersCount = 0;
         wrongAnswers = [];
         questionQueue = Array.from(selectedCodonGroupIndices);
-        shuffleArray(questionQueue); // 문제 큐 섞기
+        shuffleArray(questionQueue);
 
         if (questionQueue.length === 0) {
             alert('게임을 시작하려면 최소 하나 이상의 코돈 그룹을 선택해야 합니다.');
-            currentMode = 'selection';
+            currentMode = 'selection'; // 다시 선택 화면으로
             updateUI(currentMode);
             return;
         }
         
-        currentMode = currentMode === 'game1' ? 'game1' : 'game2'; // 정확한 모드 설정
+        // currentMode는 이미 'game1' 또는 'game2'로 설정되어 있음
         updateUI('game');
         nextQuestion();
     }
@@ -209,27 +211,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         totalQuestions++;
-        currentCorrectCells = []; // 정답 셀 초기화
-        correctClicksCount = 0; // 모드2를 위한 클릭 횟수 초기화
+        currentCorrectCells = [];
+        correctClicksCount = 0;
 
-        const questionIndex = questionQueue.shift(); // 큐에서 다음 문제 꺼내기
+        const questionIndex = questionQueue.shift();
         currentQuestion = questionIndex;
 
-        // 모든 셀의 이전 상태 초기화
         document.querySelectorAll('.codon-group-cell').forEach(cell => {
             cell.classList.remove('correct-answer', 'wrong-answer-flash');
         });
 
         if (currentMode === 'game1') {
-            // 모드 1: 코돈 -> 아미노산
             const randomCodon = codonData[questionIndex][0][Math.floor(Math.random() * codonData[questionIndex][0].length)];
             currentQuestionDisplay.textContent = `코돈: ${randomCodon}`;
             currentCorrectCells = [document.querySelector(`.codon-group-cell[data-index="${questionIndex}"]`)];
         } else if (currentMode === 'game2') {
-            // 모드 2: 아미노산 -> 코돈
             const aminoAcidName = codonData[questionIndex][1];
             currentQuestionDisplay.textContent = `아미노산: ${aminoAcidName}`;
-            // 해당 아미노산에 해당하는 모든 셀을 정답 셀로 설정
             currentCorrectCells = Array.from(document.querySelectorAll('.codon-group-cell')).filter(cell => {
                 return codonData[parseInt(cell.dataset.index)][1] === aminoAcidName;
             });
@@ -241,23 +239,18 @@ document.addEventListener('DOMContentLoaded', () => {
         let isCorrect = false;
 
         if (currentMode === 'game1') {
-            // 모드 1: 클릭된 셀이 현재 문제의 정답 셀과 일치하는지 확인
             if (currentCorrectCells[0] && parseInt(currentCorrectCells[0].dataset.index) === clickedIndex) {
                 isCorrect = true;
             }
         } else if (currentMode === 'game2') {
-            // 모드 2: 클릭된 셀이 정답 셀 중 하나인지 확인
             const isAnyCorrect = currentCorrectCells.some(cell => parseInt(cell.dataset.index) === clickedIndex);
             if (isAnyCorrect) {
-                // 클릭된 셀을 정답 처리 표시
                 clickedCell.classList.add('correct-answer');
                 correctClicksCount++;
 
-                // 모든 정답 셀을 클릭했는지 확인
                 if (correctClicksCount === currentCorrectCells.length) {
                     isCorrect = true;
                 } else {
-                    // 아직 모든 정답 셀을 클릭하지 않았다면 다음 질문으로 넘어가지 않음
                     return;
                 }
             }
@@ -265,19 +258,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (isCorrect) {
             correctAnswersCount++;
-            // 모드 1의 경우 정답 셀에 바로 'correct-answer' 클래스 추가
             if (currentMode === 'game1') {
                 currentCorrectCells[0].classList.add('correct-answer');
             }
-            setTimeout(nextQuestion, 500); // 0.5초 후 다음 문제
+            setTimeout(nextQuestion, 500);
         } else {
-            wrongAnswers.push(currentQuestion); // 틀린 문제 저장
-            // 모든 정답 셀에 빨간색 깜빡임 효과 적용
+            wrongAnswers.push(currentQuestion);
             currentCorrectCells.forEach(cell => {
                 cell.classList.add('wrong-answer-flash');
-                setTimeout(() => cell.classList.remove('wrong-answer-flash'), 1500); // 애니메이션 시간 후 클래스 제거
+                setTimeout(() => cell.classList.remove('wrong-answer-flash'), 1500);
             });
-            setTimeout(nextQuestion, 1500); // 애니메이션 후 다음 문제
+            setTimeout(nextQuestion, 1500);
         }
     }
 
@@ -296,16 +287,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // 모드 선택
     mode1Btn.addEventListener('click', () => {
         currentMode = 'game1';
-        updateUI('selection');
-        mode1Btn.classList.add('active');
-        mode2Btn.classList.remove('active');
+        updateUI('selection'); // 선택 화면으로 전환
     });
 
     mode2Btn.addEventListener('click', () => {
         currentMode = 'game2';
-        updateUI('selection');
-        mode2Btn.classList.add('active');
-        mode1Btn.classList.remove('active');
+        updateUI('selection'); // 선택 화면으로 전환
     });
 
     // 범위 선택 모드에서 셀 클릭 (선택/해제)
@@ -340,15 +327,15 @@ document.addEventListener('DOMContentLoaded', () => {
     startGameBtn.addEventListener('click', startGame);
 
     retryWrongBtn.addEventListener('click', () => {
-        selectedCodonGroupIndices = new Set(wrongAnswers); // 틀린 문제만 다시 선택
+        selectedCodonGroupIndices = new Set(wrongAnswers);
         startGame();
     });
 
     startOverBtn.addEventListener('click', () => {
-        selectedCodonGroupIndices.clear(); // 선택 초기화
-        currentMode = null; // 모드 선택 화면으로 돌아가기
+        selectedCodonGroupIndices.clear();
+        currentMode = 'mode_selection'; // 모드 선택 화면으로 돌아가기
         updateCodonTable(); // 테이블 다시 그리기 (선택 초기화 반영)
-        updateUI('mode_selection'); // UI 초기화
+        updateUI(currentMode); // UI 초기화
     });
 
     // 코돈/아미노산 가시성 토글 버튼 (이전과 동일)
@@ -390,6 +377,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 초기화: 페이지 로드 시 코돈표 생성 및 UI 설정
-    updateCodonTable();
-    updateUI('mode_selection'); // 초기에는 모드 선택 화면
+    currentMode = 'mode_selection'; // 시작 모드를 명시적으로 설정
+    updateCodonTable(); // 코돈표 먼저 생성
+    updateUI(currentMode); // 초기 UI 상태 설정
 });
