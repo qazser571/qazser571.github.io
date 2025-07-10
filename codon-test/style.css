@@ -139,7 +139,7 @@ button.start-btn:hover {
     padding: 5px;
     border-bottom: 1px solid #f0f0f0;
     cursor: pointer;
-    transition: background-color 0.2s ease, border-color 0.2s ease;
+    transition: background-color 0.2s ease; /* 배경색 변화만 트랜지션 */
     box-sizing: border-box;
 }
 
@@ -150,28 +150,22 @@ button.start-btn:hover {
 /* 선택 모드에서 선택된 셀 스타일 */
 .codon-group-cell.selected-for-game {
     background-color: #e0f7fa;
-    border-color: #00bcd4;
+    border-color: #00bcd4; /* 테두리 색상은 유지해도 됨 */
 }
 
 /* 게임 중 정답 셀 스타일 */
-.codon-group-cell.correct-answer {
-    background-color: #d4edda;
-    border-color: #28a745;
+.codon-group-cell.correct-answer-bg { /* 새로운 클래스명 */
+    background-color: #d4edda; /* 연한 녹색 */
 }
 
-/* 오답 시 깜빡이는 애니메이션 */
-@keyframes flash-red {
-    0%, 100% { border-color: red; }
-    50% { border-color: transparent; }
-}
-
-.codon-group-cell.wrong-answer-flash {
-    animation: flash-red 0.5s 3;
+/* 게임 중 오답 셀 스타일 */
+.codon-group-cell.incorrect-answer-bg { /* 새로운 클래스명 */
+    background-color: #f8d7da; /* 연한 빨간색 */
 }
 
 .codons {
-    /* 코돈 부분 너비 줄이기: flex-basis로 고정 너비 설정 */
-    /* flex: 0 0 20px; /* 70px 고정 너비 */
+    /* flex 속성 제거, width로 고정 너비 설정 */
+    width: 45px; /* 45px 고정 너비 */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -190,13 +184,12 @@ button.start-btn:hover {
 }
 
 .amino-acid {
-    /* 아미노산 부분 너비 키우기: 남은 공간 모두 차지 */
-    flex: 1;
+    flex: 1; /* 남은 공간 모두 차지 */
     text-align: center;
     font-weight: bold;
-    color: #000;
+    color: #333; /* 검은색으로 변경 */
     transition: opacity 0.3s ease;
-    font-size: 0.9em; /* 필요 시 폰트 크기 조정 가능 */
+    font-size: 0.9em;
 }
 
 /* 숨기기 클래스 */
@@ -211,3 +204,6 @@ button.start-btn:hover {
 .hidden-amino-acid .amino-acid {
     opacity: 0;
 }
+
+/* 깜빡이는 애니메이션 및 관련 클래스 제거 */
+/* @keyframes flash-red, .codon-group-cell.wrong-answer-flash 삭제 */
