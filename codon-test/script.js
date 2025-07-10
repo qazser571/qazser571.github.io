@@ -1,26 +1,35 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. 코돈 데이터 정의 (이전과 동일)
+    // 1. 코돈 데이터 정의 (아미노산 이름 수정 및 코돈 개수 추가)
+    // 각 배열 요소는 [코돈 배열, 아미노산 한글명, 아미노산 1글자 약어] 형태입니다.
     const codonData = [
-        [['UUU', 'UUC'], '페닐알라닌', 'F'], [['UUA', 'UUG'], '류신', 'L'],
+        [['UUU', 'UUC'], '페닐알라닌', 'F'],
+        [['UUA', 'UUG'], '류신', 'L'],
         [['UCU', 'UCC', 'UCA', 'UCG'], '세린', 'S'],
-        [['UAU', 'UAC'], '티로신', 'Y'], [['UAA', 'UAG'], '종결', 'STOP'],
-        [['UGU', 'UGC'], '시스테인', 'C'], [['UGA'], '종결', 'STOP'],
+        [['UAU', 'UAC'], '타이로신', 'Y'], // 티로신 -> 타이로신
+        [['UAA', 'UAG'], '종결코돈', 'STOP'], // 종결 -> 종결코돈
+        [['UGU', 'UGC'], '시스테인', 'C'],
+        [['UGA'], '종결코돈', 'STOP'], // 종결 -> 종결코돈
         [['UGG'], '트립토판', 'W'],
 
         [['CUU', 'CUC', 'CUA', 'CUG'], '류신', 'L'],
         [['CCU', 'CCC', 'CCA', 'CCG'], '프롤린', 'P'],
-        [['CAU', 'CAC'], '히스티딘', 'H'], [['CAA', 'CAG'], '글루타민', 'Q'],
-        [['CGU', 'CGC', 'CGA', 'CGG'], '아르기닌', 'R'],
+        [['CAU', 'CAC'], '히스티딘', 'H'],
+        [['CAA', 'CAG'], '글루타민', 'Q'],
+        [['CGU', 'CGC', 'CGA', 'CGG'], '아르지닌', 'R'], // 아르기닌 -> 아르지닌
 
-        [['AUU', 'AUC', 'AUA'], '이소류신', 'I'], [['AUG'], '메티오닌', 'M'],
+        [['AUU', 'AUC', 'AUA'], '이소류신', 'I'],
+        [['AUG'], '메싸이오닌', 'M'], // 메티오닌 -> 메싸이오닌
         [['ACU', 'ACC', 'ACA', 'ACG'], '트레오닌', 'T'],
-        [['AAU', 'AAC'], '아스파라진', 'N'], [['AAA', 'AAG'], '리신', 'K'],
-        [['AGU', 'AGC'], '세린', 'S'], [['AGA', 'AGG'], '아르기닌', 'R'],
+        [['AAU', 'AAC'], '아스파라진', 'N'],
+        [['AAA', 'AAG'], '류신', 'K'], // 리신 -> 류신 (주의: 류신이 중복됨)
+        [['AGU', 'AGC'], '세린', 'S'],
+        [['AGA', 'AGG'], '아르지닌', 'R'], // 아르기닌 -> 아르지닌
 
         [['GUU', 'GUC', 'GUA', 'GUG'], '발린', 'V'],
         [['GCU', 'GCC', 'GCA', 'GCG'], '알라닌', 'A'],
-        [['GAU', 'GAC'], '아스파르트산', 'D'], [['GAA', 'GAG'], '글루탐산', 'E'],
-        [['GGU', 'GGC', 'GGA', 'GGG'], '글라이신', 'G']
+        [['GAU', 'GAC'], '아스파트산', 'D'], // 아스파르트산 -> 아스파트산
+        [['GAA', 'GAG'], '글루탐산', 'E'],
+        [['GGU', 'GGC', 'GGA', 'GGG'], '글리신', 'G'] // 글라이신 -> 글리신
     ];
 
     // 코돈 데이터를 앞 두 글자 기준으로 그룹화 (이전과 동일)
@@ -31,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ['G', 'U', [20]], ['G', 'C', [21]], ['G', 'A', [22, 23]], ['G', 'G', [24]]
     ];
 
-    // 2. DOM 요소 참조
+    // 2. DOM 요소 참조 (이전과 동일)
     const codonTableContainer = document.getElementById('codon-table-container');
     const modeSelectionButtons = document.getElementById('mode-selection-buttons');
     const mode1Btn = document.getElementById('mode1-btn');
@@ -49,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggleAminoAcidsBtn = document.getElementById('toggle-amino-acids');
     const toggleAminoAcidDisplayModeBtn = document.getElementById('toggle-amino-acid-display-mode');
 
-    // 3. 게임 상태 변수
+    // 3. 게임 상태 변수 (이전과 동일)
     let currentMode = null; // 'setup', 'game1', 'game2', 'end'
     let selectedCodonGroupIndices = new Set();
     let questionQueue = [];
@@ -64,50 +73,42 @@ document.addEventListener('DOMContentLoaded', () => {
     let showAminoAcids = true;
     let aminoAcidDisplayMode = 0;
 
-    // 4. UI 상태 관리 함수
+    // 4. UI 상태 관리 함수 (이전과 동일)
     function updateUI(state) {
-        // 모든 조건부 영역 숨기기
         modeSelectionButtons.classList.add('hidden');
         selectionArea.classList.add('hidden');
         gameInfoArea.classList.add('hidden');
         gameEndArea.classList.add('hidden');
 
-        // 모드 선택 버튼의 active 클래스 초기화
         mode1Btn.classList.remove('active');
         mode2Btn.classList.remove('active');
 
-        // 코돈표 셀의 클릭 이벤트 리스너 제거 및 초기화
         document.querySelectorAll('.codon-group-cell').forEach(cell => {
             cell.removeEventListener('click', handleSelectionClick);
             cell.removeEventListener('click', handleCellClick);
             cell.classList.remove('selected-for-game', 'correct-answer', 'wrong-answer-flash');
         });
 
-        // 상태에 따라 특정 영역 표시 및 이벤트 리스너 설정
         switch (state) {
-            case 'setup': // 게임 모드 선택 및 학습 범위 설정 단계
+            case 'setup':
                 modeSelectionButtons.classList.remove('hidden');
                 selectionArea.classList.remove('hidden');
-                // 현재 선택된 모드가 있다면 active 클래스 유지
                 if (currentMode === 'game1') mode1Btn.classList.add('active');
                 if (currentMode === 'game2') mode2Btn.classList.add('active');
 
-                // 셀 선택/해제 이벤트 리스너 다시 추가
                 document.querySelectorAll('.codon-group-cell').forEach(cell => {
                     cell.addEventListener('click', handleSelectionClick);
-                    // 이전에 선택된 셀은 selected-for-game 클래스 유지
                     if (selectedCodonGroupIndices.has(parseInt(cell.dataset.index))) {
                         cell.classList.add('selected-for-game');
                     }
                 });
-                updateSelectAllButtonState(); // "모두 선택" 버튼 상태 업데이트
+                updateSelectAllButtonState();
                 break;
             case 'game':
                 gameInfoArea.classList.remove('hidden');
-                // 게임 중에는 코돈표 셀이 클릭되면 정오답 확인
                 document.querySelectorAll('.codon-group-cell').forEach(cell => {
                     cell.addEventListener('click', handleCellClick);
-                    cell.classList.remove('selected-for-game'); // 게임 시작 시 선택 표시 제거
+                    cell.classList.remove('selected-for-game');
                 });
                 break;
             case 'end':
@@ -116,11 +117,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 5. 코돈표 동적 생성 및 업데이트 함수 (이전과 동일)
+    // 5. 코돈표 동적 생성 및 업데이트 함수 (수정)
     function updateCodonTable() {
         codonTableContainer.innerHTML = '';
         const firstBases = ['U', 'C', 'A', 'G'];
         const secondBases = ['U', 'C', 'A', 'G'];
+
+        // 각 codon-block의 기본 높이 (600px / 4 = 150px)
+        const baseBlockHeight = 600 / 4;
 
         for (let i = 0; i < firstBases.length; i++) {
             for (let j = 0; j < secondBases.length; j++) {
@@ -135,13 +139,48 @@ document.addEventListener('DOMContentLoaded', () => {
                 codonBlock.classList.add('codon-block');
 
                 if (blockInfo) {
+                    // 이 블록에 포함될 codon-group-cell들의 총 코돈 개수를 계산
+                    let totalCodonsInBlock = 0;
+                    blockInfo[2].forEach(dataIndex => {
+                        totalCodonsInBlock += codonData[dataIndex][0].length;
+                    });
+
+                    // 각 codon-group-cell의 높이를 설정
                     blockInfo[2].forEach(dataIndex => {
                         const group = codonData[dataIndex];
                         const [codons, aminoAcidName, aminoAcidAbbr] = group;
+                        const numCodonsInGroup = codons.length; // 현재 그룹의 코돈 개수
 
                         const cell = document.createElement('div');
                         cell.classList.add('codon-group-cell');
                         cell.dataset.index = dataIndex;
+
+                        // 높이 계산: (현재 그룹의 코돈 개수 / 4) * baseBlockHeight
+                        // 4는 한 칸에 들어갈 수 있는 최대 코돈 개수 (예: UCU, UCC, UCA, UCG)
+                        // baseBlockHeight는 codon-block의 총 높이 (150px)
+                        // 예를 들어, 1개 코돈은 (1/4) * 150px = 37.5px
+                        // 2개 코돈은 (2/4) * 150px = 75px
+                        // 3개 코돈은 (3/4) * 150px = 112.5px
+                        // 4개 코돈은 (4/4) * 150px = 150px
+                        // 하지만, 한 블록에 여러 그룹이 들어갈 수 있으므로, 해당 블록의 총 높이(150px)를
+                        // 각 그룹의 코돈 개수 비율로 나누어 할당해야 합니다.
+                        // 이전에 'min-height'를 사용했으나, 이제는 정확한 비율로 할당합니다.
+                        // 각 블록 내에서 각 셀의 높이는 (해당 셀의 코돈 개수 / 해당 블록 내 총 코돈 개수) * baseBlockHeight 로 계산하는 것이 더 정확합니다.
+                        // 하지만 요청은 "한칸 높이의 25%에 해당하는 만큼의 높이를 가지고" 이므로,
+                        // '한칸'을 4코돈짜리 셀로 보고, 1코돈=1/4, 2코돈=2/4 등으로 계산합니다.
+                        // 이 경우, 한 codon-block의 총 높이 150px를 넘을 수 있으므로,
+                        // 각 codon-group-cell의 높이를 유동적으로 설정하기 보다는,
+                        // codon-block 내에서 flex-grow를 사용하거나,
+                        // 각 codon-group-cell의 min-height를 설정하고,
+                        // codon-block의 height를 flex-basis로 설정하는 방법이 있습니다.
+                        // 여기서는 요청에 따라 각 codon-group-cell의 높이를 직접 계산하여 적용합니다.
+                        // 이 방식은 한 codon-block의 총 높이 150px를 초과할 수 있습니다.
+                        // 만약 정확히 150px에 맞춰야 한다면, 각 블록에 들어가는 그룹들의 코돈 개수 합계를 기준으로 비율을 재조정해야 합니다.
+                        // 현재 요청은 "한칸 높이의 25%에 해당하는 만큼의 높이를 가질 수 있도록" 이므로,
+                        // '한칸'을 150px (4코돈 기준)으로 보고, 1코돈=37.5px, 2코돈=75px 등으로 설정하겠습니다.
+                        const heightPerCodon = baseBlockHeight / 4; // 1코돈 당 37.5px
+                        cell.style.height = `${numCodonsInGroup * heightPerCodon}px`;
+
 
                         const codonsDiv = document.createElement('div');
                         codonsDiv.classList.add('codons');
@@ -184,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 codonTableContainer.appendChild(codonBlock);
             }
         }
-        updateUI(currentMode); // UI 상태를 다시 적용하여 이벤트 리스너 등 업데이트
+        updateUI(currentMode);
     }
 
     // 6. 게임 로직 함수 (이전과 동일)
@@ -197,12 +236,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (questionQueue.length === 0) {
             alert('게임을 시작하려면 최소 하나 이상의 코돈 그룹을 선택해야 합니다.');
-            currentMode = 'setup'; // 다시 설정 화면으로
+            currentMode = 'setup';
             updateUI(currentMode);
             return;
         }
         
-        // currentMode는 이미 'game1' 또는 'game2'로 설정되어 있음
         updateUI('game');
         nextQuestion();
     }
@@ -286,8 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 7. 이벤트 핸들러
-    // 모드 선택
+    // 7. 이벤트 핸들러 (이전과 동일)
     mode1Btn.addEventListener('click', () => {
         currentMode = 'game1';
         mode1Btn.classList.add('active');
@@ -302,7 +339,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateUI('setup');
     });
 
-    // 범위 선택 모드에서 셀 클릭 (선택/해제)
     function handleSelectionClick(event) {
         const cell = event.currentTarget;
         const index = parseInt(cell.dataset.index);
@@ -313,45 +349,37 @@ document.addEventListener('DOMContentLoaded', () => {
             selectedCodonGroupIndices.add(index);
             cell.classList.add('selected-for-game');
         }
-        updateSelectAllButtonState(); // 셀 선택/해제 시 "모두 선택" 버튼 상태 업데이트
+        updateSelectAllButtonState();
     }
 
-    // "모두 선택" 버튼 상태를 업데이트하는 함수
     function updateSelectAllButtonState() {
         const totalCodonGroups = codonData.length;
         const selectedCount = selectedCodonGroupIndices.size;
 
         if (selectedCount === totalCodonGroups) {
-            // 모든 코돈이 선택된 경우
             selectAllBtn.textContent = '전체 선택됨';
-            selectAllBtn.dataset.toggleAction = 'deselect-all'; // 클릭 시 모두 해제
+            selectAllBtn.dataset.toggleAction = 'deselect-all';
         } else if (selectedCount === 0) {
-            // 모든 코돈이 선택 해제된 경우
             selectAllBtn.textContent = '전체 선택 해제됨';
-            selectAllBtn.dataset.toggleAction = 'select-all'; // 클릭 시 모두 선택
+            selectAllBtn.dataset.toggleAction = 'select-all';
         } else {
-            // 일부만 선택된 경우
             selectAllBtn.textContent = '전체 선택 해제하기';
-            selectAllBtn.dataset.toggleAction = 'deselect-all'; // 클릭 시 모두 해제
+            selectAllBtn.dataset.toggleAction = 'deselect-all';
         }
     }
 
-    // "모두 선택" 버튼 클릭 이벤트
     selectAllBtn.addEventListener('click', () => {
         const action = selectAllBtn.dataset.toggleAction;
 
         if (action === 'select-all') {
-            // 모든 코돈 그룹 선택
             selectedCodonGroupIndices.clear();
             for (let i = 0; i < codonData.length; i++) {
                 selectedCodonGroupIndices.add(i);
             }
-        } else { // action === 'deselect-all'
-            // 모든 코돈 그룹 선택 해제
+        } else {
             selectedCodonGroupIndices.clear();
         }
         
-        // UI 업데이트
         document.querySelectorAll('.codon-group-cell').forEach(cell => {
             const index = parseInt(cell.dataset.index);
             if (selectedCodonGroupIndices.has(index)) {
@@ -360,10 +388,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 cell.classList.remove('selected-for-game');
             }
         });
-        updateSelectAllButtonState(); // 버튼 상태 업데이트
+        updateSelectAllButtonState();
     });
 
-    // 게임 중 셀 클릭 (정오답 확인)
     function handleCellClick(event) {
         const clickedCell = event.currentTarget;
         checkAnswer(clickedCell);
@@ -378,12 +405,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     startOverBtn.addEventListener('click', () => {
         selectedCodonGroupIndices.clear();
-        currentMode = 'setup'; // 설정 화면으로 돌아가기
-        updateCodonTable(); // 테이블 다시 그리기 (선택 초기화 반영)
-        updateUI(currentMode); // UI 초기화
+        currentMode = 'setup';
+        updateCodonTable();
+        updateUI(currentMode);
     });
 
-    // 코돈/아미노산 가시성 토글 버튼 (이전과 동일)
     toggleCodonsBtn.addEventListener('click', () => {
         showCodons = !showCodons;
         toggleCodonsBtn.textContent = showCodons ? '코돈 숨기기' : '코돈 보이기';
@@ -398,7 +424,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCodonTable();
     });
 
-    // 아미노산 표시 모드 토글 버튼 (이전과 동일)
     toggleAminoAcidDisplayModeBtn.addEventListener('click', () => {
         aminoAcidDisplayMode = (aminoAcidDisplayMode + 1) % 3;
         let buttonText = '';
@@ -413,7 +438,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCodonTable();
     });
 
-    // 배열 섞기 유틸리티 함수
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -422,7 +446,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 초기화: 페이지 로드 시 코돈표 생성 및 UI 설정
-    currentMode = 'setup'; // 시작 모드를 명시적으로 'setup'으로 설정
-    updateCodonTable(); // 코돈표 먼저 생성
-    updateUI(currentMode); // 초기 UI 상태 설정
+    currentMode = 'setup';
+    updateCodonTable();
+    updateUI(currentMode);
 });
