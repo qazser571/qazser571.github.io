@@ -22,7 +22,7 @@ body {
 }
 
 #game-container {
-    width: auto;
+    min-width: calc(var(--standpadding)*4 + 25px);
     display: flex;
     gap: 25px;
     align-items: flex-start; /* 내부 컨트롤과 표를 상단에 정렬 */
