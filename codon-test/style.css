@@ -108,17 +108,21 @@ button.start-btn:hover {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    display: flex; /* 내부 컨텐츠를 중앙 정렬하기 위해 flex 사용 */
+    justify-content: center;
+    align-items: center;
 }
 
 #codon-table-container {
+    width: 600px; /* 전체 너비 600px */
+    height: 600px; /* 전체 높이 600px */
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(4, 1fr);
     gap: 1px;
     border: 1px solid #ccc;
     background-color: #ccc;
-    height: 100%;
-    min-height: 600px;
+    box-sizing: border-box; /* 패딩, 보더가 너비/높이에 포함되도록 */
 }
 
 .codon-block {
@@ -126,16 +130,17 @@ button.start-btn:hover {
     display: flex;
     flex-direction: column;
     border: 1px solid #eee;
+    box-sizing: border-box;
 }
 
 .codon-group-cell {
     display: flex;
     align-items: center;
     padding: 5px;
-    min-height: 50px;
     border-bottom: 1px solid #f0f0f0;
     cursor: pointer;
     transition: background-color 0.2s ease, border-color 0.2s ease;
+    box-sizing: border-box;
 }
 
 .codon-group-cell:last-child {
