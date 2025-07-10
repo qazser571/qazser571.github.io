@@ -1,1 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test</title>
+    <style>
+        body {
+            display: flex; /* Flexbox를 사용하여 자식 요소를 정렬합니다. */
+            justify-content: center; /* 가로 중앙 정렬 */
+            align-items: center; /* 세로 중앙 정렬 */
+            min-height: 100vh; /* 뷰포트 높이 전체를 차지하도록 합니다. */
+            margin: 0; /* body의 기본 마진을 제거합니다. */
+            background-color: #f0f0f0; /* 배경색을 연하게 설정하여 박스가 잘 보이도록 합니다. */
+        }
 
+        .centered-box {
+            width: 500px; /* 박스의 너비를 500px로 설정합니다. */
+            height: 500px; /* 박스의 높이를 500px로 설정합니다. */
+            border: 1px solid red; /* 1px 두께의 빨간색 실선 테두리를 설정합니다. */
+            box-sizing: border-box; /* 테두리를 포함하여 너비와 높이를 계산하도록 합니다. */
+            background-color: #ffffff; /* 박스 내부 배경색을 흰색으로 설정합니다. */
+        }
+    </style>
+</head>
+<body>
+    <div class="centered-box"></div>
+</body>
+</html>
