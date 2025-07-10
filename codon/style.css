@@ -30,7 +30,7 @@ body {
 
 #game-controls {
     height: var(--standheight);
-    width: 250px;
+    width: 300px;
     background-color: #ffffff;
     padding: var(--standpadding);
     border-radius: 8px;
