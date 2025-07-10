@@ -3,23 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>코돈표 학습 도구</title>
+    <title>코돈 학습 게임</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>코돈표 학습</h1>
+    <div id="game-container">
+        <!-- 왼쪽 게임 컨트롤 영역 -->
+        <div id="game-controls">
+            <h2>게임 설정</h2>
+            <div class="button-group mode-selection">
+                <button id="mode1-btn">모드 1: 코돈 → 아미노산</button>
+                <button id="mode2-btn">모드 2: 아미노산 → 코돈</button>
+            </div>
 
-    <div id="codon-table-container">
-        <!-- 코돈표가 여기에 동적으로 생성됩니다. -->
-    </div>
+            <div id="selection-area" class="hidden">
+                <h3>학습 범위 선택</h3>
+                <button id="select-all-btn">전부 선택</button>
+                <p>또는 표에서 직접 선택하세요.</p>
+                <button id="start-game-btn" class="start-btn">게임 시작</button>
+            </div>
 
-    <div class="controls">
-        <div class="button-group">
-            <button id="toggle-codons">코돈 숨기기</button>
-            <button id="toggle-amino-acids">아미노산 숨기기</button>
+            <div id="game-info-area" class="hidden">
+                <h3>현재 문제</h3>
+                <div id="current-question"></div>
+                <div class="button-group toggle-options">
+                    <button id="toggle-codons">코돈 숨기기</button>
+                    <button id="toggle-amino-acids">아미노산 숨기기</button>
+                </div>
+                <div class="button-group toggle-options">
+                    <button id="toggle-amino-acid-display-mode">표시 모드: 세린(S)</button>
+                </div>
+            </div>
+
+            <div id="game-end-area" class="hidden">
+                <h3>게임 종료</h3>
+                <p id="score-display"></p>
+                <button id="retry-wrong-btn">틀린 문제 다시 풀기</button>
+                <button id="start-over-btn">처음부터 다시</button>
+            </div>
         </div>
-        <div class="button-group">
-            <button id="toggle-amino-acid-display-mode">표시 모드: 세린(S)</button>
+
+        <!-- 오른쪽 코돈표 영역 -->
+        <div id="codon-table-wrapper">
+            <div id="codon-table-container">
+                <!-- 코돈표가 여기에 동적으로 생성됩니다. -->
+            </div>
         </div>
     </div>
 
