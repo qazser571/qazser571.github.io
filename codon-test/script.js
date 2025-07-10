@@ -1,94 +1,127 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. 코돈 데이터 정의
-    // 각 배열 요소는 [코돈 배열, 아미노산 한글명, 아미노산 1글자 약어] 형태입니다.
+    // 1. 코돈 데이터 정의 (이전과 동일)
     const codonData = [
-        // UXX
-        [['UUU', 'UUC'], '페닐알라닌', 'F'],
-        [['UUA', 'UUG'], '류신', 'L'],
+        [['UUU', 'UUC'], '페닐알라닌', 'F'], [['UUA', 'UUG'], '류신', 'L'],
         [['UCU', 'UCC', 'UCA', 'UCG'], '세린', 'S'],
-        [['UAU', 'UAC'], '티로신', 'Y'],
-        [['UAA', 'UAG'], '종결', 'STOP'], // 종결 코돈
-        [['UGU', 'UGC'], '시스테인', 'C'],
-        [['UGA'], '종결', 'STOP'], // 종결 코돈
+        [['UAU', 'UAC'], '티로신', 'Y'], [['UAA', 'UAG'], '종결', 'STOP'],
+        [['UGU', 'UGC'], '시스테인', 'C'], [['UGA'], '종결', 'STOP'],
         [['UGG'], '트립토판', 'W'],
 
-        // CXX
         [['CUU', 'CUC', 'CUA', 'CUG'], '류신', 'L'],
         [['CCU', 'CCC', 'CCA', 'CCG'], '프롤린', 'P'],
-        [['CAU', 'CAC'], '히스티딘', 'H'],
-        [['CAA', 'CAG'], '글루타민', 'Q'],
+        [['CAU', 'CAC'], '히스티딘', 'H'], [['CAA', 'CAG'], '글루타민', 'Q'],
         [['CGU', 'CGC', 'CGA', 'CGG'], '아르기닌', 'R'],
 
-        // AXX
-        [['AUU', 'AUC', 'AUA'], '이소류신', 'I'],
-        [['AUG'], '메티오닌', 'M'], // 시작 코돈
+        [['AUU', 'AUC', 'AUA'], '이소류신', 'I'], [['AUG'], '메티오닌', 'M'],
         [['ACU', 'ACC', 'ACA', 'ACG'], '트레오닌', 'T'],
-        [['AAU', 'AAC'], '아스파라진', 'N'],
-        [['AAA', 'AAG'], '리신', 'K'],
-        [['AGU', 'AGC'], '세린', 'S'],
-        [['AGA', 'AGG'], '아르기닌', 'R'],
+        [['AAU', 'AAC'], '아스파라진', 'N'], [['AAA', 'AAG'], '리신', 'K'],
+        [['AGU', 'AGC'], '세린', 'S'], [['AGA', 'AGG'], '아르기닌', 'R'],
 
-        // GXX
         [['GUU', 'GUC', 'GUA', 'GUG'], '발린', 'V'],
         [['GCU', 'GCC', 'GCA', 'GCG'], '알라닌', 'A'],
-        [['GAU', 'GAC'], '아스파르트산', 'D'],
-        [['GAA', 'GAG'], '글루탐산', 'E'],
+        [['GAU', 'GAC'], '아스파르트산', 'D'], [['GAA', 'GAG'], '글루탐산', 'E'],
         [['GGU', 'GGC', 'GGA', 'GGG'], '글라이신', 'G']
     ];
 
+    // 코돈 데이터를 앞 두 글자 기준으로 그룹화 (이전과 동일)
+    const groupedCodonBlocks = [
+        ['U', 'U', [0, 1]], ['U', 'C', [2]], ['U', 'A', [3, 4]], ['U', 'G', [5, 6, 7]],
+        ['C', 'U', [8]], ['C', 'C', [9]], ['C', 'A', [10, 11]], ['C', 'G', [12]],
+        ['A', 'U', [13, 14]], ['A', 'C', [15]], ['A', 'A', [16, 17]], ['A', 'G', [18, 19]],
+        ['G', 'U', [20]], ['G', 'C', [21]], ['G', 'A', [22, 23]], ['G', 'G', [24]]
+    ];
+
+    // 2. DOM 요소 참조
     const codonTableContainer = document.getElementById('codon-table-container');
+    const mode1Btn = document.getElementById('mode1-btn');
+    const mode2Btn = document.getElementById('mode2-btn');
+    const selectionArea = document.getElementById('selection-area');
+    const selectAllBtn = document.getElementById('select-all-btn');
+    const startGameBtn = document.getElementById('start-game-btn');
+    const gameInfoArea = document.getElementById('game-info-area');
+    const currentQuestionDisplay = document.getElementById('current-question');
+    const gameEndArea = document.getElementById('game-end-area');
+    const scoreDisplay = document.getElementById('score-display');
+    const retryWrongBtn = document.getElementById('retry-wrong-btn');
+    const startOverBtn = document.getElementById('start-over-btn');
     const toggleCodonsBtn = document.getElementById('toggle-codons');
     const toggleAminoAcidsBtn = document.getElementById('toggle-amino-acids');
     const toggleAminoAcidDisplayModeBtn = document.getElementById('toggle-amino-acid-display-mode');
+
+    // 3. 게임 상태 변수
+    let currentMode = null; // 'selection', 'game1', 'game2', 'end'
+    let selectedCodonGroupIndices = new Set(); // 게임에 사용될 codonData 인덱스
+    let questionQueue = []; // 현재 게임 문제 큐 (codonData 인덱스)
+    let wrongAnswers = []; // 틀린 문제 (codonData 인덱스)
+    let currentQuestion = null; // 현재 출제된 문제 (codonData 인덱스 또는 아미노산 이름)
+    let currentCorrectCells = []; // 현재 문제의 정답 셀 (DOM 요소)
+    let correctClicksCount = 0; // 모드2에서 필요한 클릭 횟수 (다중 정답 처리)
+    let totalQuestions = 0;
+    let correctAnswersCount = 0;
 
     let showCodons = true;
     let showAminoAcids = true;
     let aminoAcidDisplayMode = 0; // 0: 세린(S), 1: 세린, 2: S
 
-    // 2. 코돈 데이터를 앞 두 글자 기준으로 그룹화
-    // 이 부분은 실제 코돈표의 구조 (U, C, A, G 행/열)에 맞춰 수동으로 구성하는 것이 더 명확합니다.
-    // 각 배열 요소는 [첫 번째 염기, 두 번째 염기, [해당 블록에 들어갈 codonData의 인덱스 배열]]
-    const groupedCodonBlocks = [
-        // U-행
-        ['U', 'U', [0, 1]], // UUU/UUC(페닐알라닌), UUA/UUG(류신)
-        ['U', 'C', [2]],    // UCU/UCC/UCA/UCG(세린)
-        ['U', 'A', [3, 4]], // UAU/UAC(티로신), UAA/UAG(종결)
-        ['U', 'G', [5, 6, 7]], // UGU/UGC(시스테인), UGA(종결), UGG(트립토판)
+    // 4. UI 상태 관리 함수
+    function updateUI(state) {
+        // 모든 게임 관련 영역 숨기기
+        selectionArea.classList.add('hidden');
+        gameInfoArea.classList.add('hidden');
+        gameEndArea.classList.add('hidden');
+        mode1Btn.classList.remove('active');
+        mode2Btn.classList.remove('active');
 
-        // C-행
-        ['C', 'U', [8]],    // CUU/CUC/CUA/CUG(류신)
-        ['C', 'C', [9]],    // CCU/CCC/CCA/CCG(프롤린)
-        ['C', 'A', [10, 11]], // CAU/CAC(히스티딘), CAA/CAG(글루타민)
-        ['C', 'G', [12]],   // CGU/CGC/CGA/CGG(아르기닌)
+        // 코돈표 셀의 클릭 이벤트 리스너 제거 및 초기화
+        document.querySelectorAll('.codon-group-cell').forEach(cell => {
+            cell.removeEventListener('click', handleCellClick);
+            cell.classList.remove('selected-for-game', 'correct-answer', 'wrong-answer-flash');
+        });
 
-        // A-행
-        ['A', 'U', [13, 14]], // AUU/AUC/AUA(이소류신), AUG(메티오닌)
-        ['A', 'C', [15]],   // ACU/ACC/ACA/ACG(트레오닌)
-        ['A', 'A', [16, 17]], // AAU/AAC(아스파라진), AAA/AAG(리신)
-        ['A', 'G', [18, 19]], // AGU/AGC(세린), AGA/AGG(아르기닌)
+        switch (state) {
+            case 'mode_selection':
+                // 초기 상태: 게임 모드 선택 버튼만 활성화
+                if (currentMode === 'game1') mode1Btn.classList.add('active');
+                if (currentMode === 'game2') mode2Btn.classList.add('active');
+                break;
+            case 'selection':
+                selectionArea.classList.remove('hidden');
+                // 모든 셀에 선택 가능 이벤트 리스너 추가
+                document.querySelectorAll('.codon-group-cell').forEach(cell => {
+                    cell.addEventListener('click', handleSelectionClick);
+                    // 이전에 선택된 셀은 selected-for-game 클래스 유지
+                    if (selectedCodonGroupIndices.has(parseInt(cell.dataset.index))) {
+                        cell.classList.add('selected-for-game');
+                    }
+                });
+                break;
+            case 'game':
+                gameInfoArea.classList.remove('hidden');
+                // 모든 셀에 게임 클릭 이벤트 리스너 추가
+                document.querySelectorAll('.codon-group-cell').forEach(cell => {
+                    cell.addEventListener('click', handleCellClick);
+                    cell.classList.remove('selected-for-game'); // 선택 표시 제거
+                });
+                break;
+            case 'end':
+                gameEndArea.classList.remove('hidden');
+                break;
+        }
+    }
 
-        // G-행
-        ['G', 'U', [20]],   // GUU/GUC/GUA/GUG(발린)
-        ['G', 'C', [21]],   // GCU/GCC/GCA/GCG(알라닌)
-        ['G', 'A', [22, 23]], // GAU/GAC(아스파르트산), GAA/GAG(글루탐산)
-        ['G', 'G', [24]]    // GGU/GGC/GGA/GGG(글라이신)
-    ];
-
-
-    // 3. 코돈표 동적 생성 및 업데이트 함수
+    // 5. 코돈표 동적 생성 및 업데이트 함수 (이전과 거의 동일, 데이터 인덱스 추가)
     function updateCodonTable() {
-        codonTableContainer.innerHTML = ''; // 기존 내용 지우기
-
-        // 4x4 그리드에 맞춰 블록들을 배치
+        codonTableContainer.innerHTML = '';
         const firstBases = ['U', 'C', 'A', 'G'];
         const secondBases = ['U', 'C', 'A', 'G'];
+
+        let globalCellIndex = 0; // codonData의 인덱스를 추적
 
         for (let i = 0; i < firstBases.length; i++) {
             for (let j = 0; j < secondBases.length; j++) {
                 const currentFirstBase = firstBases[i];
                 const currentSecondBase = secondBases[j];
 
-                // 해당 (첫 번째, 두 번째) 염기 쌍에 해당하는 블록 찾기
                 const blockInfo = groupedCodonBlocks.find(block =>
                     block[0] === currentFirstBase && block[1] === currentSecondBase
                 );
@@ -97,12 +130,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 codonBlock.classList.add('codon-block');
 
                 if (blockInfo) {
-                    blockInfo[2].forEach(dataIndex => { // 해당 블록에 속하는 codonData 인덱스 순회
+                    blockInfo[2].forEach(dataIndex => {
                         const group = codonData[dataIndex];
                         const [codons, aminoAcidName, aminoAcidAbbr] = group;
 
                         const cell = document.createElement('div');
                         cell.classList.add('codon-group-cell');
+                        cell.dataset.index = dataIndex; // codonData의 인덱스 저장
 
                         const codonsDiv = document.createElement('div');
                         codonsDiv.classList.add('codons');
@@ -118,17 +152,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         aminoAcidDiv.classList.add('amino-acid');
 
                         let displayText = '';
-                        if (aminoAcidDisplayMode === 0) { // 세린(S)
+                        if (aminoAcidDisplayMode === 0) {
                             displayText = `${aminoAcidName}(${aminoAcidAbbr})`;
-                        } else if (aminoAcidDisplayMode === 1) { // 세린
+                        } else if (aminoAcidDisplayMode === 1) {
                             displayText = aminoAcidName;
-                        } else { // S
+                        } else {
                             displayText = aminoAcidAbbr;
                         }
                         aminoAcidDiv.textContent = displayText;
                         cell.appendChild(aminoAcidDiv);
 
-                        // 가시성 클래스 적용
                         if (!showCodons) {
                             cell.classList.add('hidden-codon');
                         } else {
@@ -142,19 +175,183 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                         codonBlock.appendChild(cell);
                     });
-                } else {
-                    // 해당 염기 쌍에 데이터가 없는 경우 빈 셀 처리 (필요에 따라)
-                    // 예를 들어, 실제 코돈표에서는 모든 4x4 칸이 채워지므로 이 else 블록은 거의 실행되지 않습니다.
-                    // 만약 특정 칸이 비어있다면, 여기에 빈 div 등을 추가할 수 있습니다.
                 }
                 codonTableContainer.appendChild(codonBlock);
             }
         }
+        updateUI(currentMode); // UI 상태를 다시 적용하여 이벤트 리스너 등 업데이트
     }
 
-    // 5. 토글 버튼 기능 구현 (이전과 동일)
+    // 6. 게임 로직 함수
+    function startGame() {
+        totalQuestions = 0;
+        correctAnswersCount = 0;
+        wrongAnswers = [];
+        questionQueue = Array.from(selectedCodonGroupIndices);
+        shuffleArray(questionQueue); // 문제 큐 섞기
 
-    // 5-1. 코돈 가시성 토글 버튼
+        if (questionQueue.length === 0) {
+            alert('게임을 시작하려면 최소 하나 이상의 코돈 그룹을 선택해야 합니다.');
+            currentMode = 'selection';
+            updateUI(currentMode);
+            return;
+        }
+        
+        currentMode = currentMode === 'game1' ? 'game1' : 'game2'; // 정확한 모드 설정
+        updateUI('game');
+        nextQuestion();
+    }
+
+    function nextQuestion() {
+        if (questionQueue.length === 0) {
+            endGame();
+            return;
+        }
+
+        totalQuestions++;
+        currentCorrectCells = []; // 정답 셀 초기화
+        correctClicksCount = 0; // 모드2를 위한 클릭 횟수 초기화
+
+        const questionIndex = questionQueue.shift(); // 큐에서 다음 문제 꺼내기
+        currentQuestion = questionIndex;
+
+        // 모든 셀의 이전 상태 초기화
+        document.querySelectorAll('.codon-group-cell').forEach(cell => {
+            cell.classList.remove('correct-answer', 'wrong-answer-flash');
+        });
+
+        if (currentMode === 'game1') {
+            // 모드 1: 코돈 -> 아미노산
+            const randomCodon = codonData[questionIndex][0][Math.floor(Math.random() * codonData[questionIndex][0].length)];
+            currentQuestionDisplay.textContent = `코돈: ${randomCodon}`;
+            currentCorrectCells = [document.querySelector(`.codon-group-cell[data-index="${questionIndex}"]`)];
+        } else if (currentMode === 'game2') {
+            // 모드 2: 아미노산 -> 코돈
+            const aminoAcidName = codonData[questionIndex][1];
+            currentQuestionDisplay.textContent = `아미노산: ${aminoAcidName}`;
+            // 해당 아미노산에 해당하는 모든 셀을 정답 셀로 설정
+            currentCorrectCells = Array.from(document.querySelectorAll('.codon-group-cell')).filter(cell => {
+                return codonData[parseInt(cell.dataset.index)][1] === aminoAcidName;
+            });
+        }
+    }
+
+    function checkAnswer(clickedCell) {
+        const clickedIndex = parseInt(clickedCell.dataset.index);
+        let isCorrect = false;
+
+        if (currentMode === 'game1') {
+            // 모드 1: 클릭된 셀이 현재 문제의 정답 셀과 일치하는지 확인
+            if (currentCorrectCells[0] && parseInt(currentCorrectCells[0].dataset.index) === clickedIndex) {
+                isCorrect = true;
+            }
+        } else if (currentMode === 'game2') {
+            // 모드 2: 클릭된 셀이 정답 셀 중 하나인지 확인
+            const isAnyCorrect = currentCorrectCells.some(cell => parseInt(cell.dataset.index) === clickedIndex);
+            if (isAnyCorrect) {
+                // 클릭된 셀을 정답 처리 표시
+                clickedCell.classList.add('correct-answer');
+                correctClicksCount++;
+
+                // 모든 정답 셀을 클릭했는지 확인
+                if (correctClicksCount === currentCorrectCells.length) {
+                    isCorrect = true;
+                } else {
+                    // 아직 모든 정답 셀을 클릭하지 않았다면 다음 질문으로 넘어가지 않음
+                    return;
+                }
+            }
+        }
+
+        if (isCorrect) {
+            correctAnswersCount++;
+            // 모드 1의 경우 정답 셀에 바로 'correct-answer' 클래스 추가
+            if (currentMode === 'game1') {
+                currentCorrectCells[0].classList.add('correct-answer');
+            }
+            setTimeout(nextQuestion, 500); // 0.5초 후 다음 문제
+        } else {
+            wrongAnswers.push(currentQuestion); // 틀린 문제 저장
+            // 모든 정답 셀에 빨간색 깜빡임 효과 적용
+            currentCorrectCells.forEach(cell => {
+                cell.classList.add('wrong-answer-flash');
+                setTimeout(() => cell.classList.remove('wrong-answer-flash'), 1500); // 애니메이션 시간 후 클래스 제거
+            });
+            setTimeout(nextQuestion, 1500); // 애니메이션 후 다음 문제
+        }
+    }
+
+    function endGame() {
+        currentMode = 'end';
+        updateUI('end');
+        scoreDisplay.textContent = `총 ${totalQuestions}문제 중 ${correctAnswersCount}문제 정답!`;
+        if (wrongAnswers.length > 0) {
+            retryWrongBtn.style.display = 'block';
+        } else {
+            retryWrongBtn.style.display = 'none';
+        }
+    }
+
+    // 7. 이벤트 핸들러
+    // 모드 선택
+    mode1Btn.addEventListener('click', () => {
+        currentMode = 'game1';
+        updateUI('selection');
+        mode1Btn.classList.add('active');
+        mode2Btn.classList.remove('active');
+    });
+
+    mode2Btn.addEventListener('click', () => {
+        currentMode = 'game2';
+        updateUI('selection');
+        mode2Btn.classList.add('active');
+        mode1Btn.classList.remove('active');
+    });
+
+    // 범위 선택 모드에서 셀 클릭 (선택/해제)
+    function handleSelectionClick(event) {
+        const cell = event.currentTarget;
+        const index = parseInt(cell.dataset.index);
+        if (selectedCodonGroupIndices.has(index)) {
+            selectedCodonGroupIndices.delete(index);
+            cell.classList.remove('selected-for-game');
+        } else {
+            selectedCodonGroupIndices.add(index);
+            cell.classList.add('selected-for-game');
+        }
+    }
+
+    // 게임 중 셀 클릭 (정오답 확인)
+    function handleCellClick(event) {
+        const clickedCell = event.currentTarget;
+        checkAnswer(clickedCell);
+    }
+
+    selectAllBtn.addEventListener('click', () => {
+        selectedCodonGroupIndices.clear();
+        for (let i = 0; i < codonData.length; i++) {
+            selectedCodonGroupIndices.add(i);
+        }
+        document.querySelectorAll('.codon-group-cell').forEach(cell => {
+            cell.classList.add('selected-for-game');
+        });
+    });
+
+    startGameBtn.addEventListener('click', startGame);
+
+    retryWrongBtn.addEventListener('click', () => {
+        selectedCodonGroupIndices = new Set(wrongAnswers); // 틀린 문제만 다시 선택
+        startGame();
+    });
+
+    startOverBtn.addEventListener('click', () => {
+        selectedCodonGroupIndices.clear(); // 선택 초기화
+        currentMode = null; // 모드 선택 화면으로 돌아가기
+        updateCodonTable(); // 테이블 다시 그리기 (선택 초기화 반영)
+        updateUI('mode_selection'); // UI 초기화
+    });
+
+    // 코돈/아미노산 가시성 토글 버튼 (이전과 동일)
     toggleCodonsBtn.addEventListener('click', () => {
         showCodons = !showCodons;
         toggleCodonsBtn.textContent = showCodons ? '코돈 숨기기' : '코돈 보이기';
@@ -162,7 +359,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCodonTable();
     });
 
-    // 5-2. 아미노산 가시성 토글 버튼
     toggleAminoAcidsBtn.addEventListener('click', () => {
         showAminoAcids = !showAminoAcids;
         toggleAminoAcidsBtn.textContent = showAminoAcids ? '아미노산 숨기기' : '아미노산 보이기';
@@ -170,7 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCodonTable();
     });
 
-    // 5-3. 아미노산 표시 모드 토글 버튼
+    // 아미노산 표시 모드 토글 버튼 (이전과 동일)
     toggleAminoAcidDisplayModeBtn.addEventListener('click', () => {
         aminoAcidDisplayMode = (aminoAcidDisplayMode + 1) % 3;
         let buttonText = '';
@@ -185,6 +381,15 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCodonTable();
     });
 
-    // 페이지 로드 시 초기 코돈표 생성
+    // 배열 섞기 유틸리티 함수
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    // 초기화: 페이지 로드 시 코돈표 생성 및 UI 설정
     updateCodonTable();
+    updateUI('mode_selection'); // 초기에는 모드 선택 화면
 });
