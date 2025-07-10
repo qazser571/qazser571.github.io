@@ -12,10 +12,13 @@
         <div id="game-controls">
             <h2>게임 설정</h2>
             
-            <!-- 게임 모드 선택 버튼 그룹 (항상 보임) -->
-            <div id="mode-selection-buttons" class="button-group">
-                <button id="mode1-btn">모드 1: 코돈 → 아미노산</button>
-                <button id="mode2-btn">모드 2: 아미노산 → 코돈</button>
+            <!-- 모드 설정 영역 -->
+            <div class="mode-setting-section">
+                <h3>모드 설정</h3>
+                <div id="mode-selection-buttons" class="button-group horizontal"> <!-- horizontal 클래스 추가 -->
+                    <button id="mode1-btn">코돈 → 아미노산</button> <!-- 텍스트 변경 -->
+                    <button id="mode2-btn">아미노산 → 코돈</button> <!-- 텍스트 변경 -->
+                </div>
             </div>
 
             <!-- 학습 범위 선택 영역 (항상 보임) -->
@@ -30,7 +33,7 @@
             <div id="game-info-area" class="hidden">
                 <h3>현재 문제</h3>
                 <div id="current-question"></div>
-                <button id="next-question-btn" class="hidden">다음 문제</button> <!-- 다음 문제 버튼 추가 -->
+                <button id="next-question-btn" class="hidden">다음 문제</button>
             </div>
 
             <!-- 게임 종료 영역 (게임 종료 후 보임) -->
@@ -43,9 +46,9 @@
 
             <!-- 코돈표 조작 버튼 그룹 (항상 보임) -->
             <div id="persistent-toggle-buttons" class="button-group toggle-options">
-                <button id="toggle-codons">코돈 숨기기</button>
-                <button id="toggle-amino-acids">아미노산 숨기기</button>
-                <button id="toggle-amino-acid-display-mode">표시 모드: 세린(S)</button>
+                <button id="toggle-codons" class="switch-btn">코돈 숨기기</button> <!-- switch-btn 클래스 추가 -->
+                <button id="toggle-amino-acids" class="switch-btn">아미노산 숨기기</button> <!-- switch-btn 클래스 추가 -->
+                <button id="toggle-amino-acid-display-mode" class="no-bg-change">표시 모드: 세린(S)</button> <!-- no-bg-change 클래스 추가 -->
             </div>
         </div>
 
