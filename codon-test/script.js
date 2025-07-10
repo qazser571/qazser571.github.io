@@ -6,9 +6,9 @@ document.addEventListener('DOMContentLoaded', () => {
         [['UUA', 'UUG'], '류신', 'L'],
         [['UCU', 'UCC', 'UCA', 'UCG'], '세린', 'S'],
         [['UAU', 'UAC'], '타이로신', 'Y'],
-        [['UAA', 'UAG'], '종결코돈', 'STOP'],
+        [['UAA', 'UAG'], '종결코돈', ''],
         [['UGU', 'UGC'], '시스테인', 'C'],
-        [['UGA'], '종결코돈', 'STOP'],
+        [['UGA'], '종결코돈', ''],
         [['UGG'], '트립토판', 'W'],
 
         [['CUU', 'CUC', 'CUA', 'CUG'], '류신', 'L'],
