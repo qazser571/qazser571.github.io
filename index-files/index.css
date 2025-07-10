@@ -25,7 +25,7 @@ body {
             font-size: 18px;
             color: #fff;
             background-color: #007bff;
-            border: 2px solid yellow;
+            border: none;
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s ease;
