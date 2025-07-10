@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>메인 페이지로 이동</title>
+    <title>Index.html</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -20,6 +20,9 @@
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-contents: centor;
         }
         h1 {
             color: #333;
@@ -42,13 +45,16 @@
 </head>
 <body>
     <div class="container">
-        <h1>메인 페이지로 이동하시겠습니까?</h1>
         <button onclick="goToMainPage()">코돈 추론</button>
+        <button onclick="goToTestPage()">test</button>
     </div>
 
     <script>
         function goToMainPage() {
             window.location.href = "./codon/codon.html";
+        }
+        function goToTestPage() {
+            window.location.href = "./test/test.html";
         }
     </script>
 </body>
