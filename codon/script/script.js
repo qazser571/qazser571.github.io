@@ -104,7 +104,7 @@ function initializeGame() {
         item.querySelector('.amino-acid-text').classList.remove('visible');
     });
 
-    startButton.textContent = '게임 시작';
+    startButton.textContent = '시작';
     startButton.disabled = false;
     resetGameButton.classList.add('hidden');
     missedCodonsContainer.classList.add('hidden');
@@ -165,14 +165,14 @@ function selectRandomCodon() {
     feedbackDiv.textContent = '';
     feedbackDiv.className = 'message';
 
-    startButton.textContent = '다음 코돈';
+    startButton.textContent = '다음';
     startButton.disabled = true;
 }
 
 // 7. 개별 코돈 클릭 이벤트 핸들러 (이전과 동일)
 function handleCellClick(event) {
     if (!currentRandomCodon) {
-        feedbackDiv.textContent = '먼저 "게임 시작" 또는 "다음 코돈" 버튼을 눌러주세요!';
+        feedbackDiv.textContent = '먼저 "시작" 또는 "다음" 버튼을 눌러주세요!';
         feedbackDiv.classList.add('incorrect');
         return;
     }
