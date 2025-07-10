@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 2. DOM 요소 참조
     const codonTableContainer = document.getElementById('codon-table-container');
-    const modeSelectionButtons = document.getElementById('mode-selection-buttons'); // 새로 추가된 모드 선택 버튼 컨테이너
+    const modeSelectionButtons = document.getElementById('mode-selection-buttons');
     const mode1Btn = document.getElementById('mode1-btn');
     const mode2Btn = document.getElementById('mode2-btn');
     const selectionArea = document.getElementById('selection-area');
@@ -48,10 +48,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggleCodonsBtn = document.getElementById('toggle-codons');
     const toggleAminoAcidsBtn = document.getElementById('toggle-amino-acids');
     const toggleAminoAcidDisplayModeBtn = document.getElementById('toggle-amino-acid-display-mode');
-    // persistent-toggle-buttons는 항상 보이기 때문에 별도의 숨김/보임 처리가 필요 없음
 
     // 3. 게임 상태 변수
-    let currentMode = null; // 'mode_selection', 'selection', 'game1', 'game2', 'end'
+    let currentMode = null; // 'setup', 'game1', 'game2', 'end'
     let selectedCodonGroupIndices = new Set();
     let questionQueue = [];
     let wrongAnswers = [];
@@ -68,8 +67,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // 4. UI 상태 관리 함수
     function updateUI(state) {
         // 모든 조건부 영역 숨기기
-        modeSelectionButtons.classList.add('hidden');
-        selectionArea.classList.add('hidden');
+        modeSelectionButtons.classList.add('hidden'); // 일단 숨기고, setup에서 다시 보이게
+        selectionArea.classList.add('hidden'); // 일단 숨기고, setup에서 다시 보이게
         gameInfoArea.classList.add('hidden');
         gameEndArea.classList.add('hidden');
 
@@ -86,25 +85,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 상태에 따라 특정 영역 표시 및 이벤트 리스너 설정
         switch (state) {
-            case 'mode_selection':
+            case 'setup': // 게임 모드 선택 및 학습 범위 설정 단계
                 modeSelectionButtons.classList.remove('hidden');
+                selectionArea.classList.remove('hidden');
                 // 현재 선택된 모드가 있다면 active 클래스 유지
                 if (currentMode === 'game1') mode1Btn.classList.add('active');
                 if (currentMode === 'game2') mode2Btn.classList.add('active');
-                break;
-            case 'selection':
-                selectionArea.classList.remove('hidden');
+
+                // 셀 선택/해제 이벤트 리스너 다시 추가
                 document.querySelectorAll('.codon-group-cell').forEach(cell => {
                     cell.addEventListener('click', handleSelectionClick);
+                    // 이전에 선택된 셀은 selected-for-game 클래스 유지
                     if (selectedCodonGroupIndices.has(parseInt(cell.dataset.index))) {
                         cell.classList.add('selected-for-game');
                     }
                 });
+                updateSelectAllButtonState(); // "모두 선택" 버튼 상태 업데이트
                 break;
             case 'game':
                 gameInfoArea.classList.remove('hidden');
+                // 게임 중에는 코돈표 셀이 클릭되면 정오답 확인
                 document.querySelectorAll('.codon-group-cell').forEach(cell => {
                     cell.addEventListener('click', handleCellClick);
+                    cell.classList.remove('selected-for-game'); // 게임 시작 시 선택 표시 제거
                 });
                 break;
             case 'end':
@@ -194,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (questionQueue.length === 0) {
             alert('게임을 시작하려면 최소 하나 이상의 코돈 그룹을 선택해야 합니다.');
-            currentMode = 'selection'; // 다시 선택 화면으로
+            currentMode = 'setup'; // 다시 설정 화면으로
             updateUI(currentMode);
             return;
         }
@@ -287,12 +290,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // 모드 선택
     mode1Btn.addEventListener('click', () => {
         currentMode = 'game1';
-        updateUI('selection'); // 선택 화면으로 전환
+        mode1Btn.classList.add('active');
+        mode2Btn.classList.remove('active');
+        updateUI('setup'); // 모드 변경 후 UI 업데이트 (버튼 활성화 상태 반영)
     });
 
     mode2Btn.addEventListener('click', () => {
         currentMode = 'game2';
-        updateUI('selection'); // 선택 화면으로 전환
+        mode2Btn.classList.add('active');
+        mode1Btn.classList.remove('active');
+        updateUI('setup'); // 모드 변경 후 UI 업데이트 (버튼 활성화 상태 반영)
     });
 
     // 범위 선택 모드에서 셀 클릭 (선택/해제)
@@ -306,23 +313,47 @@ document.addEventListener('DOMContentLoaded', () => {
             selectedCodonGroupIndices.add(index);
             cell.classList.add('selected-for-game');
         }
+        updateSelectAllButtonState(); // 셀 선택/해제 시 "모두 선택" 버튼 상태 업데이트
     }
+
+    // "모두 선택" 버튼 상태를 업데이트하는 함수
+    function updateSelectAllButtonState() {
+        const totalCodonGroups = codonData.length;
+        if (selectedCodonGroupIndices.size === totalCodonGroups) {
+            selectAllBtn.textContent = '모두 선택 해제';
+            selectAllBtn.dataset.toggleState = 'deselect-all';
+        } else {
+            selectAllBtn.textContent = '모두 선택';
+            selectAllBtn.dataset.toggleState = 'select-all';
+        }
+    }
+
+    // "모두 선택" 버튼 클릭 이벤트
+    selectAllBtn.addEventListener('click', () => {
+        if (selectAllBtn.dataset.toggleState === 'select-all') {
+            // 모든 코돈 그룹 선택
+            selectedCodonGroupIndices.clear();
+            for (let i = 0; i < codonData.length; i++) {
+                selectedCodonGroupIndices.add(i);
+            }
+            document.querySelectorAll('.codon-group-cell').forEach(cell => {
+                cell.classList.add('selected-for-game');
+            });
+        } else {
+            // 모든 코돈 그룹 선택 해제
+            selectedCodonGroupIndices.clear();
+            document.querySelectorAll('.codon-group-cell').forEach(cell => {
+                cell.classList.remove('selected-for-game');
+            });
+        }
+        updateSelectAllButtonState(); // 버튼 상태 업데이트
+    });
 
     // 게임 중 셀 클릭 (정오답 확인)
     function handleCellClick(event) {
         const clickedCell = event.currentTarget;
         checkAnswer(clickedCell);
     }
-
-    selectAllBtn.addEventListener('click', () => {
-        selectedCodonGroupIndices.clear();
-        for (let i = 0; i < codonData.length; i++) {
-            selectedCodonGroupIndices.add(i);
-        }
-        document.querySelectorAll('.codon-group-cell').forEach(cell => {
-            cell.classList.add('selected-for-game');
-        });
-    });
 
     startGameBtn.addEventListener('click', startGame);
 
@@ -333,7 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     startOverBtn.addEventListener('click', () => {
         selectedCodonGroupIndices.clear();
-        currentMode = 'mode_selection'; // 모드 선택 화면으로 돌아가기
+        currentMode = 'setup'; // 설정 화면으로 돌아가기
         updateCodonTable(); // 테이블 다시 그리기 (선택 초기화 반영)
         updateUI(currentMode); // UI 초기화
     });
@@ -377,7 +408,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 초기화: 페이지 로드 시 코돈표 생성 및 UI 설정
-    currentMode = 'mode_selection'; // 시작 모드를 명시적으로 설정
+    currentMode = 'setup'; // 시작 모드를 명시적으로 'setup'으로 설정
     updateCodonTable(); // 코돈표 먼저 생성
     updateUI(currentMode); // 초기 UI 상태 설정
 });
