@@ -1,5 +1,5 @@
 function goToMainPage() {
-    window.location.href = "./codon/codon.html";
+    window.location.href = "./main/codon.html";
 }
 function goToTestPage() {
     window.location.href = "./test2.html";
