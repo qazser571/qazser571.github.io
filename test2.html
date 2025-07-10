@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>클래스 박스 선택 게임</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .box {
+            width: 120px;
+            height: 120px;
+            border: 3px solid #ccc;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+        }
+        .box.S {
+            background-color: #e0f7fa; /* 밝은 하늘색 */
+            color: #00796b;
+        }
+        .box.T {
+            background-color: #ffe0b2; /* 밝은 주황색 */
+            color: #e65100;
+        }
+        .box.selected {
+            border-color: #4caf50; /* 초록색 테두리 */
+            background-color: #c8e6c9; /* 선택된 S 박스 배경색 */
+            box-shadow: 0 0 10px rgba(76,175,80,0.5);
+        }
+        .box.incorrect {
+            border-color: #f44336; /* 빨간색 테두리 */
+            background-color: #ffcdd2; /* 틀린 박스 배경색 */
+            box-shadow: 0 0 10px rgba(244,67,54,0.5);
+        }
+        .box.highlight-S {
+            border-color: #9c27b0; /* 보라색 테두리 */
+            background-color: #e1bee7; /* 하이라이트된 S 박스 배경색 */
+            animation: pulse 1s infinite alternate; /* 깜빡이는 효과 */
+        }
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
+        }
+        .message {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            margin-top: 20px;
+            min-height: 40px; /* 메시지 영역 확보 */
+        }
+        .reset-button {
+            padding: 12px 25px;
+            font-size: 18px;
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 30px;
+        }
+        .reset-button:hover {
+            background-color: #1976d2;
+        }
+        .disabled {
+            cursor: default;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <h1>"S" 박스만 선택하세요!</h1>
+    <div class="container">
+        <div class="box S" data-box-id="S1">S1</div>
+        <div class="box T" data-box-id="T1">T1</div>
+        <div class="box S" data-box-id="S2">S2</div>
+        <div class="box T" data-box-id="T2">T2</div>
+        <div class="box S" data-box-id="S3">S3</div>
+        <div class="box T" data-box-id="T3">T3</div>
+    </div>
+    <div id="message" class="message"></div>
+    <button id="resetButton" class="reset-button">다시 시작</button>
+
+    <script>
+        let correctSCount = 0; // 올바르게 선택된 S 박스의 개수
+        let gameEnded = false; // 게임 종료 여부 (정답 또는 오답 선택 시)
+
+        const sBoxes = document.querySelectorAll('.box.S');
+        const allBoxes = document.querySelectorAll('.box');
+        const messageDiv = document.getElementById('message');
+        const resetButton = document.getElementById('resetButton');
+
+        // 박스 클릭 이벤트 핸들러
+        function handleBoxClick(event) {
+            // 게임이 종료되었으면 더 이상 클릭 처리 안 함
+            if (gameEnded) {
+                return;
+            }
+
+            const clickedBox = event.currentTarget; // 클릭된 박스 요소
+
+            // 이미 선택된 S 박스는 다시 클릭해도 카운트하지 않음
+            if (clickedBox.classList.contains('S') && clickedBox.classList.contains('selected')) {
+                return;
+            }
+
+            if (clickedBox.classList.contains('S')) {
+                // S 박스인 경우
+                clickedBox.classList.add('selected'); // 선택 표시
+                correctSCount++; // 올바른 선택 개수 증가
+
+                if (correctSCount === sBoxes.length) {
+                    // 모든 S 박스를 다 맞혔을 때
+                    messageDiv.textContent = '🎉 다 맞았습니다! 훌륭합니다! 🎉';
+                    messageDiv.style.color = '#4CAF50'; // 초록색 메시지
+                    endGame(); // 게임 종료
+                }
+            } else if (clickedBox.classList.contains('T')) {
+                // T 박스(오답)인 경우
+                clickedBox.classList.add('incorrect'); // 틀린 박스 표시
+                messageDiv.textContent = '😅 아쉽지만 틀렸습니다. "S"인 박스를 선택해야 합니다!';
+                messageDiv.style.color = '#F44336'; // 빨간색 메시지
+                highlightSBoxes(); // S 박스 하이라이트
+                endGame(); // 게임 종료
+            }
+        }
+
+        // 모든 박스에 클릭 이벤트 리스너 추가
+        function addClickListeners() {
+            allBoxes.forEach(box => {
+                box.addEventListener('click', handleBoxClick);
+                box.classList.remove('disabled'); // 비활성화 클래스 제거
+            });
+        }
+
+        // 모든 박스에서 클릭 이벤트 리스너 제거 및 비활성화
+        function removeClickListeners() {
+            allBoxes.forEach(box => {
+                box.removeEventListener('click', handleBoxClick);
+                box.classList.add('disabled'); // 비활성화 클래스 추가
+            });
+        }
+
+        // S 박스 하이라이트
+        function highlightSBoxes() {
+            sBoxes.forEach(box => {
+                if (!box.classList.contains('selected')) { // 이미 선택된 S 박스는 제외
+                    box.classList.add('highlight-S');
+                }
+            });
+        }
+
+        // 게임 종료 처리
+        function endGame() {
+            gameEnded = true;
+            removeClickListeners(); // 더 이상 박스를 클릭할 수 없도록 함
+        }
+
+        // 게임 초기화
+        function resetGame() {
+            correctSCount = 0;
+            gameEnded = false;
+            messageDiv.textContent = '';
+            messageDiv.style.color = '#333'; // 메시지 색상 초기화
+
+            allBoxes.forEach(box => {
+                // 모든 클래스 제거 및 초기 상태로 복원
+                box.classList.remove('selected', 'incorrect', 'highlight-S', 'disabled');
+                // 배경색 및 테두리 초기화 (CSS에서 정의된 기본값으로 돌아가게 함)
+            });
+            addClickListeners(); // 다시 클릭 이벤트 리스너 추가
+        }
+
+        // 페이지 로드 시 초기 설정
+        document.addEventListener('DOMContentLoaded', () => {
+            addClickListeners(); // 초기에 클릭 이벤트 리스너 등록
+            resetButton.addEventListener('click', resetGame); // 다시 시작 버튼 이벤트 등록
+        });
+    </script>
+</body>
+</html>
