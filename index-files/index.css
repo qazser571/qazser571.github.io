@@ -14,12 +14,8 @@ body {
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             display: flex;
-            flex-direction: column;
-            justify-contents: centor;
-        }
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
+            justify-content: center;
+            alien-items: center;
         }
         button {
             margin: 10px, 0;
