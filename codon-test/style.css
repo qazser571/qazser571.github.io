@@ -1,8 +1,8 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
-    justify-content: flex-start; /* 왼쪽으로 정렬 */
-    align-items: flex-start; /* 상단 정렬 */
+    justify-content: flex-start;
+    align-items: flex-start;
     padding: 20px;
     background-color: #f4f7f6;
     color: #333;
@@ -25,7 +25,7 @@ body {
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
-    gap: 20px; /* 섹션 간 간격 */
+    gap: 20px;
 }
 
 #game-controls h2, #game-controls h3 {
@@ -60,7 +60,7 @@ body {
     gap: 10px;
 }
 
-#mode-selection-buttons button { /* 모드 선택 버튼 색상 */
+#mode-selection-buttons button {
     background-color: #3498db;
 }
 
@@ -108,21 +108,21 @@ button.start-btn:hover {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    display: flex; /* 내부 컨텐츠를 중앙 정렬하기 위해 flex 사용 */
+    display: flex;
     justify-content: center;
     align-items: center;
 }
 
 #codon-table-container {
-    width: 600px; /* 전체 너비 600px */
-    height: 600px; /* 전체 높이 600px */
+    width: 600px;
+    height: 600px;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(4, 1fr);
     gap: 1px;
     border: 1px solid #ccc;
     background-color: #ccc;
-    box-sizing: border-box; /* 패딩, 보더가 너비/높이에 포함되도록 */
+    box-sizing: border-box;
 }
 
 .codon-block {
@@ -170,7 +170,8 @@ button.start-btn:hover {
 }
 
 .codons {
-    flex: 1;
+    /* 코돈 부분 너비 줄이기: flex-basis로 고정 너비 설정 */
+    flex: 0 0 70px; /* 70px 고정 너비 */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -189,12 +190,13 @@ button.start-btn:hover {
 }
 
 .amino-acid {
+    /* 아미노산 부분 너비 키우기: 남은 공간 모두 차지 */
     flex: 1;
     text-align: center;
     font-weight: bold;
     color: #007bff;
     transition: opacity 0.3s ease;
-    font-size: 0.9em;
+    font-size: 0.9em; /* 필요 시 폰트 크기 조정 가능 */
 }
 
 /* 숨기기 클래스 */
