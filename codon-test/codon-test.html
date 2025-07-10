@@ -11,11 +11,14 @@
         <!-- 왼쪽 게임 컨트롤 영역 -->
         <div id="game-controls">
             <h2>게임 설정</h2>
-            <div class="button-group mode-selection">
+            
+            <!-- 게임 모드 선택 버튼 그룹 (초기 상태에서만 보임) -->
+            <div id="mode-selection-buttons" class="button-group">
                 <button id="mode1-btn">모드 1: 코돈 → 아미노산</button>
                 <button id="mode2-btn">모드 2: 아미노산 → 코돈</button>
             </div>
 
+            <!-- 학습 범위 선택 영역 (모드 선택 후 보임) -->
             <div id="selection-area" class="hidden">
                 <h3>학습 범위 선택</h3>
                 <button id="select-all-btn">전부 선택</button>
@@ -23,23 +26,25 @@
                 <button id="start-game-btn" class="start-btn">게임 시작</button>
             </div>
 
+            <!-- 게임 진행 정보 영역 (게임 시작 후 보임) -->
             <div id="game-info-area" class="hidden">
                 <h3>현재 문제</h3>
                 <div id="current-question"></div>
-                <div class="button-group toggle-options">
-                    <button id="toggle-codons">코돈 숨기기</button>
-                    <button id="toggle-amino-acids">아미노산 숨기기</button>
-                </div>
-                <div class="button-group toggle-options">
-                    <button id="toggle-amino-acid-display-mode">표시 모드: 세린(S)</button>
-                </div>
             </div>
 
+            <!-- 게임 종료 영역 (게임 종료 후 보임) -->
             <div id="game-end-area" class="hidden">
                 <h3>게임 종료</h3>
                 <p id="score-display"></p>
                 <button id="retry-wrong-btn">틀린 문제 다시 풀기</button>
                 <button id="start-over-btn">처음부터 다시</button>
+            </div>
+
+            <!-- 코돈표 조작 버튼 그룹 (항상 보임) -->
+            <div id="persistent-toggle-buttons" class="button-group toggle-options">
+                <button id="toggle-codons">코돈 숨기기</button>
+                <button id="toggle-amino-acids">아미노산 숨기기</button>
+                <button id="toggle-amino-acid-display-mode">표시 모드: 세린(S)</button>
             </div>
         </div>
 
