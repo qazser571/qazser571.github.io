@@ -99,7 +99,7 @@ body {
     text-align: center;
     padding: 10px;
     /* border: 2px dashed #e74c3c;*/
-    box-shadow: 0 0 10px inner #e74c3c;
+    box-shadow: 0 0 10px inset #e74c3c;
     border-radius: 5px;
     width: calc(100% - 20px); /* 패딩 고려 */
     box-sizing: border-box;
