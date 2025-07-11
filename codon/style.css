@@ -29,7 +29,7 @@ body{
     background-color: #f4f7f6;
 }
 #container{
-    width: auto;
+    width: calc(var(--btn-width)*3 + var(--stand-height)*1.2 + var(--stand-padding)*3);
     height: auto;
     display: flex;
     justify-content: center;
