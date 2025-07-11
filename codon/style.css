@@ -14,9 +14,22 @@
     --btn-active-bdc: #0055ff;
 }
 
-.btn-active{ /* 요청하신 대로 :root 아래에 추가되었습니다. */
+/* 버튼 상태 클래스 정의 */
+.btn-inactive { /* 1. 버튼이 활성화되지 않은 상황 */
+    background-color: var(--btn-passive-bgc);
+    color: #000;
+}
+
+.btn-active{ /* 2. 버튼이 활성화된 상황 (기존 클래스 재사용) */
     background-color: var(--btn-active-bgc);
     box-shadow: inset 0 0 0 1px var(--btn-active-bdc);
+}
+
+.btn-working { /* 3. 버튼이 작동중임을 알려주는 상황 */
+    background-color: #cccccc; /* 비활성화된 느낌의 배경색 */
+    color: #666; /* 흐린 글씨색 */
+    cursor: not-allowed; /* 클릭 불가능 커서 */
+    opacity: 0.8; /* 약간 투명하게 */
 }
 
 
@@ -97,7 +110,6 @@ button {
 .setting-botton{
     width: var(--btn-width);
     background-color: var(--btn-passive-bgc);
-    /* -webkit-tap-highlight-color: transparent; -> button{}으로 이동 */
 }
 
 /* control-area */
@@ -135,7 +147,7 @@ button {
     cursor: pointer;
     transition: background-color 0.1s ease, box-shadow 0.1s ease;
     box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent; /* 이 부분이 추가되었습니다. */
+    -webkit-tap-highlight-color: transparent;
 }
 /* .codon-group-cell:active {
     background-color: transparent;
@@ -259,37 +271,19 @@ button {
 }
 #current-question{
     width: var(--btn-width);
-    /* height: auto; -> button{}으로 이동 */
-    /* padding: 10px 0; -> button{}으로 이동 */
-    /* border-radius: 5px; -> button{}으로 이동 */
     border: none;
-    /* color: #000; -> button{}으로 이동 */
-    /* font-size: 14px; -> button{}으로 이동 */
     border: 1px solid #000;
     display: flex;
     justify-content: center;
     align-items: center;
-    /* -webkit-tap-highlight-color: transparent; -> button{}으로 이동 */
 }
 #next-btn{
     width: var(--btn-width);
-    /* height: auto; -> button{}으로 이동 */
-    /* padding: 10px 0; -> button{}으로 이동 */
-    /* border-radius: 5px; -> button{}으로 이동 */
     border: none;
-    /* color: #000; -> button{}으로 이동 */
-    /* font-size: 14px; -> button{}으로 이동 */
-    /* cursor: pointer; -> button{}으로 이동 */
-    /* -webkit-tap-highlight-color: transparent; -> button{}으로 이동 */
 }
 #percent-gauge{
     width: var(--btn-width);
-    /* height: auto; -> button{}으로 이동 */
-    /* padding: 10px 0; -> button{}으로 이동 */
-    /* border-radius: 5px; -> button{}으로 이동 */
     border: none;
-    /* color: #000; -> button{}으로 이동 */
-    /* font-size: 14px; -> button{}으로 이동 */
     border: 1px solid #000;
 }
 #exit-area{
@@ -298,14 +292,7 @@ button {
 }
 #exit-btn{
     width: 150px;
-    /* height: auto; -> button{}으로 이동 */
-    /* padding: 10px 0; -> button{}으로 이동 */
-    /* border-radius: 5px; -> button{}으로 이동 */
     border: none;
     background-color: rgb(255, 170, 170);
     box-shadow: inset 0 0 0 1px #ff1d1d;
-    /* color: #000; -> button{}으로 이동 */
-    /* font-size: 14px; -> button{}으로 이동 */
-    /* cursor: pointer; -> button{}으로 이동 */
-    /* -webkit-tap-highlight-color: transparent; -> button{}으로 이동 */
 }
