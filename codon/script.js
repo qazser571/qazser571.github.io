@@ -97,8 +97,10 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.codon-group-cell').forEach(cell => {
             cell.removeEventListener('click', handleSelectionClick);
             cell.removeEventListener('click', handleCellClick);
-            // 이 곳에서 하이라이트 클래스를 제거하지 않음. nextQuestion()에서만 처리
-            cell.classList.remove('selected-for-game'); // 선택 상태만 초기화
+            cell.classList.remove('selected-for-game'); // 선택 상태 초기화
+            cell.classList.remove('correct-answer-bg'); // **추가: 정답 배경색 초기화**
+            cell.classList.remove('incorrect-answer-bg'); // **추가: 오답 배경색 초기화**
+            cell.style.backgroundColor = ''; // 배경색 직접 설정된 경우 초기화
         });
 
         currentPhase = phase;
