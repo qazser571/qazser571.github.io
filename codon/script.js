@@ -98,8 +98,9 @@ document.addEventListener('DOMContentLoaded', () => {
             cell.removeEventListener('click', handleSelectionClick);
             cell.removeEventListener('click', handleCellClick);
             cell.classList.remove('selected-for-game'); // 선택 상태 초기화
-            cell.classList.remove('correct-answer-bg'); // **추가: 정답 배경색 초기화**
-            cell.classList.remove('incorrect-answer-bg'); // **추가: 오답 배경색 초기화**
+            cell.classList.remove('correct-answer-bg'); // 정답 배경색 초기화
+            cell.classList.remove('incorrect-answer-bg'); // 오답 배경색 초기화
+            cell.classList.remove('correct-answer-highlight'); // **추가: 하이라이트 클래스 초기화**
             cell.style.backgroundColor = ''; // 배경색 직접 설정된 경우 초기화
         });
 
@@ -267,13 +268,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         // 이 함수는 가시성만 변경하므로, 하이라이트나 버튼 상태를 건드리지 않음.
         // 하이라이트는 checkAnswer/nextQuestion에서 직접 관리
+        reapplyCurrentQuestionState(); // **추가: 가시성 변경 후에도 현재 상태를 다시 적용**
     }
 
     // 현재 게임 상태의 하이라이트 및 버튼 가시성을 다시 적용하는 함수
     function reapplyCurrentQuestionState() {
         // 모든 셀에서 이전 정답/오답 표시 클래스 제거 (안전하게 초기화)
         document.querySelectorAll('.codon-group-cell').forEach(cell => {
-            cell.classList.remove('correct-answer-bg', 'incorrect-answer-bg');
+            cell.classList.remove('correct-answer-bg', 'incorrect-answer-bg', 'correct-answer-highlight'); // **추가: 하이라이트 클래스도 제거**
         });
 
         if (isGameRunning && currentQuestion !== null) {
@@ -281,8 +283,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // currentCorrectCells는 DOM 요소 참조를 가지고 있으므로,
             // updateCodonTable 후에는 새로운 DOM 요소들을 찾아 다시 참조해야 함.
             // 여기서는 data-index를 기반으로 다시 찾아서 적용
-            currentCorrectCells.forEach(oldCell => { // oldCell은 이전 DOM 참조일 수 있음
-                const dataIndex = parseInt(oldCell.dataset.index);
+            currentCorrectCells.forEach(correctCellData => { // correctCellData는 원래 DOM 요소의 data-index를 가지고 있음
+                const dataIndex = parseInt(correctCellData.dataset.index); // DOM 요소의 data-index 사용
                 const newCell = document.querySelector(`.codon-group-cell[data-index="${dataIndex}"]`);
                 if (newCell) {
                     newCell.classList.add('correct-answer-bg');
@@ -292,6 +294,27 @@ document.addEventListener('DOMContentLoaded', () => {
             // isWaitingForNextQuestion 상태에 따라 nextQuestionBtn 가시성 설정
             if (isWaitingForNextQuestion) {
                  nextQuestionBtn.classList.remove('hidden');
+                 // **추가: 정답인 경우에만 하이라이트 적용**
+                 // 현재 문제가 정답으로 해결된 상태라면 하이라이트 적용
+                 // Game 1은 currentCorrectCells[0]이 클릭된 셀이고, Game 2는 모든 currentCorrectCells가 클릭되어야 함
+                 // 이 로직은 checkAnswer에서 이미 처리되므로, 여기서는 단순히 클래스만 재적용
+                 if (selectedGameMode === 'game1' && correctAnswersCount > 0 && wrongAnswers.indexOf(currentQuestion) === -1) {
+                     const newCorrectCell = document.querySelector(`.codon-group-cell[data-index="${currentQuestion.dataIndex}"]`);
+                     if (newCorrectCell) {
+                         newCorrectCell.classList.add('correct-answer-highlight');
+                     }
+                 } else if (selectedGameMode === 'game2' && correctAnswersCount > 0 && wrongAnswers.indexOf(codonData[currentQuestion][1]) === -1) {
+                     currentCorrectCells.forEach(cellData => {
+                         const newCell = document.querySelector(`.codon-group-cell[data-index="${cellData.dataset.index}"]`);
+                         if (newCell) {
+                             newCell.classList.add('correct-answer-highlight');
+                         }
+                     });
+                 } else if (wrongAnswers.includes(currentQuestion) || (selectedGameMode === 'game2' && wrongAnswers.includes(codonData[currentQuestion][1]))) {
+                    // 오답인 경우, 클릭된 셀에 incorrect-answer-bg 재적용 (checkAnswer에서 이미 처리되므로, 여기서는 모든 정답 셀에 correct-answer-bg만 재적용)
+                    // incorrect-answer-bg는 checkAnswer에서 직접 적용된 셀에만 유지되어야 하므로, 재적용 로직은 복잡해질 수 있음.
+                    // 단순화를 위해 재적용 시에는 correct-answer-bg만 고려하고, incorrect-answer-bg는 클릭 시점에만 적용되도록 함.
+                 }
             } else {
                  nextQuestionBtn.classList.add('hidden');
             }
@@ -363,7 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function nextQuestion() {
         // 모든 셀에서 이전 정답/오답 표시 클래스 제거
         document.querySelectorAll('.codon-group-cell').forEach(cell => {
-            cell.classList.remove('correct-answer-bg', 'incorrect-answer-bg');
+            cell.classList.remove('correct-answer-bg', 'incorrect-answer-bg', 'correct-answer-highlight'); // **추가: 하이라이트 클래스도 제거**
             cell.style.backgroundColor = '';
         });
         nextQuestionBtn.classList.add('hidden'); // 다음 문제 버튼 숨김 (새 문제 시작 시)
@@ -419,12 +442,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (clickedIndex === questionDataIndex) {
                 correctAnswersCount++; // 정답 처리
                 clickedCell.classList.add('correct-answer-bg');
+                clickedCell.classList.add('correct-answer-highlight'); // **추가: 하이라이트 적용**
             } else {
                 wrongAnswers.push(currentQuestion); // 오답 처리 (문제 객체 전체 저장)
                 clickedCell.classList.add('incorrect-answer-bg');
                 // 정답 셀도 표시
                 currentCorrectCells.forEach(cell => { 
                     cell.classList.add('correct-answer-bg');
+                    cell.classList.add('correct-answer-highlight'); // **추가: 오답 시 정답도 하이라이트**
                 });
             }
             questionResolved = true; // game1은 한 번의 클릭으로 문제 해결
@@ -443,6 +468,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (correctClicksCount === currentCorrectCells.length) {
                     correctAnswersCount++; // 모든 정답을 맞췄으므로 총 정답 수 증가
                     questionResolved = true; // 모든 정답을 클릭하여 문제 해결
+                    // 모든 정답 셀에 하이라이트 적용
+                    currentCorrectCells.forEach(cell => {
+                        cell.classList.add('correct-answer-highlight'); // **추가: 하이라이트 적용**
+                    });
                 } else {
                     // 아직 모든 정답을 클릭하지 않았으므로, 다음 클릭을 기다림
                     questionResolved = false; // 명시적으로 false 유지
@@ -452,6 +481,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 clickedCell.classList.add('incorrect-answer-bg');
                 currentCorrectCells.forEach(cell => { // 모든 정답 셀 표시
                     cell.classList.add('correct-answer-bg');
+                    cell.classList.add('correct-answer-highlight'); // **추가: 오답 시 정답도 하이라이트**
                 });
                 questionResolved = true; // 오답을 클릭했으므로 문제 해결
             }
