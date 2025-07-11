@@ -143,9 +143,9 @@ button {
     width: 100%;
 }
 
-button:hover {
+/* button:hover {
     background-color: #677077;
-}
+} */
 
 button.active {
     background-color: #3599f7;
@@ -185,9 +185,9 @@ button.no-bg-change {
     background-color: #6c757d;
     color: white;
 }
-button.no-bg-change:hover {
+/* button.no-bg-change:hover {
     background-color: #677077;
-}
+} */
 button.no-bg-change.active {
     background-color: #6c757d;
 }
