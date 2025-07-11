@@ -8,28 +8,49 @@
     --stand-padding: 15px;
     --main-color: #0055ff;
     --sub-color: #a9c7ff;
-    --btn-passive-bgc: #eaeaea;
+    --btn-passive-bgc: #eaeaea; /* 기본 버튼 배경색 */
 
-    --btn-active-bgc: #a9c7ff;
-    --btn-active-bdc: #0055ff;
+    --btn-active-bgc: #a9c7ff; /* 활성화 버튼 배경색 */
+    --btn-active-bdc: #0055ff; /* 활성화 버튼 테두리색 */
+
+    --btn-disabled-bgc: #e0e0e0; /* 비활성화 버튼 배경색 */
+    --btn-disabled-color: #a0a0a0; /* 비활성화 버튼 글자색 */
+
+    --btn-working-bgc: #cccccc; /* 작동 중 버튼 배경색 */
+    --btn-working-color: #666; /* 작동 중 버튼 글자색 */
 }
 
-/* 버튼 상태 클래스 정의 */
-.btn-inactive { /* 1. 버튼이 활성화되지 않은 상황 */
+/* 1. 버튼이 사용 불가능하고, 작동 중이 아닌 상황 */
+.btn-disabled {
+    background-color: var(--btn-disabled-bgc);
+    color: var(--btn-disabled-color);
+    cursor: not-allowed;
+    opacity: 0.7;
+    pointer-events: none; /* 클릭 이벤트 방지 */
+}
+
+/* 2. 버튼이 사용 가능하고, 작동 중이 아닌 상황 (기본 상태) */
+.btn-ready {
     background-color: var(--btn-passive-bgc);
     color: #000;
+    cursor: pointer;
 }
 
-.btn-active{ /* 2. 버튼이 활성화된 상황 (기존 클래스 재사용) */
+/* 3. 버튼이 사용 불가능하고, 작동 중인 상황 */
+.btn-working {
+    background-color: var(--btn-working-bgc);
+    color: var(--btn-working-color);
+    cursor: not-allowed;
+    opacity: 0.8;
+    pointer-events: none; /* 클릭 이벤트 방지 */
+}
+
+/* 4. 버튼이 사용 가능하고, 활성화된/선택된 상황 */
+.btn-active{
     background-color: var(--btn-active-bgc);
     box-shadow: inset 0 0 0 1px var(--btn-active-bdc);
-}
-
-.btn-working { /* 3. 버튼이 작동중임을 알려주는 상황 */
-    background-color: #cccccc; /* 비활성화된 느낌의 배경색 */
-    color: #666; /* 흐린 글씨색 */
-    cursor: not-allowed; /* 클릭 불가능 커서 */
-    opacity: 0.8; /* 약간 투명하게 */
+    color: #000; /* 활성화 상태의 글자색은 검정으로 유지 */
+    cursor: pointer;
 }
 
 
@@ -42,7 +63,7 @@ body{
     background-color: #f4f7f6;
 }
 #container{
-    width: calc(var(--btn-width)*3 + var(--stand-height)*1.2 + var(--stand-padding)*3); /* 요청하신 대로 수정 */
+    width: calc(var(--btn-width)*3 + var(--stand-height)*1.2 + var(--stand-padding)*3);
     height: auto;
     display: flex;
     justify-content: center;
@@ -101,15 +122,17 @@ button {
     padding: 10px 0;
     border-radius: 5px;
     border: none;
-    color: #000;
     font-size: 14px;
-    cursor: pointer;
     -webkit-tap-highlight-color: transparent; /* 모든 버튼에 적용 */
+    /* 아래 속성들은 이제 .btn-ready, .btn-disabled, .btn-working, .btn-active 클래스에서 관리됩니다. */
+    /* color: #000; */
+    /* cursor: pointer; */
 }
 
+/* .setting-botton은 이제 .btn-ready 클래스를 기본으로 가집니다. */
 .setting-botton{
     width: var(--btn-width);
-    background-color: var(--btn-passive-bgc);
+    /* background-color: var(--btn-passive-bgc); -> .btn-ready로 이동 */
 }
 
 /* control-area */
