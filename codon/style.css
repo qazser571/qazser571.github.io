@@ -205,7 +205,6 @@ button.switch-btn {
 
 button.switch-btn:hover {
     background-color: #999999;
-    transform: translateY(-1px);
 }
 
 button.switch-btn:active {
