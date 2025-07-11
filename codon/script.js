@@ -66,9 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedGameMode = null;
     let selectedCodonGroupIndices = new Set(); // 선택된 아미노산 그룹의 인덱스 (codonData의 인덱스)
     let questionQueue = []; // 실제 문제 큐 (Game 1에서는 개별 코돈, Game 2에서는 아미노산 그룹 인덱스)
-    // wrongAnswers 구조 변경: [{ question: 문제객체, clickedWrongIndex: 오답셀인덱스 }]
-    // Game 1: {dataIndex, codon}
-    // Game 2: dataIndex
+    // wrongAnswers 구조 변경: [{ mode: 'game1'/'game2', question: 문제객체/아미노산이름, clickedWrongIndex: 오답셀인덱스 }]
     let wrongAnswers = []; 
     let currentQuestion = null; // Game 1: {dataIndex: ..., codon: 'UUU'}, Game 2: dataIndex X
     let currentCorrectCells = []; // 현재 문제의 정답 셀 (DOM 요소)
@@ -282,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // isWaitingForNextQuestion이 true일 때만 정답/오답 표시 및 다음 문제 버튼 표시
-        if (isGameRunning && isWaitingForNextQuestion) {
+        if (isGameRunning && currentQuestion !== null && isWaitingForNextQuestion) { // currentQuestion !== null 조건 추가
             // 현재 문제의 정답 셀에 correct-answer-bg 다시 적용
             currentCorrectCells.forEach(correctCellData => {
                 const dataIndex = parseInt(correctCellData.dataset.index);
@@ -294,13 +292,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 현재 문제가 오답인지 확인
             let isCurrentProblemWrong = false;
-            if (selectedGameMode === 'game1') {
-                isCurrentProblemWrong = wrongAnswers.some(wrongItem => 
-                    wrongItem.question.dataIndex === currentQuestion.dataIndex && wrongItem.question.codon === currentQuestion.codon
-                );
-            } else if (selectedGameMode === 'game2') {
-                isCurrentProblemWrong = wrongAnswers.includes(codonData[currentQuestion][1]);
-            }
+            // Game 1의 경우 currentQuestion은 {dataIndex, codon} 객체
+            // Game 2의 경우 currentQuestion은 dataIndex
+            // wrongAnswers는 { mode: 'game1'/'game2', question: 문제객체/아미노산이름, clickedWrongIndex: 오답셀인덱스 }
+            const wrongEntryForCurrentQuestion = wrongAnswers.find(item => {
+                if (item.mode === 'game1' && selectedGameMode === 'game1') {
+                    return item.question.dataIndex === currentQuestion.dataIndex && item.question.codon === currentQuestion.codon;
+                } else if (item.mode === 'game2' && selectedGameMode === 'game2') {
+                    return item.question === codonData[currentQuestion][1];
+                }
+                return false;
+            });
+            isCurrentProblemWrong = (wrongEntryForCurrentQuestion !== undefined);
+
 
             if (!isCurrentProblemWrong) { // 정답인 경우에만 하이라이트 적용
                 currentCorrectCells.forEach(cellData => {
@@ -310,17 +314,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
             } else { // 오답인 경우, 해당 오답 셀에 incorrect-answer-bg 재적용
-                const wrongAnswerEntry = wrongAnswers.find(item => {
-                    if (selectedGameMode === 'game1') {
-                        return item.question.dataIndex === currentQuestion.dataIndex && item.question.codon === currentQuestion.codon;
-                    } else if (selectedGameMode === 'game2') {
-                        return item.question === codonData[currentQuestion][1];
-                    }
-                    return false;
-                });
-
-                if (wrongAnswerEntry && wrongAnswerEntry.clickedWrongIndex !== undefined) {
-                    const wrongCell = document.querySelector(`.codon-group-cell[data-index="${wrongAnswerEntry.clickedWrongIndex}"]`);
+                if (wrongEntryForCurrentQuestion && wrongEntryForCurrentQuestion.clickedWrongIndex !== undefined) {
+                    const wrongCell = document.querySelector(`.codon-group-cell[data-index="${wrongEntryForCurrentQuestion.clickedWrongIndex}"]`);
                     if (wrongCell) {
                         wrongCell.classList.add('incorrect-answer-bg');
                     }
@@ -453,8 +448,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 clickedCell.classList.add('correct-answer-bg');
                 clickedCell.classList.add('correct-answer-highlight'); // 하이라이트 적용
             } else {
-                // wrongAnswers 구조 변경: { question: 문제객체, clickedWrongIndex: 오답셀인덱스 }
-                wrongAnswers.push({ question: currentQuestion, clickedWrongIndex: clickedIndex }); // 오답 처리
+                // wrongAnswers 구조 변경: { mode: 'game1', question: 문제객체, clickedWrongIndex: 오답셀인덱스 }
+                wrongAnswers.push({ mode: 'game1', question: currentQuestion, clickedWrongIndex: clickedIndex }); // 오답 처리
                 clickedCell.classList.add('incorrect-answer-bg');
                 // 정답 셀도 표시
                 currentCorrectCells.forEach(cell => { 
@@ -487,8 +482,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     questionResolved = false; // 명시적으로 false 유지
                 }
             } else { // 오답 코돈을 클릭한 경우
-                // wrongAnswers 구조 변경: { question: 문제객체, clickedWrongIndex: 오답셀인덱스 }
-                wrongAnswers.push({ question: codonData[currentQuestion][1], clickedWrongIndex: clickedIndex }); // 오답 처리
+                // wrongAnswers 구조 변경: { mode: 'game2', question: 아미노산이름, clickedWrongIndex: 오답셀인덱스 }
+                wrongAnswers.push({ mode: 'game2', question: codonData[currentQuestion][1], clickedWrongIndex: clickedIndex }); // 오답 처리
                 clickedCell.classList.add('incorrect-answer-bg');
                 currentCorrectCells.forEach(cell => { // 모든 정답 셀 표시
                     cell.classList.add('correct-answer-bg');
@@ -658,13 +653,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (selectedGameMode === 'game1') {
              // Game 1에서는 틀린 문제 객체 {question: 문제객체, clickedWrongIndex: 오답셀인덱스}들을 그대로 사용
-             questionQueue = [...wrongAnswers.map(item => item.question)]; // 문제 객체만 추출
+             // wrongAnswers의 각 항목은 { mode: 'game1', question: {dataIndex, codon}, clickedWrongIndex: 오답셀인덱스 }
+             questionQueue = wrongAnswers.filter(item => item.mode === 'game1').map(item => item.question);
         } else if (selectedGameMode === 'game2') {
             // Game 2에서는 틀린 아미노산 이름(문자열)을 Set으로 변환하여 고유한 아미노산만 재시험 대상으로 함
-            const uniqueWrongAminoAcids = Array.from(new Set(wrongAnswers.map(item => item.question))); // 문제(아미노산 이름)만 추출
+            // wrongAnswers의 각 항목은 { mode: 'game2', question: 아미노산이름, clickedWrongIndex: 오답셀인덱스 }
+            const uniqueWrongAminoAcids = Array.from(new Set(wrongAnswers.filter(item => item.mode === 'game2').map(item => item.question)));
             
             // 각 고유한 틀린 아미노산 이름에 대해 해당 아미노산을 대표하는 dataIndex를 찾아 questionQueue에 추가
-            uniqueWrongAminoAcids.forEach(aminoAcidName => {
+            uniqueWrongAminoAcacids.forEach(aminoAcidName => {
                 // 이전에 선택된 학습 범위 내에서 해당 아미노산 이름을 가진 첫 번째 dataIndex를 찾음
                 // 이렇게 해야 재시험 문제도 원래 학습 범위에 속했던 것만 출제됨
                 const representativeDataIndex = codonData.findIndex((group, idx) => 
