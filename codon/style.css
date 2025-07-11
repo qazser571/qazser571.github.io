@@ -105,9 +105,65 @@ body{
     padding: 20px 10px;
 }
 .setting-title{
-    border-bottom: 2px solid #000;
+    /* 기존 스타일 */
+    /* border-bottom: 2px solid #000; -> 가상 요소로 대체 */
     padding: 3px 5px;
+    background-color: transparent;
+    border-radius: 0;
+    text-align: left;
+    color: #000;
+    /* cursor: pointer; -> 상태 클래스에서 관리 */
+
+    /* 가상 요소 및 애니메이션을 위한 추가 */
+    position: relative;
+    overflow: hidden; /* 가상 요소가 넘치지 않도록 */
+    border-bottom: none; /* 실제 border-bottom 제거 */
+    transition: color 0.3s ease; /* 글자색 전환 애니메이션 */
 }
+
+/* .setting-title 가상 요소 (border-bottom 역할) */
+.setting-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    background-color: #000; /* border-bottom 색상 */
+    transform: scaleX(0); /* 초기 상태: 보이지 않음 */
+    transform-origin: left; /* 늘어날 때 왼쪽에서 시작 */
+    transition: transform 0.3s ease-out; /* 늘어나는 애니메이션 */
+}
+
+/* setting-title 버튼의 2가지 상태 클래스 */
+.setting-title-disabled { /* 1. 버튼이 사용 불가능한 상태 */
+    color: var(--btn-disabled-color); /* 회색 글자 */
+    cursor: not-allowed;
+    pointer-events: none; /* 클릭 이벤트 방지 */
+    /* border-bottom: none; -> .setting-title에서 이미 처리 */
+
+    /* 가상 요소 애니메이션 */
+    .setting-title::after {
+        transform: scaleX(0); /* 보이지 않음 */
+        transform-origin: right; /* 줄어들 때 오른쪽으로 줄어듦 */
+        transition: transform 0.3s ease-in; /* 줄어드는 애니메이션 */
+    }
+}
+
+.setting-title-active { /* 2. 버튼이 활성화 되어있고, 사용가능한 상태 */
+    color: #000; /* 검은색 글자 */
+    font-weight: bold;
+    cursor: pointer;
+    /* border-bottom은 가상 요소로 처리 */
+
+    /* 가상 요소 애니메이션 */
+    .setting-title::after {
+        transform: scaleX(1); /* 100% 늘어남 */
+        transform-origin: left; /* 늘어날 때 왼쪽에서 시작 */
+        transition: transform 0.3s ease-out; /* 늘어나는 애니메이션 */
+    }
+}
+
+
 .setting-btns{
     display: flex;
     flex-direction: column;
@@ -124,9 +180,6 @@ button {
     border: none;
     font-size: 14px;
     -webkit-tap-highlight-color: transparent; /* 모든 버튼에 적용 */
-    /* 아래 속성들은 이제 .btn-ready, .btn-disabled, .btn-working, .btn-active 클래스에서 관리됩니다. */
-    /* color: #000; */
-    /* cursor: pointer; */
 }
 
 /* .setting-botton은 이제 .btn-ready 클래스를 기본으로 가집니다. */
