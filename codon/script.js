@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // 버튼들도 초기화 시 모두 숨김
         startGameBtn.classList.add('hidden');
-        // nextQuestionBtn은 nextQuestion()과 checkAnswer()에서만 제어하도록 updateUI에서는 제거
+        nextQuestionBtn.classList.add('hidden'); 
 
         mode1Btn.classList.remove('active');
         mode2Btn.classList.remove('active');
@@ -97,8 +97,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.codon-group-cell').forEach(cell => {
             cell.removeEventListener('click', handleSelectionClick);
             cell.removeEventListener('click', handleCellClick);
-            cell.classList.remove('selected-for-game', 'correct-answer-bg', 'incorrect-answer-bg');
-            cell.style.backgroundColor = '';
+            // 이 곳에서 하이라이트 클래스를 제거하지 않음. nextQuestion()에서만 처리
+            cell.classList.remove('selected-for-game'); // 선택 상태만 초기화
         });
 
         currentPhase = phase;
@@ -132,8 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     // 현재 선택된 코돈 그룹에 따라 UI 업데이트
                     if (selectedCodonGroupIndices.has(parseInt(cell.dataset.index))) {
                         cell.classList.add('selected-for-game');
-                    } else { // 추가: 선택되지 않은 셀은 클래스 제거
-                        cell.classList.remove('selected-for-game');
                     }
                 });
                 updateSelectAllButtonState();
@@ -244,31 +242,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 codonTableContainer.appendChild(codonBlock);
             }
         }
-        // 코돈표 재생성 후, 현재 게임 상태에 따라 정답/오답 표시를 재적용
-        if (isGameRunning && currentQuestion !== null) {
-            // 모든 셀에서 이전 정답/오답 표시 클래스 제거
-            document.querySelectorAll('.codon-group-cell').forEach(cell => {
-                cell.classList.remove('correct-answer-bg', 'incorrect-answer-bg');
-            });
-
-            // 현재 문제의 정답 셀에 correct-answer-bg 다시 적용
-            currentCorrectCells.forEach(cell => {
-                cell.classList.add('correct-answer-bg');
-            });
-
-            // 만약 오답인 경우, 클릭된 셀에 incorrect-answer-bg 다시 적용
-            // (이 로직은 checkAnswer에서만 발생하므로, 여기서는 모든 정답 셀만 다시 표시)
-            // isWaitingForNextQuestion이 true이면 nextQuestionBtn이 보여야 함
-            if (isWaitingForNextQuestion) {
-                 nextQuestionBtn.classList.remove('hidden');
-            } else {
-                 nextQuestionBtn.classList.add('hidden');
-            }
-        }
-
-        // 코돈표 업데이트 후 현재 UI 상태를 유지하며 이벤트 리스너를 재부착
-        // 이 호출은 UI의 전체적인 상태를 재설정하므로, 마지막에 한 번만 호출하는 것이 좋음
+        // 코돈표 업데이트 후 UI 상태를 재부착 (이벤트 리스너 등)
         updateUI(currentPhase); 
+        // 코돈표가 재생성된 후 현재 게임 상태의 시각적 피드백을 다시 적용
+        reapplyCurrentQuestionState();
     }
 
     // 코돈/아미노산 셀의 가시성만 업데이트하는 함수
@@ -286,24 +263,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 cell.classList.remove('hidden-amino-acid');
             }
         });
-        // 현재 게임 상태에 따라 정답/오답 표시를 재적용
+        // 이 함수는 가시성만 변경하므로, 하이라이트나 버튼 상태를 건드리지 않음.
+        // 하이라이트는 checkAnswer/nextQuestion에서 직접 관리
+    }
+
+    // 현재 게임 상태의 하이라이트 및 버튼 가시성을 다시 적용하는 함수
+    function reapplyCurrentQuestionState() {
+        // 모든 셀에서 이전 정답/오답 표시 클래스 제거 (안전하게 초기화)
+        document.querySelectorAll('.codon-group-cell').forEach(cell => {
+            cell.classList.remove('correct-answer-bg', 'incorrect-answer-bg');
+        });
+
         if (isGameRunning && currentQuestion !== null) {
-            // 모든 셀에서 이전 정답/오답 표시 클래스 제거
-            document.querySelectorAll('.codon-group-cell').forEach(cell => {
-                cell.classList.remove('correct-answer-bg', 'incorrect-answer-bg');
-            });
-
             // 현재 문제의 정답 셀에 correct-answer-bg 다시 적용
-            currentCorrectCells.forEach(cell => {
-                cell.classList.add('correct-answer-bg');
+            // currentCorrectCells는 DOM 요소 참조를 가지고 있으므로,
+            // updateCodonTable 후에는 새로운 DOM 요소들을 찾아 다시 참조해야 함.
+            // 여기서는 data-index를 기반으로 다시 찾아서 적용
+            currentCorrectCells.forEach(oldCell => { // oldCell은 이전 DOM 참조일 수 있음
+                const dataIndex = parseInt(oldCell.dataset.index);
+                const newCell = document.querySelector(`.codon-group-cell[data-index="${dataIndex}"]`);
+                if (newCell) {
+                    newCell.classList.add('correct-answer-bg');
+                }
             });
 
-            // isWaitingForNextQuestion이 true이면 nextQuestionBtn이 보여야 함
+            // isWaitingForNextQuestion 상태에 따라 nextQuestionBtn 가시성 설정
             if (isWaitingForNextQuestion) {
                  nextQuestionBtn.classList.remove('hidden');
             } else {
                  nextQuestionBtn.classList.add('hidden');
             }
+        } else {
+            nextQuestionBtn.classList.add('hidden'); // 게임 중이 아니면 버튼 숨김
         }
     }
 
@@ -360,14 +351,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 게임 중지 함수 추가
     function stopGame() {
-        selectedGameMode = null; // 선택된 게임 모드 초기화
         selectedCodonGroupIndices.clear(); // 선택된 학습 범위 초기화
+        selectedGameMode = null; // 선택된 게임 모드 초기화
         updateUI('setup'); // 게임을 설정 단계로 되돌림
         currentQuestionDisplay.textContent = ''; // 문제 표시 초기화
         isWaitingForNextQuestion = false; // 다음 문제 대기 상태 초기화
     }
 
     function nextQuestion() {
+        // 모든 셀에서 이전 정답/오답 표시 클래스 제거
         document.querySelectorAll('.codon-group-cell').forEach(cell => {
             cell.classList.remove('correct-answer-bg', 'incorrect-answer-bg');
             cell.style.backgroundColor = '';
