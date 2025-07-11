@@ -16,7 +16,7 @@ body {
     align-items: center; /* 전체 game-container를 수직 중앙 정렬 */
     padding: 20px;
     background-color: #f4f7f6;
-    color: red;
+    color: #333;
     min-height: 100vh;
     box-sizing: border-box;
 }
