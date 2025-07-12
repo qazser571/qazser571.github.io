@@ -51,6 +51,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const hideAminoBtn = document.getElementById('hide-amino-btn');
     const aminoModeBtn = document.getElementById('amino-mode-btn');
 
+    // #quiz-report-area 요소 참조
+    const quizReportArea = document.getElementById('quiz-report-area');
+    // control-area 내의 모든 .control-area-title 요소 참조
+    const controlAreaTitles = document.querySelectorAll('#control-area .control-area-title');
+
+
     // 3. 게임 상태 변수 (코돈표 생성 및 가시성 관련만 포함)
     let showCodons = true;
     let showAminoAcids = true;
@@ -223,6 +229,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 초기화: 페이지 로드 시 코돈표 생성 및 UI 설정
+    // #quiz-report-area를 초기 숨김 처리 (CSS로 이미 처리되었지만 JS에서도 명시적으로 제어 가능)
+    // quizReportArea.style.display = 'none'; // CSS에서 처리했으므로 주석 처리
+
+    // 표기모드 버튼에 .btn-active 클래스 추가
+    aminoModeBtn.classList.add('btn-active');
+
+    // control-area 내의 모든 .control-area-title에 .control-area-title-active 클래스 추가하여 효과 활성화
+    controlAreaTitles.forEach(title => {
+        title.classList.add('control-area-title-active');
+    });
+
     updateAminoAcidDisplayModeButtonText();
     updateCodonTable();
     updateUI('setup'); // 초기 UI를 'setup' 상태로 설정
