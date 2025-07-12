@@ -173,7 +173,6 @@ button {
     border-radius: 5px;
     border: none;
     font-size: 14px;
-    -webkit-tap-highlight-color: transparent; /* 모든 버튼에 적용 */
 }
 
 /* .setting-botton은 이제 .btn-ready 클래스를 기본으로 가집니다. */
@@ -211,6 +210,7 @@ button {
     background-color: transparent;
     box-sizing: border-box;
     padding: 0;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .codon-block {
