@@ -176,211 +176,111 @@ button {
     -webkit-tap-highlight-color: transparent; /* 모든 버튼에 적용 */
 }
 
-
-
 /* .setting-botton은 이제 .btn-ready 클래스를 기본으로 가집니다. */
-
 .setting-botton{
-
     width: var(--btn-width);
-
     height: 40px;
-
     display: flex;
-
     justify-content: center;
-
     align-items: center;
-
     /* background-color: var(--btn-passive-bgc); -> .btn-ready로 이동 */
-
 }
-
-
 
 /* control-area */
-
 #division-line{
-
     width: 100%;
-
     height: 0;
-
     border-bottom: 0.5px solid #eee;
-
 }
-
 #control-area{
-
     width: 100%;
-
     height: auto;
-
 }
-
 #amino-writting-mode{
-
     border: none;
-
 }
-
-
 
 /* codon-table-area */
-
 #codon-table-area {
-
     width: calc(var(--stand-height)*1.3);
-
     height: auto;
-
     display: grid;
-
     grid-template-columns: repeat(4, 1fr);
-
     grid-template-rows: repeat(4, 1fr);
-
     gap: 0;
-
     background-color: transparent;
-
     box-sizing: border-box;
-
     padding: 0;
-
 }
-
-
 
 .codon-block {
-
     height: calc(var(--stand-height) / 4);
-
     background-color: #fff;
-
     display: flex;
-
     flex-direction: column;
-
     border: 1px solid #eee;
-
     box-sizing: border-box;
-
 }
-
-
 
 .codon-group-cell {
-
     display: flex;
-
     align-items: center;
-
     border-bottom: 1px solid #f0f0f0;
-
     cursor: pointer;
-
     transition: background-color 0.1s ease, box-shadow 0.1s ease;
-
     box-sizing: border-box;
-
     -webkit-tap-highlight-color: transparent;
-
 }
-
 /* .codon-group-cell:active {
-
     background-color: transparent;
-
 } */
 
 
-
-
-
 .codon-group-cell:last-child {
-
     border-bottom: none;
-
 }
-
-
 
 /* 선택 모드에서 선택된 셀 스타일 */
-
 .codon-group-cell.selected-for-game {
-
     background-color: #e0f7fa;
-
     box-shadow: inset 0 0 0 1px #3cd9ee;
-
 }
 
-
-
 /* 게임 중 정답 셀 스타일 */
-
 .codon-group-cell.correct-answer-bg {
-
     background-color: #d4edda;
-
 }
 
 /* 게임 중 정답 셀 하이라이트 (깜빡이는 테두리) */
-
 @keyframes blink-green-shadow {
-
     from {
-
         box-shadow: inset 0 0 0 1px green;
-
     }
-
     to {
-
         box-shadow: inset 0 0 0 1px rgba(0, 128, 0, 0);
-
     }
-
 }
 
 .codon-group-cell.correct-answer-highlight {
-
     box-shadow: inset 0 0 0 1px green;
-
     animation: blink-green-shadow 0.7s infinite alternate;
-
 }
 
 /* 게임 중 오답 셀 스타일 */
-
 @keyframes blink-red-shadow {
-
     from {
-
         box-shadow: inset 0 0 0 1px red;
-
     }
-
     to {
-
         box-shadow: inset 0 0 0 1px rgba(255, 0, 0, 0);
-
     }
-
 }
 
 .codon-group-cell.incorrect-answer-bg {
-
     background-color: #FFDCDC;
-
     box-shadow: inset 0 0 0 1px red;
-
     animation: blink-red-shadow 0.7s infinite alternate;
-
 }
-
-
 
 .codons {
 
