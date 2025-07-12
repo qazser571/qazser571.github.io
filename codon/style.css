@@ -140,11 +140,13 @@ body{
     pointer-events: none; /* 클릭 이벤트 방지 */
     /* border-bottom: none; -> .setting-title에서 이미 처리 */
     /* 가상 요소 애니메이션 */
-    &::after { /* 중첩 선택자 사용 */
-        transform: scaleX(0); /* 보이지 않음 */
-        transform-origin: right; /* 줄어들 때 오른쪽으로 줄어듦 */
-        transition: transform 0.3s ease-in; /* 줄어드는 애니메이션 */
-    }
+}
+
+/* SCSS 문법을 일반 CSS 문법으로 수정 */
+.setting-title-disabled::after, .control-area-title-disabled::after { 
+    transform: scaleX(0); /* 보이지 않음 */
+    transform-origin: right; /* 줄어들 때 오른쪽으로 줄어듦 */
+    transition: transform 0.3s ease-in; /* 줄어드는 애니메이션 */
 }
 
 .setting-title-active, .control-area-title-active { /* .control-area-title-active 추가 */
@@ -153,11 +155,13 @@ body{
     cursor: pointer;
     /* border-bottom은 가상 요소로 처리 */
     /* 가상 요소 애니메이션 */
-    &::after { /* 중첩 선택자 사용 */
-        transform: scaleX(1); /* 100% 늘어남 */
-        transform-origin: left; /* 늘어날 때 왼쪽에서 시작 */
-        transition: transform 0.3s ease-out; /* 늘어나는 애니메이션 */
-    }
+}
+
+/* SCSS 문법을 일반 CSS 문법으로 수정 */
+.setting-title-active::after, .control-area-title-active::after { 
+    transform: scaleX(1); /* 100% 늘어남 */
+    transform-origin: left; /* 늘어날 때 왼쪽에서 시작 */
+    transition: transform 0.3s ease-out; /* 늘어나는 애니메이션 */
 }
 
 .setting-btns{
@@ -173,6 +177,7 @@ button {
     border-radius: 5px;
     border: none;
     font-size: 14px;
+    /* -webkit-tap-highlight-color: transparent; */ /* 이 부분을 삭제했습니다 */
 }
 
 /* .setting-botton은 이제 .btn-ready 클래스를 기본으로 가집니다. */
@@ -210,7 +215,7 @@ button {
     background-color: transparent;
     box-sizing: border-box;
     padding: 0;
-    -webkit-tap-highlight-color: transparent;
+    -webkit-tap-highlight-color: transparent; /* 이 부분을 추가했습니다 */
 }
 
 .codon-block {
@@ -229,7 +234,7 @@ button {
     cursor: pointer;
     transition: background-color 0.1s ease, box-shadow 0.1s ease;
     box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
+    /* -webkit-tap-highlight-color: transparent; */ /* 이 부분은 원래 여기에 없었습니다. */
 }
 /* .codon-group-cell:active {
     background-color: transparent;
