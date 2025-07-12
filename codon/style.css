@@ -105,7 +105,7 @@ body{
     padding: 20px 10px;
 }
 .setting-box:last-child{
-    border: none;
+    padding-bottom: 40px;
 }
 .setting-title{
     /* 기존 스타일 */
