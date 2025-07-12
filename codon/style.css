@@ -104,7 +104,7 @@ body{
     align-items: start;
     padding: 20px 10px;
 }
-.setting-box:last-child{
+#quiz-start{
     padding-bottom: 40px;
 }
 .setting-title{
@@ -197,6 +197,9 @@ button {
 #control-area{
     width: 100%;
     height: auto;
+}
+#amino-writting-mode{
+    border: none;
 }
 
 /* codon-table-area */
