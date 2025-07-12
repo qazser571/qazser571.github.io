@@ -104,7 +104,7 @@ body{
 #quiz-start{
     border: none;
 }
-.setting-title{
+.setting-title, .control-area-title{ /* .control-area-title 추가 */
     /* 기존 스타일 */
     /* border-bottom: 2px solid #000; -> 가상 요소로 대체 */
     padding: 3px 5px;
@@ -120,8 +120,8 @@ body{
     transition: color 0.3s ease; /* 글자색 전환 애니메이션 */
 }
 
-/* .setting-title 가상 요소 (border-bottom 역할) */
-.setting-title::after {
+/* .setting-title 및 .control-area-title 가상 요소 (border-bottom 역할) */
+.setting-title::after, .control-area-title::after { /* .control-area-title 추가 */
     content: '';
     position: absolute;
     bottom: 0;
@@ -133,27 +133,27 @@ body{
     transition: transform 0.3s ease-out; /* 늘어나는 애니메이션 */
 }
 
-/* setting-title 버튼의 2가지 상태 클래스 */
-.setting-title-disabled { /* 1. 버튼이 사용 불가능한 상태 */
+/* setting-title 및 control-area-title 버튼의 2가지 상태 클래스 */
+.setting-title-disabled, .control-area-title-disabled { /* .control-area-title-disabled 추가 */
     color: var(--btn-disabled-color); /* 회색 글자 */
     cursor: not-allowed;
     pointer-events: none; /* 클릭 이벤트 방지 */
     /* border-bottom: none; -> .setting-title에서 이미 처리 */
     /* 가상 요소 애니메이션 */
-    .setting-title::after {
+    &::after { /* 중첩 선택자 사용 */
         transform: scaleX(0); /* 보이지 않음 */
         transform-origin: right; /* 줄어들 때 오른쪽으로 줄어듦 */
         transition: transform 0.3s ease-in; /* 줄어드는 애니메이션 */
     }
 }
 
-.setting-title-active { /* 2. 버튼이 활성화 되어있고, 사용가능한 상태 */
+.setting-title-active, .control-area-title-active { /* .control-area-title-active 추가 */
     color: #000; /* 검은색 글자 */
     font-weight: bold;
     cursor: pointer;
     /* border-bottom은 가상 요소로 처리 */
     /* 가상 요소 애니메이션 */
-    .setting-title::after {
+    &::after { /* 중첩 선택자 사용 */
         transform: scaleX(1); /* 100% 늘어남 */
         transform-origin: left; /* 늘어날 때 왼쪽에서 시작 */
         transition: transform 0.3s ease-out; /* 늘어나는 애니메이션 */
@@ -335,6 +335,7 @@ button {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    display: none; /* 추가: 초기 숨김 처리 */
 }
 .report-box{
     height: auto;
