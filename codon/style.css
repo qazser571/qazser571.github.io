@@ -235,7 +235,6 @@ button {
     background-color: transparent;
 } */
 
-
 .codon-group-cell:last-child {
     border-bottom: none;
 }
@@ -306,159 +305,81 @@ button {
 }
 
 
-
 .amino-acid {
-
     flex: 1;
-
     text-align: center;
-
     font-weight: bold;
-
     color: #333;
-
     transition: opacity 0.3s ease;
-
     font-size: 0.9em;
-
     box-sizing: border-box;
-
 }
-
-
 
 /* 숨기기 클래스 */
-
 .hidden {
-
     display: none !important;
-
 }
-
-
 
 .hidden-codon .codon-item {
-
     opacity: 0;
-
 }
-
-
 
 .hidden-amino-acid .amino-acid {
-
     opacity: 0;
-
 }
-
-
-
 
 
 /* quiz-report-area */
-
 #quiz-report-area{
-
     width: calc(var(--btn-width) + var(--stand-padding) * 2);
-
     display: flex;
-
     flex-direction: column;
-
     justify-content: space-between;
-
 }
-
 .report-box{
-
     height: auto;
-
     border-bottom: 0.5px solid #eee;
-
     padding: 20px 0px;
-
 }
-
 /* #report-area{
-
     border: 1px solid #000;
-
 } */
-
 .report-box:last-child{
-
     border: none;
-
 }
-
 #question-box{
-
     padding: 10px 0 20px 0;
-
     display: flex;
-
     flex-direction: column;
-
     justify-content: center;
-
     align-items: center;
-
     gap: 5px;
-
 }
-
 #current-question{
-
     width: var(--btn-width);
-
     border: none;
-
     border: 1px solid #000;
-
     display: flex;
-
     justify-content: center;
-
     align-items: center;
-
 }
-
 #next-btn{
-
     width: var(--btn-width);
-
     border: none;
-
 }
-
 #percent-gauge{
-
     width: var(--btn-width);
-
     height: 35px;
-
     border: none;
-
     border: 1px solid #000;
-
 }
-
 #exit-area{
-
     padding-top: var(--stand-padding);
-
     border-top: 0.5px solid #eee;
-
 }
-
 #exit-btn{
-
     width: 150px;
-
     border: none;
-
     background-color: rgb(255, 170, 170);
-
     box-shadow: inset 0 0 0 1px #ff1d1d;
-
 }
