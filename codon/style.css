@@ -63,7 +63,7 @@ body{
     background-color: #f4f7f6;
 }
 #container{
-    width: calc(var(--btn-width)*3 + var(--stand-height)*1.2 + var(--stand-padding)*3);
+    width: auto;
     height: auto;
     display: flex;
     justify-content: center;
@@ -83,7 +83,7 @@ body{
 
 /* setting-control-area */
 #setting-control-area{
-    width: calc(var(--btn-width) * 2 + var(--stand-padding) * 3);
+    width: calc(var(--btn-width) * 2 + var(--stand-padding) * 4);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
