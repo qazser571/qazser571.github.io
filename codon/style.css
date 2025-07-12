@@ -186,7 +186,7 @@ button {
 /* .setting-botton은 이제 .btn-ready 클래스를 기본으로 가집니다. */
 .setting-botton{
     width: var(--btn-width);
-    height: 35px;
+    height: 40px;
     display: flex;
     justify-content: center;
     align-items: center;
