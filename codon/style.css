@@ -357,6 +357,7 @@ button {
 }
 #current-question{
     width: var(--btn-width);
+    height: 40px;
     border: none;
     border: 1px solid #000;
     display: flex;
@@ -365,11 +366,12 @@ button {
 }
 #next-btn{
     width: var(--btn-width);
+    height: 40px;
     border: none;
 }
 #percent-gauge{
     width: var(--btn-width);
-    height: 35px;
+    height: 40px;
     border: none;
     border: 1px solid #000;
 }
@@ -379,6 +381,7 @@ button {
 }
 #exit-btn{
     width: 150px;
+    height: 40px;
     border: none;
     background-color: rgb(255, 170, 170);
     box-shadow: inset 0 0 0 1px #ff1d1d;
