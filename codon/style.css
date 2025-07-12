@@ -299,7 +299,7 @@ button {
     font-weight: bold;
     margin: 1px 0;
     color: #555;
-    transition: opacity 0.1s ease;
+    transition: opacity 0.2s ease;
     font-size: 1.1em;
     box-sizing: border-box;
 }
@@ -310,7 +310,7 @@ button {
     text-align: center;
     font-weight: bold;
     color: #333;
-    transition: opacity 0.1s ease;
+    transition: opacity 0.2s ease;
     font-size: 0.9em;
     box-sizing: border-box;
 }
