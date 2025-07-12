@@ -361,6 +361,7 @@ button {
 }
 #percent-gauge{
     width: var(--btn-width);
+    height: 35px;
     border: none;
     border: 1px solid #000;
 }
