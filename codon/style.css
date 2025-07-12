@@ -97,12 +97,15 @@ body{
 }
 
 .setting-box{
-    border-top: 0.5px solid #eee;
+    border-bottom: 0.5px solid #eee;
     height: auto;
     display: flex;
     justify-content: space-between;
     align-items: start;
     padding: 20px 10px;
+}
+.setting-box:last-child{
+    border: none;
 }
 .setting-title{
     /* 기존 스타일 */
