@@ -202,7 +202,7 @@ button {
 
 /* codon-table-area */
 #codon-table-area {
-    width: calc(var(--stand-height)*1.3);
+    width: calc(var(--stand-height)*1.23);
     height: auto;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
