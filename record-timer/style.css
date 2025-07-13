@@ -1,0 +1,63 @@
+@font-face {
+  font-family: 'DS-Digital';
+  src: url('./fonts/DS-DIGI.TTF') format('truetype'),
+       url('./fonts/DS-DIGIB.TTF') format('truetype'),
+       url('./fonts/DS-DIGII.TTF') format('truetype'),
+       url('./fonts/DS-DIGIT.TTF') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  margin: 0;
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  color: #4a4a4a;
+}
+
+.container {
+  text-align: center;
+  user-select: none;
+}
+
+.time-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.ampm {
+  font-size: 1.8rem;
+  font-weight: 400;
+  color: #4a4a4a;
+  min-width: 3.5rem;
+  text-align: center;
+  user-select: none;
+}
+
+.digital-time {
+  font-family: 'DS-Digital', monospace;
+  font-size: 5.5rem;
+  color: #4a4a4a;
+  letter-spacing: 0; /* 숫자 간격 좁힘 */
+  user-select: none;
+
+  display: flex; /* 내부 숫자들을 flex로 배치 */
+  justify-content: center; /* 중앙 정렬 */
+  gap: 0.05em; /* 숫자 사이 간격을 아주 약간만 줌 */
+
+  width: 16ch; /* 고정 너비: 숫자 8자리(시:분:초) 기준 적절히 설정 */
+}
+
+.date {
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: #4a4a4a;
+  user-select: none;
+}
