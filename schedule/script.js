@@ -53,22 +53,23 @@ async function init() {
   exceptionSchedules = JSON.parse(localStorage.getItem(STORAGE_KEYS.exceptionSchedules)) || [];
 
   // 예외 스케줄은 항상 schedules 객체에 반영
-  schedules['예외 스케줄'] = exceptionSchedules;
+  // loadSchedules()에서 order 배열을 기반으로 schedules 객체를 채우므로,
+  // order가 로드된 후에 예외 스케줄을 schedules에 추가해야 합니다.
+  // 여기서는 초기화만 하고, loadSchedules() 내에서 최종적으로 반영합니다.
 
   // 파일에서 범주 순서 및 스케줄 불러오기
   try {
     await loadOrder(); // order.txt에서 범주 순서 로드
     await loadSchedules(); // 각 범주별 txt 파일에서 일정 로드
+    // order와 schedules가 성공적으로 로드된 후에 예외 스케줄을 schedules에 반영
+    schedules['예외 스케줄'] = exceptionSchedules;
   } catch (error) {
-    console.error("파일 로드 중 오류 발생:", error);
-    alert("스케줄 파일을 불러오는 데 실패했습니다. 서버 환경에서 실행 중인지 확인해주세요.");
-    // 기본 데이터로 대체 (개발 시 유용)
-    order = ['예외 스케줄', '국어', '수학', '영어', '사회과학', '자연과학'];
-    schedules['국어'] = ['책읽기', '문제풀기', '시험보기'];
-    schedules['수학'] = ['개념복습', '문제풀이'];
-    schedules['영어'] = ['듣기연습', '독해'];
-    schedules['사회과학'] = ['정리', '암기'];
-    schedules['자연과학'] = ['실험', '복습'];
+    console.error("스케줄 파일을 불러오는 데 실패했습니다. 서버 환경에서 실행 중인지 확인해주세요.", error);
+    alert("스케줄 파일을 불러오는 데 실패했습니다. 웹페이지에 스케줄이 표시되지 않을 수 있습니다.");
+    // 파일 로드 실패 시 order와 schedules는 빈 상태로 유지됩니다.
+    // 이 경우 '예외 스케줄'만이라도 표시되도록 수동으로 추가
+    order = ['예외 스케줄'];
+    schedules['예외 스케줄'] = exceptionSchedules;
   }
 
   updateCurrentDateAndDDay();
@@ -91,7 +92,7 @@ async function loadOrder() {
 
 // 각 범주별 txt 파일에서 일정 읽기
 async function loadSchedules() {
-  // '예외 스케줄'은 이미 로컬 스토리지에서 로드되었으므로, 파일에서 불러오지 않음
+  // '예외 스케줄'은 로컬 스토리지에서 관리되므로, 파일에서 불러오지 않음
   const categoriesToLoad = order.filter(category => category !== '예외 스케줄');
 
   for (const category of categoriesToLoad) {
@@ -183,7 +184,7 @@ function startTimerInterval() {
 // 시간 포맷팅 (밀리초 -> HH:MM:SS)
 function formatDuration(ms) {
   const totalSeconds = Math.floor(ms / 1000);
-  const h = Math.floor(totalSeconds / 3600);
+  const h = Math.floor((totalSeconds / 3600) % 24); // 24시간 넘어가면 다시 0부터
   const m = Math.floor((totalSeconds % 3600) / 60);
   const s = totalSeconds % 60;
   return `${padZero(h)}:${padZero(m)}:${padZero(s)}`;
@@ -240,6 +241,17 @@ function saveExceptionSchedule(text) {
 function renderTaskList() {
   taskListContainer.innerHTML = '';
 
+  // order 배열이 비어있을 경우 (파일 로드 실패 등) 처리
+  if (order.length === 0) {
+    const noDataMessage = document.createElement('div');
+    noDataMessage.textContent = '스케줄 데이터를 불러올 수 없습니다. 파일 경로를 확인해주세요.';
+    noDataMessage.style.textAlign = 'center';
+    noDataMessage.style.padding = '20px';
+    noDataMessage.style.color = '#888';
+    taskListContainer.appendChild(noDataMessage);
+    return;
+  }
+
   order.forEach(category => {
     const categoryDiv = document.createElement('div');
     categoryDiv.classList.add('task-category');
@@ -250,6 +262,16 @@ function renderTaskList() {
     categoryDiv.appendChild(titleDiv);
 
     const tasks = schedules[category] || [];
+
+    // 해당 카테고리에 일정이 없을 경우 메시지 표시
+    if (tasks.length === 0 && category !== '예외 스케줄') { // 예외 스케줄은 비어있을 수 있음
+      const noTaskMessage = document.createElement('div');
+      noTaskMessage.textContent = '일정 없음';
+      noTaskMessage.style.textAlign = 'center';
+      noTaskMessage.style.padding = '5px';
+      noTaskMessage.style.color = '#aaa';
+      categoryDiv.appendChild(noTaskMessage);
+    }
 
     tasks.forEach(task => {
       const taskDiv = document.createElement('div');
@@ -304,7 +326,10 @@ function renderTaskList() {
       categoryDiv.appendChild(timerRecordDiv);
 
       // 일정 클릭 이벤트 (토글)
-      taskDiv.addEventListener('click', () => {
+      taskDiv.addEventListener('click', (event) => {
+        // 이벤트 버블링 방지 (상위 요소의 클릭 이벤트가 실행되지 않도록)
+        event.stopPropagation();
+
         if (selectingMode) return; // 일정 선택 모드일 때는 토글 기능 비활성화
 
         // 다른 열려있는 기록 닫기
@@ -352,33 +377,47 @@ function renderAnalysisGraph() {
 
   // 각 범주별 오늘 기록된 총 시간 계산 (밀리초)
   const dailyTotalTimes = {};
+  // 모든 범주를 초기화 (기록이 없어도 0으로 표시하기 위함)
+  order.forEach(category => {
+    dailyTotalTimes[category] = 0;
+  });
+
   for (const category in records) {
-    let sum = 0;
     for (const task in records[category]) {
       records[category][task].forEach(r => {
         const recordDate = new Date(r.start);
         recordDate.setHours(0, 0, 0, 0);
         if (recordDate.getTime() === today.getTime()) { // 오늘 기록만 포함
-          sum += r.duration;
+          if (dailyTotalTimes[category] !== undefined) { // 해당 범주가 order에 있다면
+            dailyTotalTimes[category] += r.duration;
+          }
         }
       });
     }
-    dailyTotalTimes[category] = sum;
   }
-
-  // 모든 범주(order 배열에 있는)를 대상으로 그래프 생성
-  const allCategories = order; // order 배열에 있는 모든 범주 사용
 
   // 오늘 기록된 모든 시간의 총합 (비율 계산용)
   const totalAllDaily = Object.values(dailyTotalTimes).reduce((a, b) => a + b, 0);
 
-  // 시간 많은 순 정렬 (오늘 기록 기준)
-  const sortedCategories = allCategories
+  // 모든 범주(order 배열에 있는)를 대상으로 그래프 생성
+  // 기록이 없는 범주도 포함시키기 위해 order 배열을 기준으로 정렬
+  const sortedCategories = order
     .map(category => ({ category, time: dailyTotalTimes[category] || 0 })) // 기록 없는 범주는 0으로
-    .sort((a, b) => b.time - a.time);
+    .sort((a, b) => b.time - a.time); // 시간 많은 순으로 정렬
 
   // 색상 배열 (시간이 많은 순서대로 다른 색상 부여)
   const colors = ['#d33', '#3366cc', '#ffcc00', '#28a745', '#6f42c1', '#fd7e14', '#17a2b8', '#dc3545']; // 추가 색상
+
+  // order 배열이 비어있을 경우 (파일 로드 실패 등) 처리
+  if (order.length === 0) {
+    const noDataMessage = document.createElement('div');
+    noDataMessage.textContent = '분석 데이터를 불러올 수 없습니다.';
+    noDataMessage.style.textAlign = 'center';
+    noDataMessage.style.padding = '20px';
+    noDataMessage.style.color = '#888';
+    analysisGraphContainer.appendChild(noDataMessage);
+    return;
+  }
 
   sortedCategories.forEach((item, idx) => {
     const category = item.category;
@@ -391,17 +430,10 @@ function renderAnalysisGraph() {
 
     const labelSpan = document.createElement('span');
     labelSpan.textContent = category;
-    labelSpan.style.width = '60px'; // 레이블 너비 고정
-    labelSpan.style.fontSize = '12px';
-    labelSpan.style.fontWeight = '600';
-    labelSpan.style.marginRight = '6px';
-    labelSpan.style.flexShrink = '0'; // 레이블이 줄어들지 않도록
+    // CSS에서 위치와 정렬을 담당하므로 여기서는 기본 텍스트만 설정
 
     const barOuter = document.createElement('div');
-    barOuter.style.flexGrow = '1'; // 남은 공간 모두 차지
-    barOuter.style.height = '12px';
-    barOuter.style.border = '1px solid #ccc';
-    barOuter.style.position = 'relative';
+    // CSS에서 flex-grow 및 기타 스타일을 담당하므로 여기서는 기본 div만 생성
 
     const barInner = document.createElement('div');
     barInner.style.height = '100%';
