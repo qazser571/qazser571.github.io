@@ -298,7 +298,6 @@ body {
   font-weight: 700;
   font-size: 14px;
   position: relative; /* ::after를 위한 position */
-  background-color: #f8f8f8; /* 배경색 추가 */
 }
 
 .analysis-detail-link {
