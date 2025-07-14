@@ -58,13 +58,13 @@ body {
 }
 
 .container {
-  width: 900px;
-  border-radius: var(--border-radius);
-  box-shadow: var(--container-shadow);
+  min-width: 1000px; /* 최소 너비 설정 */
+  /* border-radius: var(--border-radius); */ /* 제거 */
+  /* box-shadow: var(--container-shadow); */ /* 제거 */
   display: flex;
   gap: 20px;
-  background-color: #fff; /* 컨테이너 배경색 추가 */
-  overflow: hidden; /* 자식 요소의 box-shadow가 튀어나오지 않도록 */
+  /* background-color: #fff; */ /* 제거 */
+  /* overflow: hidden; */ /* 제거 */
 }
 
 /* left, right */
@@ -97,6 +97,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  background-color: #fff; /* 배경색 추가 */
 }
 
 .current-date {
@@ -109,9 +110,11 @@ body {
 /* dday-container는 가로 배치, 앞쪽 div 너비 고정, 뒤쪽 div 나머지 차지 */
 .dday-container {
   display: flex;
+  border-radius: var(--border-radius); /* 다시 추가 */
+  box-shadow: var(--box-shadow); /* 다시 추가 */
   overflow: hidden; /* 내부 요소의 border-radius를 위해 */
   height: 40px;
-  background-color: transparent; /* 배경색 제거 */
+  background-color: #fff; /* 다시 추가 */
 }
 
 .dday-title {
@@ -123,7 +126,7 @@ body {
   font-weight: 700;
   font-size: 18px;
   position: relative; /* ::after를 위한 position */
-  background-color: transparent; /* 배경색 제거 */
+  background-color: #f8f8f8; /* 배경색 추가 */
 }
 
 /* dday-count는 나머지 너비 차지 */
@@ -134,7 +137,7 @@ body {
   justify-content: center;
   font-weight: 700;
   font-size: 18px;
-  background-color: transparent; /* 배경색 제거 */
+  background-color: #fff; /* 배경색 추가 */
 }
 
 /* 2번째 div: 현재 시각 */
@@ -149,6 +152,7 @@ body {
   padding-left: 12px;
   gap: 6px;
   user-select: none;
+  background-color: #fff; /* 배경색 추가 */
 }
 
 .ampm {
@@ -164,12 +168,14 @@ body {
 
 /* 3번째 div: 타이머 상태 및 일정 */
 .timer-status-box {
-  padding: 10px 12px; /* padding 10px 적용 */
+  border-radius: var(--border-radius); /* 다시 추가 */
+  box-shadow: var(--box-shadow); /* 다시 추가 */
+  padding: 8px 12px; /* padding 8px 12px 적용 */
   display: flex;
   flex-direction: column;
   gap: 8px;
   user-select: none;
-  background-color: transparent; /* 배경색 제거 */
+  background-color: #fff; /* 배경색 추가 */
 }
 
 .timer-top-row {
@@ -185,7 +191,7 @@ body {
   font-size: 16px;
   padding-right: 8px;
   position: relative; /* ::after를 위한 position */
-  background-color: transparent; /* 배경색 제거 */
+  background-color: #f8f8f8; /* 배경색 추가 */
 }
 
 .timer-time {
@@ -208,7 +214,7 @@ body {
   font-size: 16px;
   padding-right: 8px;
   position: relative; /* ::after를 위한 position */
-  background-color: transparent; /* 배경색 제거 */
+  background-color: #f8f8f8; /* 배경색 추가 */
 }
 
 .schedule-task {
@@ -249,13 +255,15 @@ body {
 
 /* 4번째 div: 분석 박스 */
 .analysis-box {
-  padding: 10px 12px; /* padding 10px 적용 */
+  border-radius: var(--border-radius); /* 다시 추가 */
+  box-shadow: var(--box-shadow); /* 다시 추가 */
+  padding: 8px 12px; /* padding 8px 12px 적용 */
   display: flex;
   flex-direction: column;
   gap: 6px;
   user-select: none;
   height: 160px; /* 고정 높이 */
-  background-color: transparent; /* 배경색 제거 */
+  background-color: #fff; /* 배경색 추가 */
 }
 
 .analysis-header {
@@ -274,7 +282,7 @@ body {
   font-size: 14px;
   padding-right: 8px;
   position: relative; /* ::after를 위한 position */
-  background-color: transparent; /* 배경색 제거 */
+  background-color: #f8f8f8; /* 배경색 추가 */
 }
 
 .analysis-detail-link {
@@ -297,49 +305,51 @@ body {
   margin-top: 6px;
   overflow-y: auto; /* 스크롤 가능하도록 */
   flex-grow: 1;
+  /* border: 1px solid #ccc; */ /* 막대그래프 둘러싼 border 제거 */
   position: relative; /* 세로 바를 위한 position */
-  padding-left: calc(var(--title-width) + var(--vertical-bar-width) + var(--label-padding-right)); /* 레이블 너비 + 세로바 너비 + 간격 */
+  /* padding-left: calc(var(--title-width) + var(--vertical-bar-width) + var(--label-padding-right)); */ /* 제거 */
 }
 
-/* 분석 그래프 세로 바 */
-.analysis-graph-container::before {
+/* 분석 그래프 세로 바 (원상 복구) */
+/* .analysis-graph-container::before {
   content: "";
   position: absolute;
-  left: calc(var(--title-width) + var(--vertical-bar-width) / 2); /* 레이블 너비 + 세로바 절반 */
+  left: calc(var(--title-width) + var(--vertical-bar-width) / 2);
   top: 0;
   bottom: 0;
   width: var(--vertical-bar-width);
   background-color: var(--vertical-bar-color);
-  transform: translateX(-50%); /* 정확히 중앙에 오도록 */
-}
+  transform: translateX(-50%);
+} */
 
-/* 각 그래프 바 요소 */
-.analysis-graph-container > div { /* barDiv 대신 직접 자식 div 선택 */
+/* 각 그래프 바 요소 (원상 복구) */
+.analysis-graph-container > div {
   display: flex;
   align-items: center;
   margin-bottom: 4px;
-  position: relative; /* 레이블 위치 조정을 위해 */
+  /* position: relative; */ /* 제거 */
 }
 
-/* 막대 그래프 레이블 */
-.analysis-graph-container span { /* labelSpan 대신 직접 span 선택 */
-  position: absolute; /* 절대 위치로 세로 바 옆에 배치 */
-  left: 0;
-  width: var(--title-width); /* 레이블 너비 고정 */
-  text-align: right; /* 오른쪽 정렬 */
-  padding-right: var(--label-padding-right); /* 세로 바와의 간격 */
+/* 막대 그래프 레이블 (원상 복구) */
+.analysis-graph-container span {
+  /* position: absolute; */ /* 제거 */
+  /* left: 0; */ /* 제거 */
+  width: 60px; /* 레이블 너비 고정 */
+  text-align: left; /* 왼쪽 정렬로 원상 복구 */
+  /* padding-right: var(--label-padding-right); */ /* 제거 */
   font-size: 12px;
   font-weight: 600;
   flex-shrink: 0;
+  margin-right: 6px; /* 원래 마진으로 원상 복구 */
 }
 
-/* 막대 그래프 바 외부 컨테이너 */
-.analysis-graph-container > div > div:last-child { /* barOuter 대신 직접 div 선택 */
+/* 막대 그래프 바 외부 컨테이너 (원상 복구) */
+.analysis-graph-container > div > div:last-child {
   flex-grow: 1;
   height: 12px;
   border: 1px solid #ccc;
   position: relative;
-  margin-left: 0; /* 기존 margin-right 제거 */
+  /* margin-left: 0; */ /* 제거 */
 }
 
 
@@ -352,6 +362,7 @@ body {
   flex-direction: column;
   gap: 6px;
   user-select: none;
+  background-color: #fff; /* 배경색 추가 */
 }
 
 .exception-title {
@@ -488,4 +499,4 @@ body {
 .task-list-container.selecting {
   box-shadow: 0 0 10px 3px var(--active-color-blue);
   border-color: var(--active-color-blue);
-}
+  }
