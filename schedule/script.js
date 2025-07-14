@@ -52,11 +52,6 @@ async function init() {
   records = JSON.parse(localStorage.getItem(STORAGE_KEYS.records)) || {};
   exceptionSchedules = JSON.parse(localStorage.getItem(STORAGE_KEYS.exceptionSchedules)) || [];
 
-  // 예외 스케줄은 항상 schedules 객체에 반영
-  // loadSchedules()에서 order 배열을 기반으로 schedules 객체를 채우므로,
-  // order가 로드된 후에 예외 스케줄을 schedules에 추가해야 합니다.
-  // 여기서는 초기화만 하고, loadSchedules() 내에서 최종적으로 반영합니다.
-
   // 파일에서 범주 순서 및 스케줄 불러오기
   try {
     await loadOrder(); // order.txt에서 범주 순서 로드
@@ -430,10 +425,17 @@ function renderAnalysisGraph() {
 
     const labelSpan = document.createElement('span');
     labelSpan.textContent = category;
-    // CSS에서 위치와 정렬을 담당하므로 여기서는 기본 텍스트만 설정
+    labelSpan.style.width = '60px'; // 레이블 너비 고정
+    labelSpan.style.fontSize = '12px';
+    labelSpan.style.fontWeight = '600';
+    labelSpan.style.marginRight = '6px';
+    labelSpan.style.flexShrink = '0'; // 레이블이 줄어들지 않도록
 
     const barOuter = document.createElement('div');
-    // CSS에서 flex-grow 및 기타 스타일을 담당하므로 여기서는 기본 div만 생성
+    barOuter.style.flexGrow = '1'; // 남은 공간 모두 차지
+    barOuter.style.height = '12px';
+    barOuter.style.border = '1px solid #ccc';
+    barOuter.style.position = 'relative';
 
     const barInner = document.createElement('div');
     barInner.style.height = '100%';
