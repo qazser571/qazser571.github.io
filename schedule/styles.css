@@ -1,3 +1,4 @@
+/* 폰트 정의 */
 @font-face {
   font-family: 'DS-DIGI';
   src: url('fonts/DS-DIGI.TTF') format('truetype');
@@ -151,7 +152,7 @@ body {
   font-size: 18px;
   font-weight: 600;
   padding-left: 12px;
-  gap: calc(var(--title-gap)*2 + var(--bar-width);
+  gap: calc(var(--title-gap)*2 + var(--bar-width)); /* 수정된 부분 */
   user-select: none;
 }
 
@@ -319,9 +320,7 @@ body {
   margin-top: 6px;
   overflow-y: auto; /* 스크롤 가능하도록 */
   flex-grow: 1;
-  /* border: 1px solid #ccc; */ /* 막대그래프 둘러싼 border 제거 */
   position: relative; /* 세로 바를 위한 position */
-  /* padding-left: calc(var(--title-width) + var(--vertical-bar-width) + var(--label-padding-right)); */ /* 제거 */
 }
 
 
@@ -330,16 +329,12 @@ body {
   display: flex;
   align-items: center;
   margin-bottom: 4px;
-  /* position: relative; */ /* 제거 */
 }
 
 /* 막대 그래프 레이블 (원상 복구) */
 .analysis-graph-container span {
-  /* position: absolute; */ /* 제거 */
-  /* left: 0; */ /* 제거 */
   width: 60px; /* 레이블 너비 고정 */
   text-align: left; /* 왼쪽 정렬로 원상 복구 */
-  /* padding-right: var(--label-padding-right); */ /* 제거 */
   font-size: 12px;
   font-weight: 600;
   flex-shrink: 0;
@@ -352,7 +347,6 @@ body {
   height: 12px;
   border: 1px solid #ccc;
   position: relative;
-  /* margin-left: 0; */ /* 제거 */
 }
 
 
