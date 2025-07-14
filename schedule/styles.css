@@ -122,11 +122,11 @@ body {
   border-right: var(--bar-width) solid var(--bar-color); /* 바 두께 적용 */
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: end;
+  padding-right: 10px;
   font-weight: 700;
   font-size: 18px;
   position: relative; /* ::after를 위한 position */
-  background-color: #f8f8f8; /* 배경색 추가 */
 }
 
 /* dday-count는 나머지 너비 차지 */
@@ -157,6 +157,11 @@ body {
 
 .ampm {
   font-weight: 700;
+  width: var(--title-width);
+  padding-right: 10px;
+  display: flex;
+  justify-content: end;
+  align-items: center;
 }
 
 .digital-time {
@@ -180,18 +185,22 @@ body {
 
 .timer-top-row {
   display: flex;
-  justify-content: space-between;
+  justify-content: start;
   align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid #eee; /* 얇은 구분선 */
 }
 
 .timer-state {
   width: var(--title-width);
   border-right: var(--bar-width) solid var(--bar-color); /* 바 두께 적용 */
+  padding-right: 10px;
+  display: flex;
+  justify-content: end;
+  align-items: center;
   font-weight: 700;
   font-size: 16px;
-  padding-right: 8px;
   position: relative; /* ::after를 위한 position */
-  background-color: #f8f8f8; /* 배경색 추가 */
 }
 
 .timer-time {
@@ -207,14 +216,18 @@ body {
   align-items: center;
 }
 
+
+
 .schedule-category {
   width: var(--title-width);
   border-right: var(--bar-width) solid var(--bar-color); /* 바 두께 적용 */
+  padding-right: 10px;
+  display: flex;
+  justify-content: end;
+  align-items: center;
   font-weight: 700;
   font-size: 16px;
-  padding-right: 8px;
   position: relative; /* ::after를 위한 position */
-  background-color: #f8f8f8; /* 배경색 추가 */
 }
 
 .schedule-task {
