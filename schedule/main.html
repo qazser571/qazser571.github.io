@@ -1,1 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>수능 일정 및 진행 관리</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="left">
+      <!-- 1번째 div: 날짜 및 디데이 -->
+      <div class="date-dday-box">
+        <div class="current-date">2025년 7월 14일 월요일</div>
+        <div class="dday-container">
+          <div class="dday-title">수능</div>
+          <div class="dday-count">D-122</div>
+        </div>
+      </div>
 
+      <!-- 2번째 div: 현재 시각 -->
+      <div class="current-time-box">
+        <span class="ampm">오전</span> <span class="digital-time">10:31:17</span>
+      </div>
+
+      <!-- 3번째 div: 타이머 상태 및 일정 -->
+      <div class="timer-status-box">
+        <div class="timer-top-row">
+          <div class="timer-state">쉬는중</div>
+          <div class="timer-time">00:00:00</div>
+        </div>
+        <div class="timer-schedule-row">
+          <div class="schedule-category">국어</div>
+          <div class="schedule-task">문제풀기</div>
+        </div>
+        <div class="timer-btn-group">
+          <button class="btn-start">시작</button>
+          <button class="btn-pause inactive">보류</button>
+          <button class="btn-complete inactive">완료</button>
+        </div>
+      </div>
+
+      <!-- 4번째 div: 오늘 타이머 기록 분석 -->
+      <div class="analysis-box">
+        <div class="analysis-header">
+          <div>분석</div>
+          <a href="https://example.com" target="_blank" class="analysis-detail-link">상세 분석</a>
+        </div>
+        <div class="analysis-graph-container">
+          <!-- 그래프 바는 JS로 동적 생성 예정 -->
+        </div>
+      </div>
+
+      <!-- 5번째 div: 예외 스케줄 작성 -->
+      <div class="exception-schedule-box">
+        <div class="exception-title">예외 스케줄 작성</div>
+        <hr />
+        <div class="exception-input-area">
+          <input type="text" id="exception-input" placeholder="예외 스케줄 작성" />
+          <button id="exception-save-btn">저장</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="right">
+      <hr class="right-separator" />
+      <div class="task-list-container">
+        <!-- 스케줄 범주 및 일정 목록은 JS로 동적 생성 -->
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
