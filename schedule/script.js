@@ -4,7 +4,8 @@
 const ORDER_FILE_PATH = 'data/order.txt';
 const DUTY_FOLDER_PATH = 'data/duty/';
 
-const D_DAY_TARGET_DATE = new Date('2026-11-13T00:00:00'); // 2026학년도 수능 날짜 예시 (실제 날짜로 수정 필요)
+// 2026학년도 수능 디데이 (2025년 11월 13일 목요일 기준)
+const D_DAY_TARGET_DATE = new Date('2025-11-13T00:00:00');
 
 const btnStart = document.querySelector('.btn-start');
 const btnPause = document.querySelector('.btn-pause');
@@ -43,6 +44,7 @@ const STORAGE_KEYS = {
 let order = []; // 범주 순서 배열
 let schedules = {}; // {범주: [일정명,...]}
 let records = {}; // 로컬 스토리지에서 로드
+let exceptionSchedules = []; // 로컬 스토리지에서 로드
 
 // 초기화 함수
 async function init() {
@@ -345,34 +347,42 @@ function renderTaskList() {
 function renderAnalysisGraph() {
   analysisGraphContainer.innerHTML = '';
 
-  // 각 범주별 총 시간 계산 (밀리초)
-  const totalTimes = {};
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // 오늘 날짜의 시작 시간
+
+  // 각 범주별 오늘 기록된 총 시간 계산 (밀리초)
+  const dailyTotalTimes = {};
   for (const category in records) {
     let sum = 0;
     for (const task in records[category]) {
       records[category][task].forEach(r => {
-        sum += r.duration;
+        const recordDate = new Date(r.start);
+        recordDate.setHours(0, 0, 0, 0);
+        if (recordDate.getTime() === today.getTime()) { // 오늘 기록만 포함
+          sum += r.duration;
+        }
       });
     }
-    if (sum > 0) { // 0분 이상인 범주만 표시
-      totalTimes[category] = sum;
-    }
+    dailyTotalTimes[category] = sum;
   }
 
-  // 총합
-  const totalAll = Object.values(totalTimes).reduce((a, b) => a + b, 0);
+  // 모든 범주(order 배열에 있는)를 대상으로 그래프 생성
+  const allCategories = order; // order 배열에 있는 모든 범주 사용
 
-  // 시간 많은 순 정렬
-  const sortedCategories = Object.entries(totalTimes)
-    .sort((a, b) => b[1] - a[1])
-    .map(e => e[0]);
+  // 오늘 기록된 모든 시간의 총합 (비율 계산용)
+  const totalAllDaily = Object.values(dailyTotalTimes).reduce((a, b) => a + b, 0);
+
+  // 시간 많은 순 정렬 (오늘 기록 기준)
+  const sortedCategories = allCategories
+    .map(category => ({ category, time: dailyTotalTimes[category] || 0 })) // 기록 없는 범주는 0으로
+    .sort((a, b) => b.time - a.time);
 
   // 색상 배열 (시간이 많은 순서대로 다른 색상 부여)
-  const colors = ['#d33', '#3366cc', '#ffcc00', '#28a745', '#6f42c1', '#fd7e14']; // 추가 색상
+  const colors = ['#d33', '#3366cc', '#ffcc00', '#28a745', '#6f42c1', '#fd7e14', '#17a2b8', '#dc3545']; // 추가 색상
 
-  sortedCategories.forEach((category, idx) => {
-    const time = totalTimes[category];
-    // if (time === 0) return; // 이미 위에서 0분 이상인 범주만 필터링 됨
+  sortedCategories.forEach((item, idx) => {
+    const category = item.category;
+    const time = item.time;
 
     const barDiv = document.createElement('div');
     barDiv.style.display = 'flex';
@@ -395,7 +405,7 @@ function renderAnalysisGraph() {
 
     const barInner = document.createElement('div');
     barInner.style.height = '100%';
-    barInner.style.width = totalAll > 0 ? `${(time / totalAll) * 100}%` : '0%';
+    barInner.style.width = totalAllDaily > 0 ? `${(time / totalAllDaily) * 100}%` : '0%';
     barInner.style.backgroundColor = colors[idx % colors.length]; // 색상 순환
     barInner.style.transition = 'width 0.5s ease-out'; // 애니메이션 효과
 
