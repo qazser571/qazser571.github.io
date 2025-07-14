@@ -80,7 +80,7 @@ body {
   width: 320px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 10px;
 }
 
 .right {
@@ -271,8 +271,8 @@ body {
   flex-direction: column;
   gap: 6px;
   user-select: none;
-  height: 160px; /* 고정 높이 */
   background-color: #fff; /* 배경색 추가 */
+  flex: 1;
 }
 
 .analysis-header {
