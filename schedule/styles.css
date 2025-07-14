@@ -111,10 +111,7 @@ body {
 /* dday-container는 가로 배치, 앞쪽 div 너비 고정, 뒤쪽 div 나머지 차지 */
 .dday-container {
   display: flex;
-  border-radius: var(--border-radius); /* 다시 추가 */
-  box-shadow: var(--box-shadow); /* 다시 추가 */
-  overflow: hidden; /* 내부 요소의 border-radius를 위해 */
-  height: 40px;
+  height: 30px;
   gap: var(--title-gap);
   background-color: #fff; /* 다시 추가 */
 }
@@ -142,12 +139,14 @@ body {
   background-color: #fff; /* 배경색 추가 */
 }
 
+
 /* 2번째 div: 현재 시각 */
 .current-time-box {
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
   height: 50px;
   display: flex;
+  justify-content: start;
   align-items: center;
   font-size: 18px;
   font-weight: 600;
@@ -159,7 +158,6 @@ body {
 .ampm {
   font-weight: 700;
   width: var(--title-width);
-  padding-right: 10px;
   display: flex;
   justify-content: end;
   align-items: center;
