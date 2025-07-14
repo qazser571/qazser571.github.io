@@ -325,17 +325,6 @@ body {
   /* padding-left: calc(var(--title-width) + var(--vertical-bar-width) + var(--label-padding-right)); */ /* 제거 */
 }
 
-/* 분석 그래프 세로 바 (원상 복구) */
-/* .analysis-graph-container::before {
-  content: "";
-  position: absolute;
-  left: calc(var(--title-width) + var(--vertical-bar-width) / 2);
-  top: 0;
-  bottom: 0;
-  width: var(--vertical-bar-width);
-  background-color: var(--vertical-bar-color);
-  transform: translateX(-50%);
-} */
 
 /* 각 그래프 바 요소 (원상 복구) */
 .analysis-graph-container > div {
