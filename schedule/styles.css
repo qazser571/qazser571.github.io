@@ -33,7 +33,6 @@
 
 /* CSS 변수 */
 :root {
-  --title-width: 80px;
   --title-gap: 15px;
   --bar-width: 2px; /* 바 두께 줄임 */
   --bar-color: #000;
@@ -105,7 +104,9 @@ body {
   font-size: 14px;
   font-weight: 600;
   border-bottom: 1px solid #eee; /* 얇은 구분선 */
-  padding: 0 0 4px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* dday-container는 가로 배치, 앞쪽 div 너비 고정, 뒤쪽 div 나머지 차지 */
@@ -117,12 +118,11 @@ body {
 }
 
 .dday-title {
-  width: var(--title-width);
   border-right: var(--bar-width) solid var(--bar-color); /* 바 두께 적용 */
   display: flex;
   align-items: center;
-  justify-content: end;
-  padding-right: var(--title-gap);
+  justify-content: center;
+  padding: 0 var(--title-gap);
   font-weight: 700;
   font-size: 18px;
   position: relative; /* ::after를 위한 position */
@@ -146,18 +146,17 @@ body {
   box-shadow: var(--box-shadow);
   height: 50px;
   display: flex;
-  justify-content: start;
+  justify-content: center;
   align-items: center;
   font-size: 18px;
   font-weight: 600;
   padding-left: 12px;
-  gap: calc(var(--title-gap)*2 + var(--bar-width)); /* 수정된 부분 */
+  gap: var(--title-gap);
   user-select: none;
 }
 
 .ampm {
-  font-weight: 700;
-  width: var(--title-width);
+  font-weight: 500;
   display: flex;
   justify-content: end;
   align-items: center;
@@ -192,9 +191,8 @@ body {
 }
 
 .timer-state {
-  width: var(--title-width);
   border-right: var(--bar-width) solid var(--bar-color); /* 바 두께 적용 */
-  padding-right: var(--title-gap);
+  padding: 0 var(--title-gap);
   display: flex;
   justify-content: end;
   align-items: center;
@@ -286,10 +284,9 @@ body {
   padding-bottom: 4px;
 }
 
-.analysis-title { /* '분석' 텍스트에 --title-width 적용 */
-  width: var(--title-width);
+.analysis-title {
   border-right: var(--bar-width) solid var(--bar-color); /* 바 두께 적용 */
-  padding-right: var(--title-gap);
+  padding: 0 var(--title-gap);
   display: flex;
   justify-content: end;
   align-items: center;
@@ -314,13 +311,15 @@ body {
   border-color: #999;
 }
 
+
+
+
 .analysis-graph-container {
   margin-top: 6px;
   overflow-y: auto; /* 스크롤 가능하도록 */
   flex-grow: 1;
   position: relative; /* 세로 바를 위한 position */
 }
-
 
 /* 각 그래프 바 요소 (원상 복구) */
 .analysis-graph-container > div {
