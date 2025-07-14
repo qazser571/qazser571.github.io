@@ -1,1 +1,244 @@
-
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>수능 일정 및 진행 관리</title>
+<style>
+  body {
+    font-family: '맑은 고딕', Malgun Gothic, Arial, sans-serif;
+    background: #fff;
+    margin: 20px;
+    display: flex;
+    justify-content: center;
+  }
+  .container {
+    width: 900px;
+    border: 1px solid #000;
+    padding: 15px;
+    display: flex;
+    gap: 20px;
+  }
+  .left, .right {
+    border: 1px solid #000;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+  .left {
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  .right {
+    flex-grow: 1;
+  }
+  .box {
+    border: 1px solid #000;
+    padding: 8px 12px;
+  }
+  .date-box {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+  .title {
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 5px;
+  }
+  .time-large {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-align: center;
+  }
+  .label-row {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 3px;
+  }
+  .progress-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    margin-bottom: 3px;
+  }
+  .btn-group {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 8px;
+  }
+  button {
+    width: 70px;
+    padding: 6px 0;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .analysis-box {
+    font-size: 14px;
+  }
+  .analysis-graph {
+    margin-top: 6px;
+    border: 1px solid #ccc;
+    height: 60px;
+    position: relative;
+  }
+  .bar {
+    height: 12px;
+    margin: 4px 0;
+  }
+  .bar.red {
+    background-color: #d33;
+  }
+  .bar.blue {
+    background-color: #3366cc;
+  }
+  .bar-label {
+    font-size: 12px;
+    margin-right: 6px;
+    width: 60px;
+    display: inline-block;
+  }
+  .analysis-header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .schedule-input {
+    margin-top: 10px;
+    display: flex;
+    gap: 8px;
+  }
+  .schedule-input input[type="text"] {
+    flex-grow: 1;
+    padding: 6px 8px;
+    font-size: 14px;
+    border: 1px solid #000;
+  }
+  .schedule-input button {
+    width: 70px;
+  }
+  /* 오른쪽 */
+  .right .title {
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+  .task-list {
+    border: 1px solid #000;
+    padding: 8px;
+  }
+  .task-item {
+    border: 1px solid #ccc;
+    margin-bottom: 8px;
+    padding: 6px 8px;
+  }
+  .task-header {
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .checkbox-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
+  }
+  .color-box {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    vertical-align: middle;
+    margin-left: 6px;
+    border: 1px solid #000;
+  }
+  .color-blue {
+    background-color: #3366cc;
+  }
+  .color-yellow {
+    background-color: #ffeb3b;
+  }
+  .time-range {
+    font-size: 13px;
+    margin-left: 20px;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="left">
+      <div class="box">
+        <div class="date-box">2025년 7월 14일 월요일</div>
+        <div class="title">수능 10-122</div>
+      </div>
+      <div class="box time-large">10 : 31 : 17</div>
+      <div class="box">
+        <div class="label-row">
+          <div>진행중</div>
+          <div>01 : 47 : 22</div>
+        </div>
+        <div class="label-row">
+          <div>국어</div>
+          <div>문제풀기</div>
+        </div>
+        <div class="btn-group">
+          <button>시작</button>
+          <button>보류</button>
+          <button>완료</button>
+        </div>
+      </div>
+      <div class="box analysis-box">
+        <div class="analysis-header">
+          <div>분석</div>
+          <div>상세 분석</div>
+        </div>
+        <div>
+          <div><span class="bar-label">국어</span><div class="bar red" style="width: 80%;"></div></div>
+          <div><span class="bar-label">수학</span><div class="bar red" style="width: 0;"></div></div>
+          <div><span class="bar-label">영어</span><div class="bar blue" style="width: 40%;"></div></div>
+          <div><span class="bar-label">사회과학</span><div class="bar blue" style="width: 0;"></div></div>
+          <div><span class="bar-label">자연과학</span><div class="bar" style="width: 0;"></div></div>
+        </div>
+      </div>
+      <div class="box schedule-input">
+        <input type="text" placeholder="예외 스케줄 작성" />
+        <button>저장</button>
+      </div>
+    </div>
+    <div class="right">
+      <div class="title">일과 목록</div>
+      <div class="task-list">
+        <div class="task-item">
+          <div class="task-header">예비 스케줄</div>
+          <div class="checkbox-group">
+            <label><input type="checkbox" /> 치과가기</label>
+            <label><input type="checkbox" /> 도서관가기</label>
+          </div>
+        </div>
+        <div class="task-item">
+          <div class="task-header">국어</div>
+          <div class="checkbox-group">
+            <label><input type="checkbox" checked /> 책읽기 <span class="color-box color-blue"></span></label>
+          </div>
+          <div class="checkbox-group">
+            <label>문제풀기 <span class="color-box color-yellow"></span></label>
+          </div>
+          <div class="time-range">7:12 - 7:40 | 00:18:30</div>
+          <div class="time-range">8:01 - 8:12 | 00:10:40</div>
+          <div class="checkbox-group">
+            <label><input type="checkbox" /> 시험보기</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
