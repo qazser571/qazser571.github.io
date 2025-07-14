@@ -52,9 +52,9 @@
 body {
   font-family: '맑은 고딕', Malgun Gothic, Arial, sans-serif;
   background: #f0f2f5; /* 배경색 변경 */
-  padding: 20px;
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 .container {
