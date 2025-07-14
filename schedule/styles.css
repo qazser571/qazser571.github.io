@@ -34,6 +34,7 @@
 /* CSS 변수 */
 :root {
   --title-width: 80px;
+  --title-gap: 15px;
   --bar-width: 2px; /* 바 두께 줄임 */
   --bar-color: #000;
   --inactive-color: #ccc;
@@ -104,7 +105,7 @@ body {
   font-size: 14px;
   font-weight: 600;
   border-bottom: 1px solid #eee; /* 얇은 구분선 */
-  padding-bottom: 4px;
+  padding: 0 0 4px 20px;
 }
 
 /* dday-container는 가로 배치, 앞쪽 div 너비 고정, 뒤쪽 div 나머지 차지 */
@@ -114,6 +115,7 @@ body {
   box-shadow: var(--box-shadow); /* 다시 추가 */
   overflow: hidden; /* 내부 요소의 border-radius를 위해 */
   height: 40px;
+  gap: var(--title-gap);
   background-color: #fff; /* 다시 추가 */
 }
 
@@ -123,7 +125,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: end;
-  padding-right: 10px;
+  padding-right: var(--title-gap);
   font-weight: 700;
   font-size: 18px;
   position: relative; /* ::after를 위한 position */
@@ -134,9 +136,9 @@ body {
   flex-grow: 1;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: start;
   font-weight: 700;
-  font-size: 18px;
+  font-size: 22px;
   background-color: #fff; /* 배경색 추가 */
 }
 
@@ -150,9 +152,8 @@ body {
   font-size: 18px;
   font-weight: 600;
   padding-left: 12px;
-  gap: 6px;
+  gap: calc(var(--title-gap)*2 + var(--bar-width);
   user-select: none;
-  background-color: #fff; /* 배경색 추가 */
 }
 
 .ampm {
@@ -187,14 +188,15 @@ body {
   display: flex;
   justify-content: start;
   align-items: center;
-  gap: 10px;
+  gap: var(--title-gap);
+  padding-bottom: 8px;
   border-bottom: 1px solid #eee; /* 얇은 구분선 */
 }
 
 .timer-state {
   width: var(--title-width);
   border-right: var(--bar-width) solid var(--bar-color); /* 바 두께 적용 */
-  padding-right: 10px;
+  padding-right: var(--title-gap);
   display: flex;
   justify-content: end;
   align-items: center;
@@ -216,14 +218,12 @@ body {
   align-items: center;
 }
 
-
-
 .schedule-category {
   width: var(--title-width);
   border-right: var(--bar-width) solid var(--bar-color); /* 바 두께 적용 */
   padding-right: 10px;
   display: flex;
-  justify-content: end;
+  justify-content: center;
   align-items: center;
   font-weight: 700;
   font-size: 16px;
@@ -291,9 +291,12 @@ body {
 .analysis-title { /* '분석' 텍스트에 --title-width 적용 */
   width: var(--title-width);
   border-right: var(--bar-width) solid var(--bar-color); /* 바 두께 적용 */
+  padding-right: var(--title-gap);
+  display: flex;
+  justify-content: end;
+  align-items: center;
   font-weight: 700;
   font-size: 14px;
-  padding-right: 8px;
   position: relative; /* ::after를 위한 position */
   background-color: #f8f8f8; /* 배경색 추가 */
 }
