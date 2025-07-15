@@ -13,7 +13,7 @@ const timerTimeDiv = document.querySelector('.timer-time');
 const ampmSpan = document.querySelector('.ampm');
 const digitalTimeSpan = document.querySelector('.digital-time');
 const currentDateDiv = document.querySelector('.current-date');
-const ddayCountDiv = document.querySelector('.dday-count'); // 오타 수정: .dday-count로 변경
+const ddayCountDiv = document.querySelector('.dday-count');
 
 const taskListContainer = document.querySelector('.task-list-container');
 const analysisGraphContainer = document.querySelector('.analysis-graph-container');
@@ -35,7 +35,8 @@ let currentSelectedTaskItemElement = null; // 현재 선택된 task-item DOM 요
 const STORAGE_KEYS = {
   records: 'records',
   exceptionSchedules: 'exceptionSchedules',
-  TIMER_STATE: 'timerState' // 타이머 상태 저장을 위한 새로운 키
+  TIMER_STATE: 'timerState', // 타이머 상태 저장을 위한 키
+  LAST_INITIALIZED_DAY: 'lastInitializedDay' // 마지막으로 초기화된 날짜 저장 키
 };
 
 let order = [];
@@ -46,6 +47,8 @@ let exceptionSchedules = [];
 async function init() {
   records = JSON.parse(localStorage.getItem(STORAGE_KEYS.records)) || {};
   exceptionSchedules = JSON.parse(localStorage.getItem(STORAGE_KEYS.exceptionSchedules)) || [];
+
+  checkAndInitializeDailyData(); // records 로드 후 바로 호출하여 일일 초기화 확인
 
   try {
     await loadOrder();
@@ -272,6 +275,69 @@ function loadTimerState() {
   }
 }
 
+/**
+ * 현재 "하루"의 시작 시간 (오전 5시 기준)을 반환합니다.
+ * 예: 현재 시간이 7/15 03:00 이면 7/14 05:00 반환
+ *     현재 시간이 7/15 06:00 이면 7/15 05:00 반환
+ * @returns {Date} 현재 "하루"의 시작 시간
+ */
+function getStartOfCurrentDay() {
+    const now = new Date();
+    const startOfToday5AM = new Date(now);
+    startOfToday5AM.setHours(5, 0, 0, 0);
+
+    if (now.getHours() < 5) {
+        // 현재 시간이 오전 5시 이전이면, "하루"는 어제 오전 5시에 시작
+        const startOfYesterday5AM = new Date(startOfToday5AM);
+        startOfYesterday5AM.setDate(startOfYesterday5AM.getDate() - 1);
+        return startOfYesterday5AM;
+    } else {
+        // 현재 시간이 오전 5시 이후이면, "하루"는 오늘 오전 5시에 시작
+        return startOfToday5AM;
+    }
+}
+
+// 일일 데이터 초기화를 확인하고 수행하는 함수
+function checkAndInitializeDailyData() {
+  const currentDayStart = getStartOfCurrentDay();
+  const lastInitializedDay = localStorage.getItem(STORAGE_KEYS.LAST_INITIALIZED_DAY);
+
+  // 마지막 초기화 날짜가 없거나, 현재 날짜와 다르면 초기화 수행
+  if (!lastInitializedDay || new Date(lastInitializedDay).getTime() !== currentDayStart.getTime()) {
+    console.log("새로운 날이 시작되었습니다. 기록을 초기화합니다.");
+
+    // records 객체 순회하며 현재 날짜에 해당하지 않는 기록 제거
+    for (const category in records) {
+      for (const task in records[category]) {
+        records[category][task] = records[category][task].filter(record => {
+          const recordStartTime = new Date(record.start);
+          // 현재 날짜(오전 5시 기준) 이후의 기록만 유지
+          return recordStartTime.getTime() >= currentDayStart.getTime();
+        });
+        // 만약 특정 task의 기록이 모두 제거되었다면, 해당 task 키도 제거
+        if (records[category][task].length === 0) {
+          delete records[category][task];
+        }
+      }
+      // 만약 특정 category의 task가 모두 제거되었다면, 해당 category 키도 제거
+      if (Object.keys(records[category]).length === 0) {
+        delete records[category];
+      }
+    }
+
+    saveRecords(); // 변경된 records를 localStorage에 저장
+    localStorage.setItem(STORAGE_KEYS.LAST_INITIALIZED_DAY, currentDayStart.toISOString()); // 마지막 초기화 날짜 업데이트
+
+    // status-box 클래스 초기화 (renderTaskList가 호출될 때 반영됨)
+    // currentSelectedTaskItemElement 초기화 (만약 어제 선택된 것이 있다면)
+    if (currentSelectedTaskItemElement) {
+      currentSelectedTaskItemElement.classList.remove('selected');
+      currentSelectedTaskItemElement = null;
+    }
+    localStorage.removeItem(STORAGE_KEYS.TIMER_STATE); // 어제부터 유지되던 타이머 상태도 초기화
+  }
+}
+
 
 function saveExceptionSchedule(text) {
   exceptionSchedules.push(text);
@@ -346,16 +412,16 @@ function renderTaskList() {
       // --- 새로운 task-item-header 생성 시작 ---
       const taskItemHeader = document.createElement('div');
       taskItemHeader.classList.add('task-item-header');
-      taskDiv.appendChild(taskItemHeader); // task-item의 자식으로 추가
+      taskDiv.appendChild(taskItemHeader);
 
       const nameSpan = document.createElement('span');
       nameSpan.classList.add('task-name');
       nameSpan.textContent = task;
-      taskItemHeader.appendChild(nameSpan); // task-item-header의 자식으로 추가
+      taskItemHeader.appendChild(nameSpan);
 
       const taskActionsDiv = document.createElement('div');
       taskActionsDiv.classList.add('task-actions');
-      taskItemHeader.appendChild(taskActionsDiv); // task-item-header의 자식으로 추가
+      taskItemHeader.appendChild(taskActionsDiv);
       // --- task-item-header 생성 끝 ---
 
       if (category === '예외 스케줄') {
@@ -422,6 +488,7 @@ function renderTaskList() {
         event.stopPropagation();
 
         if (timerRunning || isEditing) {
+          // 타이머가 진행 중이거나 편집 모드인 경우: 기록 시간만 토글
           document.querySelectorAll('.task-timer-record').forEach(div => {
             if (div !== timerRecordDiv) {
               div.style.display = 'none';
@@ -436,6 +503,7 @@ function renderTaskList() {
         }
 
         if (selectingMode) {
+          // 일정 선택 모드일 때 task-item 클릭 시 (타이머 시작)
           if (currentSelectedTaskItemElement) {
             currentSelectedTaskItemElement.classList.remove('selected');
           }
@@ -443,17 +511,18 @@ function renderTaskList() {
           currentSelectedTaskItemElement = taskDiv;
 
           selectedSchedule = { category, task };
-          selectingMode = false;
+          selectingMode = false; // 일정 선택 후 선택 모드 종료
 
           timerRunning = true;
           timerStartTime = new Date();
-          saveTimerState();
+          saveTimerState(); // 타이머 시작 시 상태 저장
 
           timerElapsed = 0;
           updateTimerUI();
           startTimerInterval();
 
         } else {
+          // 타이머가 진행 중이 아니고, 선택 모드도 아닐 때 (기록 토글)
           document.querySelectorAll('.task-timer-record').forEach(div => {
             if (div !== timerRecordDiv) {
               div.style.display = 'none';
@@ -471,28 +540,6 @@ function renderTaskList() {
 
     taskListContainer.appendChild(categoryDiv);
   });
-}
-
-/**
- * 현재 "하루"의 시작 시간 (오전 5시 기준)을 반환합니다.
- * 예: 현재 시간이 7/15 03:00 이면 7/14 05:00 반환
- *     현재 시간이 7/15 06:00 이면 7/15 05:00 반환
- * @returns {Date} 현재 "하루"의 시작 시간
- */
-function getStartOfCurrentDay() {
-    const now = new Date();
-    const startOfToday5AM = new Date(now);
-    startOfToday5AM.setHours(5, 0, 0, 0);
-
-    if (now.getHours() < 5) {
-        // 현재 시간이 오전 5시 이전이면, "하루"는 어제 오전 5시에 시작
-        const startOfYesterday5AM = new Date(startOfToday5AM);
-        startOfYesterday5AM.setDate(startOfYesterday5AM.getDate() - 1);
-        return startOfYesterday5AM;
-    } else {
-        // 현재 시간이 오전 5시 이후이면, "하루"는 오늘 오전 5시에 시작
-        return startOfToday5AM;
-    }
 }
 
 
@@ -572,6 +619,8 @@ function renderAnalysisGraph() {
   barsColumn.classList.add('analysis-bars-column');
   analysisGraphInner.appendChild(barsColumn);
 
+
+  // グラフ描画のための順序制御: '예외 스케줄'을 제외한 나머지 범주들을 먼저 배치하고, 마지막에 '예외 스케줄' 추가
   let graphDisplayOrder = order.filter(category => category !== '예외 스케줄');
   const exceptionScheduleCategory = order.find(category => category === '예외 스케줄');
   if (exceptionScheduleCategory) {
@@ -579,17 +628,15 @@ function renderAnalysisGraph() {
   }
 
 
-  graphDisplayOrder.forEach(category => { // graphDisplayOrder 배열을 기준으로 순서 유지
+  graphDisplayOrder.forEach(category => {
     const time = dailyTotalTimes[category] || 0;
-    const barColor = categoryColorMap.get(category) || rankColors[3]; // 매핑된 색상 사용, 매핑 안된 경우 기본 회색
+    const barColor = categoryColorMap.get(category) || rankColors[3];
 
-    // 레이블 생성 및 labelsColumn에 추가
     const labelSpan = document.createElement('span');
     labelSpan.classList.add('analysis-label-item');
     labelSpan.textContent = category;
     labelsColumn.appendChild(labelSpan);
 
-    // 막대그래프 생성 및 barsColumn에 추가
     const barOuter = document.createElement('div');
     barOuter.classList.add('analysis-bar-outer');
     // .analysis-bar-outer의 border는 styles.css에서 제어
