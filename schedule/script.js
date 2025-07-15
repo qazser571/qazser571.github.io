@@ -343,13 +343,20 @@ function renderTaskList() {
       taskDiv.dataset.task = task;
       taskDiv.dataset.index = index;
 
+      // --- 새로운 task-item-header 생성 시작 ---
+      const taskItemHeader = document.createElement('div');
+      taskItemHeader.classList.add('task-item-header');
+      taskDiv.appendChild(taskItemHeader); // task-item의 자식으로 추가
+
       const nameSpan = document.createElement('span');
       nameSpan.classList.add('task-name');
       nameSpan.textContent = task;
-      taskDiv.appendChild(nameSpan);
+      taskItemHeader.appendChild(nameSpan); // task-item-header의 자식으로 추가
 
       const taskActionsDiv = document.createElement('div');
       taskActionsDiv.classList.add('task-actions');
+      taskItemHeader.appendChild(taskActionsDiv); // task-item-header의 자식으로 추가
+      // --- task-item-header 생성 끝 ---
 
       if (category === '예외 스케줄') {
         const deleteBtn = document.createElement('button');
@@ -387,8 +394,7 @@ function renderTaskList() {
       }
       taskActionsDiv.appendChild(statusBox);
 
-      taskDiv.appendChild(taskActionsDiv);
-
+      // --- task-timer-record를 task-item의 자식으로 추가 ---
       const timerRecordDiv = document.createElement('div');
       timerRecordDiv.classList.add('task-timer-record');
 
@@ -407,15 +413,15 @@ function renderTaskList() {
       } else {
         timerRecordDiv.textContent = '기록 없음';
       }
+      taskDiv.appendChild(timerRecordDiv); // task-item의 자식으로 추가
+      // --- task-timer-record 추가 끝 ---
 
-      categoryDiv.appendChild(taskDiv);
-      categoryDiv.appendChild(timerRecordDiv);
+      categoryDiv.appendChild(taskDiv); // task-item을 categoryDiv에 추가
 
       taskDiv.addEventListener('click', (event) => {
         event.stopPropagation();
 
         if (timerRunning || isEditing) {
-          // 타이머가 진행 중이거나 편집 모드인 경우: 기록 시간만 토글
           document.querySelectorAll('.task-timer-record').forEach(div => {
             if (div !== timerRecordDiv) {
               div.style.display = 'none';
@@ -430,7 +436,6 @@ function renderTaskList() {
         }
 
         if (selectingMode) {
-          // 일정 선택 모드일 때 task-item 클릭 시 (타이머 시작)
           if (currentSelectedTaskItemElement) {
             currentSelectedTaskItemElement.classList.remove('selected');
           }
@@ -438,18 +443,17 @@ function renderTaskList() {
           currentSelectedTaskItemElement = taskDiv;
 
           selectedSchedule = { category, task };
-          selectingMode = false; // 일정 선택 후 선택 모드 종료
+          selectingMode = false;
 
           timerRunning = true;
           timerStartTime = new Date();
-          saveTimerState(); // 타이머 시작 시 상태 저장
+          saveTimerState();
 
           timerElapsed = 0;
           updateTimerUI();
           startTimerInterval();
 
         } else {
-          // 타이머가 진행 중이 아니고, 선택 모드도 아닐 때 (기록 토글)
           document.querySelectorAll('.task-timer-record').forEach(div => {
             if (div !== timerRecordDiv) {
               div.style.display = 'none';
@@ -568,8 +572,6 @@ function renderAnalysisGraph() {
   barsColumn.classList.add('analysis-bars-column');
   analysisGraphInner.appendChild(barsColumn);
 
-
-  // グラフ描画のための順序制御: '예외 스케줄'을 제외한 나머지 범주들을 먼저 배치하고, 마지막에 '예외 스케줄' 추가
   let graphDisplayOrder = order.filter(category => category !== '예외 스케줄');
   const exceptionScheduleCategory = order.find(category => category === '예외 스케줄');
   if (exceptionScheduleCategory) {
