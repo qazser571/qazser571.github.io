@@ -462,6 +462,12 @@ body {
   text-overflow: ellipsis;
 }
 
+.task-actions { /* 새로운 클래스 추가 */
+  display: flex;
+  align-items: center;
+  gap: 8px; /* 삭제 버튼과 상태 박스 사이 간격 */
+}
+
 .status-box {
   width: 20px;
   height: 20px;
@@ -484,16 +490,15 @@ body {
 
 .delete-item-btn {
   padding: 2px 6px;
-  margin-left: 8px;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  border: 1px solid #dc3545; /* 삭제 버튼 색상 */
+  border: 1px solid #dc3545;
   border-radius: 4px;
   background-color: #dc3545;
   color: #fff;
   transition: background-color 0.2s ease, border-color 0.2s ease;
-  display: none; /* 기본적으로 숨김 */
+  display: none;
 }
 
 .delete-item-btn:hover {
