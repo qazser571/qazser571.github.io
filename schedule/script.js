@@ -22,7 +22,7 @@ const analysisGraphContainer = document.querySelector('.analysis-graph-container
 
 const exceptionInput = document.getElementById('exception-input');
 const exceptionSaveBtn = document.getElementById('exception-save-btn');
-const editScheduleBtn = document.getElementById('editScheduleBtn');
+// const editScheduleBtn = document.getElementById('editScheduleBtn'); // HTML에서 제거되었으므로 주석 처리 또는 제거
 
 let timerInterval = null;
 let timerStartTime = null;
@@ -30,7 +30,7 @@ let timerElapsed = 0;
 let timerRunning = false;
 let selectedSchedule = null;
 let selectingMode = false;
-let isEditing = false;
+let isEditing = false; // 예외 스케줄 편집 모드 상태
 
 const STORAGE_KEYS = {
   records: 'records',
@@ -129,7 +129,7 @@ function padZero(num) {
 }
 
 function updateTimerUI() {
-  const rightSection = document.querySelector('.right'); // .right 섹션 선택
+  const rightSection = document.querySelector('.right');
 
   if (!timerRunning) {
     timerStateDiv.textContent = '쉬는중';
@@ -138,22 +138,28 @@ function updateTimerUI() {
     scheduleTaskDiv.textContent = '';
 
     btnStart.textContent = selectingMode ? '일정 선택' : '시작';
+    if (selectingMode) {
+      btnStart.classList.add('selecting-mode');
+    } else {
+      btnStart.classList.remove('selecting-mode');
+    }
+
     btnStart.classList.remove('inactive');
     btnPause.classList.add('inactive');
     btnComplete.classList.add('inactive');
 
     selectedSchedule = null;
-    // selectingMode가 false일 때만 하이라이트 제거
     if (!selectingMode) {
-      rightSection.classList.remove('selecting'); // .right에서 하이라이트 제거
+      rightSection.classList.remove('selecting');
     }
   } else {
     timerStateDiv.textContent = '진행중';
     btnStart.textContent = '시작';
     btnStart.classList.add('inactive');
+    btnStart.classList.remove('selecting-mode');
     btnPause.classList.remove('inactive');
     btnComplete.classList.remove('inactive');
-    rightSection.classList.remove('selecting'); // 타이머 시작 시 .right에서 하이라이트 제거
+    rightSection.classList.remove('selecting');
   }
 }
 
@@ -178,7 +184,7 @@ function stopTimer(status) {
   clearInterval(timerInterval);
   timerInterval = null;
   timerRunning = false;
-  selectingMode = false; // 타이머가 멈추면 선택 모드 종료
+  selectingMode = false;
 
   const endTime = new Date();
   const duration = endTime - timerStartTime;
@@ -217,7 +223,14 @@ function saveExceptionSchedule(text) {
 }
 
 function renderTaskList() {
-  taskListContainer.innerHTML = '';
+  // task-list-container의 내용만 초기화하고, task-list-header는 HTML에 직접 있으므로 그대로 둠
+  // HTML에서 task-list-header를 task-list-container 밖으로 옮겼으므로, 이 로직은 제거
+  // const existingHeader = taskListContainer.querySelector('.task-list-header');
+  taskListContainer.innerHTML = ''; // task-list-container의 내용만 비움
+  // if (existingHeader) {
+  //     taskListContainer.appendChild(existingHeader); // header를 다시 추가하지 않음
+  // }
+
 
   if (order.length === 0) {
     const noDataMessage = document.createElement('div');
@@ -235,8 +248,27 @@ function renderTaskList() {
 
     const titleDiv = document.createElement('div');
     titleDiv.classList.add('category-title');
-    titleDiv.textContent = category;
+    // titleDiv.textContent = category; // 아래에서 텍스트와 버튼을 함께 추가하므로 여기서는 텍스트만 설정하지 않음
     categoryDiv.appendChild(titleDiv);
+
+    // category-title 내부에 범주 이름 span과 편집 버튼을 추가
+    const categoryNameSpan = document.createElement('span');
+    categoryNameSpan.textContent = category;
+    titleDiv.appendChild(categoryNameSpan);
+
+
+    // 예외 스케줄일 경우 편집 버튼 추가
+    if (category === '예외 스케줄') {
+      const editExceptionBtn = document.createElement('button');
+      editExceptionBtn.classList.add('edit-exception-schedule-btn');
+      editExceptionBtn.textContent = isEditing ? '완료' : '편집';
+      editExceptionBtn.addEventListener('click', () => {
+        isEditing = !isEditing; // 편집 모드 토글
+        renderTaskList(); // UI 전체 갱신 (삭제 버튼 표시/숨김)
+      });
+      titleDiv.appendChild(editExceptionBtn);
+    }
+
 
     const tasks = schedules[category] || [];
 
@@ -361,6 +393,8 @@ function renderTaskList() {
       });
     });
 
+    // taskListContainer.appendChild(categoryDiv); // 이전에 header를 추가했으므로, header 다음부터 추가되도록 수정
+    // taskListContainer에 header가 이미 있으므로, header 다음 자식으로 추가
     taskListContainer.appendChild(categoryDiv);
   });
 }
@@ -408,11 +442,9 @@ function renderAnalysisGraph() {
 
   const finalSortedCategories = categoriesForColorRanking;
 
-  // 1등: 빨강, 2등: 주황, 3등: 노랑, 나머지: 회색
-  const rankColors = ['#d33', '#FF8C00', '#FFD700', '#B0B0B0']; // 빨강, 주황, 노랑, 회색
+  const rankColors = ['#d33', '#FF8C00', '#FFD700', '#B0B0B0'];
   const categoryColorMap = new Map();
   finalSortedCategories.forEach((item, idx) => {
-      // 3등까지는 고정 색상, 그 이후는 회색
       categoryColorMap.set(item.category, idx < 3 ? rankColors[idx] : rankColors[3]);
   });
 
@@ -465,21 +497,23 @@ function renderAnalysisGraph() {
 }
 
 function setupEventListeners() {
-  const rightSection = document.querySelector('.right'); // .right 섹션 참조
+  const rightSection = document.querySelector('.right');
 
   btnStart.addEventListener('click', () => {
-    if (!timerRunning) { // 타이머가 작동 중이 아닐 때만
-      if (!selectingMode) { // 현재 선택 모드가 아니라면 -> 선택 모드 진입
+    if (!timerRunning) {
+      if (!selectingMode) {
         selectingMode = true;
         btnStart.textContent = '일정 선택';
-        rightSection.classList.add('selecting'); // .right에 하이라이트 적용
+        btnStart.classList.add('selecting-mode');
+        rightSection.classList.add('selecting');
         updateTimerUI();
-      } else { // 현재 선택 모드라면 -> 선택 모드 종료
+      } else {
         selectingMode = false;
-        selectedSchedule = null; // 선택된 일정 초기화
-        btnStart.textContent = '시작'; // 버튼 텍스트 '시작'으로 변경
-        rightSection.classList.remove('selecting'); // .right에서 하이라이트 제거
-        updateTimerUI(); // UI 상태 업데이트
+        selectedSchedule = null;
+        btnStart.textContent = '시작';
+        btnStart.classList.remove('selecting-mode');
+        rightSection.classList.remove('selecting');
+        updateTimerUI();
       }
     }
   });
@@ -504,11 +538,7 @@ function setupEventListeners() {
     }
   });
 
-  editScheduleBtn.addEventListener('click', () => {
-    isEditing = !isEditing;
-    editScheduleBtn.textContent = isEditing ? '완료' : '편집';
-    renderTaskList();
-  });
+  // editScheduleBtn.addEventListener('click', ...); 이 부분은 이제 동적으로 생성된 버튼에서 처리됨
 }
 
 window.addEventListener('DOMContentLoaded', init);
