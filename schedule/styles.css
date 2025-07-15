@@ -365,16 +365,11 @@ body {
 }
 
 .exception-title {
+  width: 100px;
+  border-bottom: 1px solid var(--division-bar-color);
   font-weight: 700;
   font-size: 14px;
   padding-left: calc(var(--title-gap) - var(--box-inner-padding));
-}
-
-hr{
-  width: 100%;
-  border: none;
-  height: 1px;
-  background-color: var(--division-bar-color);
 }
 
 .exception-input-area {
