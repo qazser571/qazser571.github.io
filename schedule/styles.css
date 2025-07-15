@@ -488,7 +488,7 @@ body {
   border-bottom: 1px solid #ddd;
 }
 
-.task-item:last-child{
+.task-item:last-of-type{
   border-bottom: none;
 }
 
