@@ -460,8 +460,11 @@ body {
   user-select: none;
 }
 
-.task-category > .task-item:not(:first-child) {
+.task-category > .task-item{
   border-top: 1px solid var(--division-bar-color);
+}
+.task-item:first-child{
+  border: none;
 }
 
 .task-name {
