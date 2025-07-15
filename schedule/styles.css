@@ -313,8 +313,10 @@ body {
   border-bottom: 1px solid var(--division-bar-color);
   overflow-y: auto;
   flex: 1;
+}
+.analysis-graph-inner{
+  width: 100%;
   display: flex;
-  flex-direction: row;
 }
 
 .analysis-labels-column {
