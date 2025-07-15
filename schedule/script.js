@@ -227,12 +227,9 @@ function saveExceptionSchedule(text) {
 }
 
 function renderTaskList() {
-  taskListContainer.innerHTML = '';
+  taskListContainer.innerHTML = ''; // task-list-container의 내용만 초기화
 
-  const todayScheduleTitle = document.querySelector('.today-schedule-title-text');
-  if (todayScheduleTitle && todayScheduleTitle.parentNode !== taskListContainer) {
-      taskListContainer.prepend(todayScheduleTitle);
-  }
+  // "오늘 일정" 제목은 HTML에 직접 있으므로, 여기서는 건드리지 않습니다.
 
 
   if (order.length === 0) {
