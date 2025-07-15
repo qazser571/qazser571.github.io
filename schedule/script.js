@@ -230,7 +230,8 @@ function saveExceptionSchedule(text) {
 function renderTaskList() {
   taskListContainer.innerHTML = ''; // task-list-container의 내용만 초기화
 
-  // "오늘 일정" 제목은 HTML에 직접 있으므로, 여기서는 건드리지 않습니다.
+  const todayScheduleTitle = document.querySelector('.today-schedule-title-text');
+  // todayScheduleTitle은 HTML에 직접 있으므로, 여기서는 건드리지 않습니다.
 
 
   if (order.length === 0) {
@@ -480,14 +481,19 @@ function renderAnalysisGraph() {
   }
 
 
-  // 2열 구조를 위한 컬럼 생성
+  // analysis-graph-inner 생성 및 추가
+  const analysisGraphInner = document.createElement('div');
+  analysisGraphInner.classList.add('analysis-graph-inner');
+  analysisGraphContainer.appendChild(analysisGraphInner);
+
+  // 2열 구조를 위한 컬럼 생성 (analysis-graph-inner의 자식으로)
   const labelsColumn = document.createElement('div');
   labelsColumn.classList.add('analysis-labels-column');
-  analysisGraphContainer.appendChild(labelsColumn);
+  analysisGraphInner.appendChild(labelsColumn);
 
   const barsColumn = document.createElement('div');
   barsColumn.classList.add('analysis-bars-column');
-  analysisGraphContainer.appendChild(barsColumn);
+  analysisGraphInner.appendChild(barsColumn);
 
 
   graphDisplayOrder.forEach(category => { // graphDisplayOrder 배열을 기준으로 순서 유지
