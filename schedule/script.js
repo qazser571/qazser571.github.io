@@ -19,6 +19,7 @@ const ddayCountDiv = document.querySelector('.dday-count');
 
 const taskListContainer = document.querySelector('.task-list-container');
 const analysisGraphContainer = document.querySelector('.analysis-graph-container');
+const totalTimeDisplay = document.querySelector('.total-time-display'); // 새로 추가된 요소
 
 const exceptionInput = document.getElementById('exception-input');
 const exceptionSaveBtn = document.getElementById('exception-save-btn');
@@ -69,7 +70,7 @@ async function init() {
   setInterval(updateCurrentTime, 1000);
 
   renderTaskList();
-  renderAnalysisGraph();
+  renderAnalysisGraph(); // 초기 로드 시 그래프 렌더링 및 총 시간 업데이트
   updateTimerUI();
   setupEventListeners();
 }
@@ -212,7 +213,7 @@ function stopTimer(status) {
   saveRecords();
   updateTimerUI();
   renderTaskList();
-  renderAnalysisGraph(); // 타이머 종료 시 그래프 색상 업데이트를 위해 호출
+  renderAnalysisGraph(); // 타이머 종료 시 그래프 렌더링 및 총 시간 업데이트
 }
 
 function saveRecords() {
@@ -394,11 +395,36 @@ function renderTaskList() {
   });
 }
 
+/**
+ * 현재 "하루"의 시작 시간 (오전 5시 기준)을 반환합니다.
+ * 예: 현재 시간이 7/15 03:00 이면 7/14 05:00 반환
+ *     현재 시간이 7/15 06:00 이면 7/15 05:00 반환
+ * @returns {Date} 현재 "하루"의 시작 시간
+ */
+function getStartOfCurrentDay() {
+    const now = new Date();
+    const startOfToday5AM = new Date(now);
+    startOfToday5AM.setHours(5, 0, 0, 0);
+
+    if (now.getHours() < 5) {
+        // 현재 시간이 오전 5시 이전이면, "하루"는 어제 오전 5시에 시작
+        const startOfYesterday5AM = new Date(startOfToday5AM);
+        startOfYesterday5AM.setDate(startOfYesterday5AM.getDate() - 1);
+        return startOfYesterday5AM;
+    } else {
+        // 현재 시간이 오전 5시 이후이면, "하루"는 오늘 오전 5시에 시작
+        return startOfToday5AM;
+    }
+}
+
+
 function renderAnalysisGraph() {
   analysisGraphContainer.innerHTML = '';
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const startOfCurrentDay = getStartOfCurrentDay(); // 현재 "하루"의 시작 시간 (오전 5시 기준)
+  const endOfCurrentDay = new Date(startOfCurrentDay);
+  endOfCurrentDay.setDate(endOfCurrentDay.getDate() + 1); // 현재 "하루"의 끝 시간 (다음날 오전 5시)
+
 
   const dailyTotalTimes = {};
   order.forEach(category => {
@@ -408,9 +434,9 @@ function renderAnalysisGraph() {
   for (const category in records) {
     for (const task in records[category]) {
       records[category][task].forEach(r => {
-        const recordDate = new Date(r.start);
-        recordDate.setHours(0, 0, 0, 0);
-        if (recordDate.getTime() === today.getTime()) {
+        const recordStartTime = new Date(r.start);
+        // 레코드가 현재 "하루" (오전 5시 ~ 다음날 오전 5시) 범위 내에 있는지 확인
+        if (recordStartTime.getTime() >= startOfCurrentDay.getTime() && recordStartTime.getTime() < endOfCurrentDay.getTime()) {
           if (dailyTotalTimes[category] !== undefined) {
             dailyTotalTimes[category] += r.duration;
           }
@@ -420,6 +446,10 @@ function renderAnalysisGraph() {
   }
 
   const totalAllDaily = Object.values(dailyTotalTimes).reduce((a, b) => a + b, 0);
+
+  // 총 시간 합계 업데이트
+  totalTimeDisplay.textContent = `합계: ${formatDuration(totalAllDaily)}`;
+
 
   // 모든 카테고리를 시간 순으로 정렬하여 색상 순위를 결정
   let categoriesForColorRanking = order.map(category => ({ category, time: dailyTotalTimes[category] || 0 }));
