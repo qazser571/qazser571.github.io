@@ -135,6 +135,7 @@ function padZero(num) {
 
 function updateTimerUI() {
   const rightSection = document.querySelector('.right');
+  const timerStatusBox = document.querySelector('.timer-status-box');
 
   if (!timerRunning) {
     timerStateDiv.textContent = '쉬는중';
