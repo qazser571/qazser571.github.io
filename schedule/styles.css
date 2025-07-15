@@ -373,6 +373,13 @@ body {
   padding-left: calc(var(--title-gap) - var(--box-inner-padding));
 }
 
+hr{
+  width: 100%;
+  border: none;
+  height: 1px;
+  background-color: var(--division-bar-color);
+}
+
 .exception-input-area {
   display: flex;
   gap: 8px;
