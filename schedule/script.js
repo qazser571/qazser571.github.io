@@ -417,37 +417,38 @@ function renderAnalysisGraph() {
     return;
   }
 
+  // 새로운 레이아웃을 위한 두 개의 컬럼 생성
+  const labelsColumn = document.createElement('div');
+  labelsColumn.classList.add('analysis-labels-column');
+  analysisGraphContainer.appendChild(labelsColumn);
+
+  const barsColumn = document.createElement('div');
+  barsColumn.classList.add('analysis-bars-column');
+  analysisGraphContainer.appendChild(barsColumn);
+
+
   finalSortedCategories.forEach((item, idx) => {
     const category = item.category;
     const time = item.time;
 
-    const barDiv = document.createElement('div');
-    barDiv.style.position = 'relative';
-    barDiv.style.display = 'flex';
-    barDiv.style.alignItems = 'center';
-    barDiv.style.marginBottom = '4px';
-
+    // 레이블 생성 및 labelsColumn에 추가
     const labelSpan = document.createElement('span');
+    labelSpan.classList.add('analysis-label-item');
     labelSpan.textContent = category;
+    labelsColumn.appendChild(labelSpan);
 
+    // 막대그래프 생성 및 barsColumn에 추가
     const barOuter = document.createElement('div');
-    barOuter.style.flexGrow = '1';
-    barOuter.style.height = '12px';
-    barOuter.style.border = '1px solid #ccc';
-    barOuter.style.position = 'relative';
-    barOuter.style.marginLeft = '0';
+    barOuter.classList.add('analysis-bar-outer');
 
     const barInner = document.createElement('div');
-    barInner.style.height = '100%';
+    barInner.classList.add('analysis-bar-inner');
     barInner.style.width = totalAllDaily > 0 ? `${(time / totalAllDaily) * 100}%` : '0%';
     barInner.style.backgroundColor = colors[idx % colors.length];
     barInner.style.transition = 'width 0.5s ease-out';
 
     barOuter.appendChild(barInner);
-    barDiv.appendChild(labelSpan);
-    barDiv.appendChild(barOuter);
-
-    analysisGraphContainer.appendChild(barDiv);
+    barsColumn.appendChild(barOuter);
   });
 }
 
