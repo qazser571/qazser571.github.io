@@ -413,13 +413,11 @@ body {
 
 .right-separator {
   border: none;
-  border-top: 1px solid #eee;
-  margin-bottom: 10px;
 }
 
 .task-list-container {
-  border-top: 1px solid #ccc;
-  border-bottom: 1px solid #ccc;
+  border-top: 1px solid var(--division-bar-color);
+  border-bottom: 1px solid var(--division-bar-color);
   flex-grow: 1;
   overflow-y: auto;
   padding: 8px 5px;
