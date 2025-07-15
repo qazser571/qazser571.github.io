@@ -317,37 +317,67 @@ body {
   border-color: #999;
 }
 
+/* --- 분석 그래프 컨테이너 (.analysis-graph-container) - 2열 구조 --- */
 .analysis-graph-container {
   padding: 4px 5px 0 5px;
   border-top: 1px solid var(--division-bar-color);
   border-bottom: 1px solid var(--division-bar-color);
   overflow-y: auto;
   flex: 1;
-  position: relative;
+  display: flex; /* 2열 구조를 위한 flexbox */
+  gap: 10px; /* 레이블 열과 막대 열 사이 간격 */
 }
 
-.analysis-graph-container > div {
+.analysis-labels-column {
+  width: var(--title-width); /* 레이블 열의 고정 너비 */
   display: flex;
-  align-items: center;
-  margin-bottom: 4px;
-  position: relative;
+  flex-direction: column;
+  align-items: flex-end; /* 레이블을 오른쪽으로 정렬 */
+  padding-right: var(--label-padding-right); /* 레이블과 세로 바 사이 간격 */
+  position: relative; /* 세로 바를 위한 position */
 }
 
-.analysis-graph-container > div > span {
-  width: 60px;
-  text-align: right;
+.analysis-labels-column::after { /* 세로 바 */
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: var(--bar-width);
+  background-color: var(--bar-color);
+}
+
+.analysis-label-item {
   font-size: 12px;
   font-weight: 600;
-  flex-shrink: 0;
-  margin-right: 6px;
+  white-space: nowrap; /* 줄바꿈 방지 */
+  overflow: hidden; /* 넘치는 내용 숨김 */
+  text-overflow: ellipsis; /* 넘치는 내용 ... 처리 */
+  height: 12px; /* 막대 높이와 일치시켜 세로 정렬 맞춤 */
+  line-height: 12px; /* 텍스트를 세로 중앙에 정렬 */
+  flex-shrink: 0; /* 레이블이 줄어들지 않도록 */
+  margin-bottom: 4px; /* 막대 사이 간격과 동일하게 설정 */
 }
 
-.analysis-graph-container > div > div:last-child {
-  flex-grow: 1;
+.analysis-bars-column {
+  flex-grow: 1; /* 남은 공간 모두 차지 */
+  display: flex;
+  flex-direction: column;
+}
+
+.analysis-bar-outer {
   height: 12px;
   border: 1px solid #ccc;
   position: relative;
+  margin-bottom: 4px; /* 막대 사이 간격 */
+  display: flex; /* 내부 막대가 채우도록 설정 */
 }
+
+.analysis-bar-inner {
+  height: 100%;
+  /* width와 background-color는 JS에서 설정 */
+}
+
 
 /* --- 좌측 (.left) - 5번째 div: 예외 스케줄 작성 (.exception-schedule-box) --- */
 .exception-schedule-box {
@@ -404,6 +434,8 @@ body {
   font-weight: 700;
   padding-bottom: 8px;
   margin-left: 10px;
+  border-bottom: 1px solid var(--division-bar-color); /* 이전에 제거되었던 부분 다시 추가 */
+  margin-bottom: 10px;
 }
 
 /* --- 우측 (.right) - 일정 목록 컨테이너 (.task-list-container) --- */
@@ -417,30 +449,31 @@ body {
 }
 
 /* --- 우측 (.right) - 일정 목록 컨테이너 내 헤더 (.task-list-header) --- */
-/* HTML에서 .task-list-header를 .task-list-container 내부로 이동시켰으므로 이 스타일은 여기에 배치 */
 .task-list-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding-bottom: 8px;
   margin-left: 10px;
-  margin-bottom: 10px; /* task-category와의 간격 */
-  padding-right: 5px; /* .task-list-container의 padding-right와 맞춤 */
+  margin-bottom: 10px;
+  padding-right: 5px;
 }
 
 /* --- 우측 (.right) - 개별 일정 범주 (.task-category) --- */
 .task-category {
-  border: 1px solid #ddd;
+  border: 1px solid #ddd; /* #eee에서 #ddd로 변경 */
   border-radius: 4px;
   margin-bottom: 10px;
-  padding: 6px 8px 0 8px;
+  padding: 6px 8px 0 8px; /* padding-bottom 0으로 변경 */
   user-select: none;
-  background-color: #fff;
+  background-color: #fff; /* #ccc에서 #fff로 변경 */
 }
 
 .task-category > .category-title {
   font-weight: 700;
   font-size: 16px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid #eee;
   padding-bottom: 4px;
   display: flex;
   justify-content: space-between;
@@ -473,7 +506,11 @@ body {
   padding: 4px 6px;
   cursor: pointer;
   user-select: none;
-  border-top: 1px solid #ddd; /* 색상 변경 */
+  border-top: 1px solid #ddd;
+}
+
+.task-item:first-child{
+  border: none;
 }
 
 .task-name {
