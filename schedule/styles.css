@@ -84,7 +84,7 @@ body {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  transition: box-shadow 0.1s ease, border-color 0.1s ease;
 }
 
 .right.selecting {
@@ -232,7 +232,7 @@ body {
   border: 1px solid #ccc;
   border-radius: 4px;
   background-color: #fff;
-  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  transition: background-color 0.1s ease, border-color 0.1s ease, box-shadow 0.1s ease;
 }
 
 .timer-btn-group .btn-start.selecting-mode {
@@ -394,7 +394,7 @@ body {
   border: 1px solid #ccc;
   border-radius: 4px;
   background-color: #fff;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  transition: background-color 0.1s ease, border-color 0.1s ease;
 }
 
 .exception-input-area button:hover {
@@ -438,7 +438,7 @@ body {
   border: 1px solid #ccc;
   border-radius: 4px;
   background-color: #fff;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  transition: background-color 0.1s ease, border-color 0.1s ease;
   flex-shrink: 0;
 }
 
@@ -453,7 +453,7 @@ body {
   cursor: pointer;
   user-select: none;
   border-bottom: 1px solid #ccc;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.1s ease;
 }
   
 .task-item-header {
@@ -494,8 +494,8 @@ body {
   height: 20px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  background-color: transparent;
-  transition: background-color 0.3s ease;
+  background-color: #fff;
+  transition: background-color 0.1s ease;
   flex-shrink: 0;
 }
 
@@ -522,7 +522,7 @@ body {
   border-radius: 4px;
   background-color: #dc3545;
   color: #fff;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
+  transition: background-color 0.1s ease, border-color 0.1s ease;
   display: none;
 }
 
