@@ -317,7 +317,7 @@ body {
   border-color: #999;
 }
 
-/* --- 분석 그래프 컨테이너 (.analysis-graph-container) - 2열 구조로 복원 --- */
+/* --- 분석 그래프 컨테이너 (.analysis-graph-container) - 2열 구조 --- */
 .analysis-graph-container {
   padding: 4px 5px; /* padding-top 0으로 변경 */
   border-top: 1px solid var(--division-bar-color);
