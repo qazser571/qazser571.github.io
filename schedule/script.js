@@ -9,6 +9,8 @@ const btnComplete = document.querySelector('.btn-complete');
 
 const timerStateDiv = document.querySelector('.timer-state');
 const timerTimeDiv = document.querySelector('.timer-time');
+const scheduleCategoryDiv = document.querySelector('.schedule-category'); // 주석 해제
+const scheduleTaskDiv = document.querySelector('.schedule-task'); // 주석 해제
 
 const ampmSpan = document.querySelector('.ampm');
 const digitalTimeSpan = document.querySelector('.digital-time');
@@ -138,11 +140,13 @@ function padZero(num) {
 function updateTimerUI() {
   const rightSection = document.querySelector('.right');
   const timerStatusBox = document.querySelector('.timer-status-box');
-  const editButtons = document.querySelectorAll('.edit-exception-schedule-btn'); // 모든 편집 버튼 선택
+  const editButtons = document.querySelectorAll('.edit-exception-schedule-btn');
 
   if (!timerRunning) {
     timerStateDiv.textContent = '쉬는중';
     timerTimeDiv.textContent = '00:00:00';
+    scheduleCategoryDiv.textContent = ''; // 이제 오류 없음
+    scheduleTaskDiv.textContent = ''; // 이제 오류 없음
 
     btnStart.textContent = selectingMode ? '일정 선택' : '시작';
     if (selectingMode) {
@@ -161,7 +165,6 @@ function updateTimerUI() {
     }
     timerStatusBox.classList.remove('running-highlight');
 
-    // 타이머가 쉬는 중이면 편집 버튼을 다시 보이게 함
     editButtons.forEach(button => button.style.display = 'inline-block');
   } else {
     timerStateDiv.textContent = '진행중';
@@ -173,7 +176,6 @@ function updateTimerUI() {
     rightSection.classList.remove('selecting');
     timerStatusBox.classList.add('running-highlight');
 
-    // 타이머가 진행 중이면 편집 버튼을 숨김
     editButtons.forEach(button => button.style.display = 'none');
   }
 }
@@ -381,15 +383,15 @@ function renderTaskList() {
 
     if (tasks.length === 0) {
       const noTaskMessage = document.createElement('div');
-      noDataMessage.style.textAlign = 'center';
-      noDataMessage.style.padding = '5px';
-      noDataMessage.style.color = '#aaa';
+      noTaskMessage.style.textAlign = 'center';
+      noTaskMessage.style.padding = '5px';
+      noTaskMessage.style.color = '#aaa';
       if (category === '예외 스케줄') {
-        noDataMessage.textContent = '등록된 예외 스케줄이 없습니다.';
+        noTaskMessage.textContent = '등록된 예외 스케줄이 없습니다.';
       } else {
-        noDataMessage.textContent = '일정 없음';
+        noTaskMessage.textContent = '일정 없음';
       }
-      categoryDiv.appendChild(noDataMessage);
+      categoryDiv.appendChild(noTaskMessage);
     }
 
     tasks.forEach((task, index) => {
@@ -531,3 +533,178 @@ function renderTaskList() {
     taskListContainer.appendChild(categoryDiv);
   });
 }
+
+
+/**
+ * 현재 "하루"의 시작 시간 (오전 5시 기준)을 반환합니다.
+ * 예: 현재 시간이 7/15 03:00 이면 7/14 05:00 반환
+ *     현재 시간이 7/15 06:00 이면 7/15 05:00 반환
+ * @returns {Date} 현재 "하루"의 시작 시간
+ */
+function getStartOfCurrentDay() {
+    const now = new Date();
+    const startOfToday5AM = new Date(now);
+    startOfToday5AM.setHours(5, 0, 0, 0);
+
+    if (now.getHours() < 5) {
+        // 현재 시간이 오전 5시 이전이면, "하루"는 어제 오전 5시에 시작
+        const startOfYesterday5AM = new Date(startOfToday5AM);
+        startOfYesterday5AM.setDate(startOfYesterday5AM.getDate() - 1);
+        return startOfYesterday5AM;
+    } else {
+        // 현재 시간이 오전 5시 이후이면, "하루"는 오늘 오전 5시에 시작
+        return startOfToday5AM;
+    }
+}
+
+
+function renderAnalysisGraph() {
+  analysisGraphContainer.innerHTML = '';
+
+  const startOfCurrentDay = getStartOfCurrentDay();
+  const endOfCurrentDay = new Date(startOfCurrentDay);
+  endOfCurrentDay.setDate(endOfCurrentDay.getDate() + 1);
+
+
+  const dailyTotalTimes = {};
+  order.forEach(category => {
+    dailyTotalTimes[category] = 0;
+  });
+
+  for (const category in records) {
+    for (const task in records[category]) {
+      records[category][task].forEach(r => {
+        const recordStartTime = new Date(r.start);
+        if (recordStartTime.getTime() >= startOfCurrentDay.getTime() && recordStartTime.getTime() < endOfCurrentDay.getTime()) {
+          if (dailyTotalTimes[category] !== undefined) {
+            dailyTotalTimes[category] += r.duration;
+          }
+        }
+      });
+    }
+  }
+
+  const totalAllDaily = Object.values(dailyTotalTimes).reduce((a, b) => a + b, 0);
+
+  totalTimeDisplay.innerHTML = '';
+  const totalTimeLabel = document.createElement('span');
+  totalTimeLabel.classList.add('total-time-label');
+  totalTimeLabel.textContent = '합계:';
+  const totalTimeValue = document.createElement('span');
+  totalTimeValue.classList.add('total-time-value');
+  totalTimeValue.textContent = formatDuration(totalAllDaily);
+  totalTimeDisplay.appendChild(totalTimeLabel);
+  totalTimeDisplay.appendChild(totalTimeValue);
+
+
+  let categoriesForColorRanking = order.map(category => ({ category, time: dailyTotalTimes[category] || 0 }));
+  categoriesForColorRanking.sort((a, b) => b.time - a.time);
+
+  const rankColors = ['#d33', '#FF8C00', '#FFD700', '#B0B0B0'];
+  const categoryColorMap = new Map();
+  categoriesForColorRanking.forEach((item, idx) => {
+      categoryColorMap.set(item.category, idx < 3 ? rankColors[idx] : rankColors[3]);
+  });
+
+
+  if (order.length === 0) {
+    const noDataMessage = document.createElement('div');
+    noDataMessage.textContent = '분석 데이터를 불러올 수 없습니다.';
+    noDataMessage.style.textAlign = 'center';
+    noDataMessage.style.padding = '20px';
+    noDataMessage.style.color = '#888';
+    analysisGraphContainer.appendChild(noDataMessage);
+    return;
+  }
+
+  const analysisGraphInner = document.createElement('div');
+  analysisGraphInner.classList.add('analysis-graph-inner');
+  analysisGraphContainer.appendChild(analysisGraphInner);
+
+  const labelsColumn = document.createElement('div');
+  labelsColumn.classList.add('analysis-labels-column');
+  analysisGraphInner.appendChild(labelsColumn);
+
+  const barsColumn = document.createElement('div');
+  barsColumn.classList.add('analysis-bars-column');
+  analysisGraphInner.appendChild(barsColumn);
+
+
+  let graphDisplayOrder = order.filter(category => category !== '예외 스케줄');
+  const exceptionScheduleCategory = order.find(category => category === '예외 스케줄');
+  if (exceptionScheduleCategory) {
+      graphDisplayOrder.push(exceptionScheduleCategory);
+  }
+
+
+  graphDisplayOrder.forEach(category => {
+    const time = dailyTotalTimes[category] || 0;
+    const barColor = categoryColorMap.get(category) || rankColors[3];
+
+    const labelSpan = document.createElement('span');
+    labelSpan.classList.add('analysis-label-item');
+    labelSpan.textContent = category;
+    labelsColumn.appendChild(labelSpan);
+
+    const barOuter = document.createElement('div');
+    barOuter.classList.add('analysis-bar-outer');
+
+    const barInner = document.createElement('div');
+    barInner.classList.add('analysis-bar-inner');
+    barInner.style.width = totalAllDaily > 0 ? `${(time / totalAllDaily) * 100}%` : '0%';
+    barInner.style.backgroundColor = barColor;
+    barInner.style.transition = 'width 0.5s ease-out';
+
+    barOuter.appendChild(barInner);
+    barsColumn.appendChild(barOuter);
+  });
+}
+
+function setupEventListeners() {
+  const rightSection = document.querySelector('.right');
+
+  btnStart.addEventListener('click', () => {
+    if (!timerRunning) {
+      if (!selectingMode) {
+        selectingMode = true;
+        btnStart.textContent = '일정 선택';
+        btnStart.classList.add('selecting-mode');
+        rightSection.classList.add('selecting');
+        updateTimerUI();
+      } else {
+        selectingMode = false;
+        selectedSchedule = null;
+        if (currentSelectedTaskItemElement) {
+          currentSelectedTaskItemElement.classList.remove('selected');
+          currentSelectedTaskItemElement = null;
+        }
+        btnStart.textContent = '시작';
+        btnStart.classList.remove('selecting-mode');
+        rightSection.classList.remove('selecting');
+        updateTimerUI();
+      }
+    }
+  });
+
+  btnPause.addEventListener('click', () => {
+    if (timerRunning) {
+      stopTimer('paused');
+    }
+  });
+
+  btnComplete.addEventListener('click', () => {
+    if (timerRunning) {
+      stopTimer('completed');
+    }
+  });
+
+  exceptionSaveBtn.addEventListener('click', () => {
+    const val = exceptionInput.value.trim();
+    if (val) {
+      saveExceptionSchedule(val);
+      exceptionInput.value = '';
+    }
+  });
+}
+
+window.addEventListener('DOMContentLoaded', init);
