@@ -489,6 +489,7 @@ body {
 }
 
 .delete-item-btn {
+  height: 20px;
   padding: 0 6px;
   font-size: 12px;
   display: flex;
