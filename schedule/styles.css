@@ -185,6 +185,12 @@ body {
   background-color: #fff;
 }
 
+/* --- 좌측 (.left) - 3번째 div: 타이머 상태 및 일정 (.timer-status-box) --- */
+/* ... 기존 .timer-status-box 스타일 ... */
+.timer-status-box.running-highlight {
+  box-shadow: 0 0 5px 1px var(--active-color-blue);
+}
+
 .timer-top-row {
   display: flex;
   justify-content: start;
