@@ -47,15 +47,19 @@ async function init() {
 
   try {
     await loadOrder();
-    if (!order.includes('예외 스케줄')) {
-      order.unshift('예외 스케줄');
+    // '예외 스케줄' 범주가 order 배열에 없으면 추가 (항상 최상단이 아닌, 마지막에 위치)
+    if (order.includes('예외 스케줄')) {
+      order = order.filter(cat => cat !== '예외 스케줄'); // 기존에 있으면 제거
     }
+    order.push('예외 스케줄'); // 항상 마지막에 추가
+
     await loadSchedules();
     schedules['예외 스케줄'] = exceptionSchedules;
 
   } catch (error) {
     console.error("스케줄 파일을 불러오는 데 실패했습니다. 서버 환경에서 실행 중인지 확인해주세요.", error);
     alert("스케줄 파일을 불러오는 데 실패했습니다. 웹페이지에 스케줄이 표시되지 않을 수 있습니다.");
+    // 파일 로드 실패 시에도 '예외 스케줄'만이라도 표시되도록
     order = ['예외 스케줄'];
     schedules['예외 스케줄'] = exceptionSchedules;
   }
@@ -78,6 +82,7 @@ async function loadOrder() {
 }
 
 async function loadSchedules() {
+  // '예외 스케줄'은 로컬 스토리지에서 관리되므로, 파일에서 불러오지 않음
   const categoriesToLoad = order.filter(category => category !== '예외 스케줄');
 
   for (const category of categoriesToLoad) {
@@ -207,7 +212,7 @@ function stopTimer(status) {
   saveRecords();
   updateTimerUI();
   renderTaskList();
-  renderAnalysisGraph();
+  renderAnalysisGraph(); // 타이머 종료 시 그래프 색상 업데이트를 위해 호출
 }
 
 function saveRecords() {
@@ -425,25 +430,14 @@ function renderAnalysisGraph() {
 
   const totalAllDaily = Object.values(dailyTotalTimes).reduce((a, b) => a + b, 0);
 
+  // 모든 카테고리를 시간 순으로 정렬하여 색상 순위를 결정
+  // '예외 스케줄'도 이제 다른 범주와 동일하게 시간 순위 매김
   let categoriesForColorRanking = order.map(category => ({ category, time: dailyTotalTimes[category] || 0 }));
-  let exceptionScheduleItemForColor = null;
-
-  const exceptionColorIndex = categoriesForColorRanking.findIndex(item => item.category === '예외 스케줄');
-  if (exceptionColorIndex !== -1) {
-      exceptionScheduleItemForColor = categoriesForColorRanking.splice(exceptionColorIndex, 1)[0];
-  }
-
   categoriesForColorRanking.sort((a, b) => b.time - a.time);
-
-  if (exceptionScheduleItemForColor) {
-      categoriesForColorRanking.push(exceptionScheduleItemForColor);
-  }
-
-  const finalSortedCategories = categoriesForColorRanking;
 
   const rankColors = ['#d33', '#FF8C00', '#FFD700', '#B0B0B0'];
   const categoryColorMap = new Map();
-  finalSortedCategories.forEach((item, idx) => {
+  categoriesForColorRanking.forEach((item, idx) => {
       categoryColorMap.set(item.category, idx < 3 ? rankColors[idx] : rankColors[3]);
   });
 
@@ -468,9 +462,9 @@ function renderAnalysisGraph() {
   analysisGraphContainer.appendChild(barsColumn);
 
 
-  order.forEach(category => {
+  order.forEach(category => { // order 배열을 기준으로 순서 유지
     const time = dailyTotalTimes[category] || 0;
-    const barColor = categoryColorMap.get(category) || rankColors[3];
+    const barColor = categoryColorMap.get(category) || rankColors[3]; // 매핑된 색상 사용, 매핑 안된 경우 기본 회색
 
     // 레이블 생성 및 labelsColumn에 추가
     const labelSpan = document.createElement('span');
