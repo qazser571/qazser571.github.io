@@ -426,23 +426,20 @@ function renderAnalysisGraph() {
     const time = item.time;
 
     const barDiv = document.createElement('div');
+    barDiv.style.position = 'relative';
     barDiv.style.display = 'flex';
     barDiv.style.alignItems = 'center';
     barDiv.style.marginBottom = '4px';
 
     const labelSpan = document.createElement('span');
     labelSpan.textContent = category;
-    labelSpan.style.width = '60px';
-    labelSpan.style.fontSize = '12px';
-    labelSpan.style.fontWeight = '600';
-    labelSpan.style.marginRight = '6px';
-    labelSpan.style.flexShrink = '0';
 
     const barOuter = document.createElement('div');
     barOuter.style.flexGrow = '1';
     barOuter.style.height = '12px';
     barOuter.style.border = '1px solid #ccc';
     barOuter.style.position = 'relative';
+    barOuter.style.marginLeft = '0';
 
     const barInner = document.createElement('div');
     barInner.style.height = '100%';
