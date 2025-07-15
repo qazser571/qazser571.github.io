@@ -425,8 +425,7 @@ body {
   justify-content: space-between;
   align-items: center;
   padding-bottom: 8px;
-  margin-left: 10px; /* .task-list-container의 padding-left와 맞춤 */
-  border-bottom: 1px solid var(--division-bar-color);
+  margin-left: 10px;
   margin-bottom: 10px; /* task-category와의 간격 */
   padding-right: 5px; /* .task-list-container의 padding-right와 맞춤 */
 }
