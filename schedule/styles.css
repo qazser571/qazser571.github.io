@@ -317,55 +317,41 @@ body {
   border-color: #999;
 }
 
+/* --- 분석 그래프 컨테이너 (.analysis-graph-container) - 단일 행 구조로 복원 --- */
 .analysis-graph-container {
-  padding: 4px 5px;
+  padding: 4px 5px 0 5px;
   border-top: 1px solid var(--division-bar-color);
   border-bottom: 1px solid var(--division-bar-color);
   overflow-y: auto;
   flex: 1;
-  display: flex;
+  /* 2열 레이아웃 관련 스타일 제거 */
 }
 
-.analysis-labels-column {
-  max-width: 100px;
-  height: auto;
+.analysis-graph-container > div { /* 각 그래프 행 */
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  padding-right: var(--label-padding-right);
+  align-items: center;
+  margin-bottom: 4px;
   position: relative;
-  border-right: 1.5px solid #000;
 }
 
-
-.analysis-label-item {
+.analysis-graph-container > div > span { /* 레이블 */
+  width: 60px; /* 레이블 너비 고정 */
+  text-align: left; /* 왼쪽 정렬 */
   font-size: 12px;
   font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  height: 12px;
-  line-height: 12px;
   flex-shrink: 0;
-  margin-bottom: 4px;
+  margin-right: 6px; /* 막대와의 간격 */
 }
 
-.analysis-bars-column {
+.analysis-graph-container > div > div:last-child { /* 막대 외부 컨테이너 */
   flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.analysis-bar-outer {
   height: 12px;
+  border: 1px solid #ccc;
   position: relative;
-  margin-bottom: 4px;
-  display: flex;
 }
 
-.analysis-bar-inner {
-  height: 100%;
-}
+/* .analysis-bar-outer, .analysis-bar-inner는 기존대로 유지 */
+
 
 .exception-schedule-box {
   border-radius: var(--border-radius);
