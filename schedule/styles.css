@@ -317,40 +317,57 @@ body {
   border-color: #999;
 }
 
-/* --- 분석 그래프 컨테이너 (.analysis-graph-container) - 단일 행 구조로 복원 --- */
+/* --- 분석 그래프 컨테이너 (.analysis-graph-container) - 2열 구조로 복원 --- */
 .analysis-graph-container {
-  padding: 4px 5px 0 5px;
+  padding: 4px 5px; /* padding-top 0으로 변경 */
   border-top: 1px solid var(--division-bar-color);
   border-bottom: 1px solid var(--division-bar-color);
   overflow-y: auto;
   flex: 1;
-  /* 2열 레이아웃 관련 스타일 제거 */
+  display: flex; /* 2열 구조를 위한 flexbox */
 }
 
-.analysis-graph-container > div { /* 각 그래프 행 */
+.analysis-labels-column {
+  max-width: 100px; /* 고정 너비 사용 */
+  height: auto; /* 내용에 따라 높이 조절 */
   display: flex;
-  align-items: center;
-  margin-bottom: 4px;
+  flex-direction: column;
+  align-items: flex-end; /* 레이블을 오른쪽으로 정렬 */
+  padding-right: var(--label-padding-right); /* 레이블과 세로 바 사이 간격 */
   position: relative;
+  border-right: 1.5px solid #000; /* 세로 바 */
 }
 
-.analysis-graph-container > div > span { /* 레이블 */
-  width: 60px; /* 레이블 너비 고정 */
-  text-align: left; /* 왼쪽 정렬 */
+.analysis-label-item {
   font-size: 12px;
   font-weight: 600;
-  flex-shrink: 0;
-  margin-right: 6px; /* 막대와의 간격 */
+  white-space: nowrap; /* 줄바꿈 방지 */
+  overflow: hidden; /* 넘치는 내용 숨김 */
+  text-overflow: ellipsis; /* 넘치는 내용 ... 처리 */
+  height: 12px; /* 막대 높이와 일치시켜 세로 정렬 맞춤 */
+  line-height: 12px; /* 텍스트를 세로 중앙에 정렬 */
+  flex-shrink: 0; /* 레이블이 줄어들지 않도록 */
+  margin-bottom: 4px; /* 막대 사이 간격과 동일하게 설정 */
 }
 
-.analysis-graph-container > div > div:last-child { /* 막대 외부 컨테이너 */
+.analysis-bars-column {
   flex-grow: 1;
-  height: 12px;
-  border: 1px solid #ccc;
-  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
-/* .analysis-bar-outer, .analysis-bar-inner는 기존대로 유지 */
+.analysis-bar-outer {
+  height: 12px;
+  border: 1px solid #ccc; /* border 다시 추가 (JS에서 제거했었음) */
+  position: relative;
+  margin-bottom: 4px;
+  display: flex;
+}
+
+.analysis-bar-inner {
+  height: 100%;
+  /* width와 background-color는 JS에서 설정 */
+}
 
 
 .exception-schedule-box {
