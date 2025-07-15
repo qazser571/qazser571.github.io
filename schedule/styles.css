@@ -303,14 +303,18 @@ body {
 
 /* 새로운 총 시간 표시 스타일 */
 .total-time-display {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 20px;
   color: #000;
 }
 
 /* --- 분석 그래프 컨테이너 (.analysis-graph-container) - 2열 구조 --- */
 .analysis-graph-container {
-  padding: 4px 5px;
+  padding: 3px 5px;
   border-top: 1px solid var(--division-bar-color);
   border-bottom: 1px solid var(--division-bar-color);
   overflow-y: auto;
@@ -343,7 +347,7 @@ body {
   height: 12px;
   line-height: 12px;
   flex-shrink: 0;
-  margin-bottom: 4px;
+  margin: 2px 0;
 }
 
 .analysis-bars-column {
@@ -354,10 +358,9 @@ body {
 
 .analysis-bar-outer {
   height: 12px;
-  border: 1px solid #ccc;
   position: relative;
-  margin-bottom: 4px;
   display: flex;
+  margin: 2px 0;
 }
 
 .analysis-bar-inner {
