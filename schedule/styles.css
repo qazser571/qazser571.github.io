@@ -276,7 +276,7 @@ body {
   flex-direction: column;
   user-select: none;
   background-color: #fff; /* 배경색 추가 */
-  flex: 1;
+  height: 140px;
 }
 
 .analysis-header {
