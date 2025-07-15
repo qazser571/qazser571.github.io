@@ -1,4 +1,3 @@
-/* 폰트 정의 */
 @font-face {
   font-family: 'DS-DIGI';
   src: url('fonts/DS-DIGI.TTF') format('truetype');
@@ -24,61 +23,53 @@
   font-style: normal;
 }
 
-/* 초기화 */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* CSS 변수 */
 :root {
   --title-gap: 15px;
-  --bar-width: 2px; /* 바 두께 줄임 */
+  --bar-width: 2px;
   --bar-color: #000;
   --inactive-color: #ccc;
   --active-color-blue: #3366cc;
   --active-color-yellow: #ffeb3b;
   --font-digital: 'DS-DIGI', monospace;
-  --container-shadow: 0 0 8px rgba(0, 0, 0, 0.15); /* offset-x, offset-y를 0으로 변경 */
-  --box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);     /* offset-x, offset-y를 0으로 변경 */
+  --container-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
+  --box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
   --border-radius: 8px;
-  --vertical-bar-width: 2px; /* 새로 추가된 세로 바 두께 */
-  --vertical-bar-color: #000; /* 새로 추가된 세로 바 색상 */
-  --label-padding-right: 8px; /* 레이블과 세로 바 사이 간격 */
+  --vertical-bar-width: 2px;
+  --vertical-bar-color: #000;
+  --label-padding-right: 8px;
   --box-inner-padding: 12px;
-  --division-bar-color: #ccc;
+  --division-bar-color: #a0a0a0;
 }
 
-/* body 및 container */
 body {
   width: 100vw;
   height: 100vh;
   font-family: '맑은 고딕', Malgun Gothic, Arial, sans-serif;
-  background: #f0f2f5; /* 배경색 변경 */
+  background: #f0f2f5;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .container {
-  min-width: 1000px; /* 최소 너비 설정 */
+  min-width: 1000px;
   height: 600px;
-  /* border-radius: var(--border-radius); */ /* 제거 */
-  /* box-shadow: var(--container-shadow); */ /* 제거 */
   display: flex;
   gap: 20px;
-  /* background-color: #fff; */ /* 제거 */
-  /* overflow: hidden; */ /* 제거 */
 }
 
-/* left, right */
 .left, .right {
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
   padding: 10px;
   box-sizing: border-box;
-  background-color: #fff; /* 내부 박스 배경색 추가 */
+  background-color: #fff;
 }
 
 .left {
@@ -92,19 +83,17 @@ body {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  gap: 10px; /* gap 추가 */
+  gap: 10px;
 }
 
-/* "오늘 일정" 제목 스타일 */
 .today-schedule-title {
   font-size: 18px;
   font-weight: 700;
   padding-bottom: 8px;
-  margin-left: 10px; /* .right padding과 맞춤 */
+  margin-left: 10px;
   border-bottom: 1px solid var(--division-bar-color);
 }
 
-/* 1번째 div: 날짜 및 디데이 */
 .date-dday-box {
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
@@ -112,39 +101,37 @@ body {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background-color: #fff; /* 배경색 추가 */
+  background-color: #fff;
 }
 
 .current-date {
   font-size: 14px;
   font-weight: 600;
-  border-bottom: 1px solid var(--division-bar-color); /* 얇은 구분선 */
+  border-bottom: 1px solid var(--division-bar-color);
   display: flex;
   align-items: center;
   justify-content: center;
   padding-bottom: 4px;
 }
 
-/* dday-container는 가로 배치, 앞쪽 div 너비 고정, 뒤쪽 div 나머지 차지 */
 .dday-container {
   display: flex;
   height: 30px;
   gap: var(--title-gap);
-  background-color: #fff; /* 다시 추가 */
+  background-color: #fff;
 }
 
 .dday-title {
-  border-right: var(--bar-width) solid var(--bar-color); /* 바 두께 적용 */
+  border-right: var(--bar-width) solid var(--bar-color);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0 var(--title-gap) 0 calc(var(--title-gap) - var(--box-inner-padding));
   font-weight: 700;
   font-size: 18px;
-  position: relative; /* ::after를 위한 position */
+  position: relative;
 }
 
-/* dday-count는 나머지 너비 차지 */
 .dday-count {
   flex-grow: 1;
   display: flex;
@@ -152,11 +139,9 @@ body {
   justify-content: start;
   font-weight: 700;
   font-size: 22px;
-  background-color: #fff; /* 배경색 추가 */
+  background-color: #fff;
 }
 
-
-/* 2번째 div: 현재 시각 */
 .current-time-box {
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
@@ -185,15 +170,14 @@ body {
   letter-spacing: 2px;
 }
 
-/* 3번째 div: 타이머 상태 및 일정 */
 .timer-status-box {
-  border-radius: var(--border-radius); /* 다시 추가 */
-  box-shadow: var(--box-shadow); /* 다시 추가 */
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
   padding: 8px var(--box-inner-padding);
   display: flex;
   flex-direction: column;
   user-select: none;
-  background-color: #fff; /* 배경색 추가 */
+  background-color: #fff;
 }
 
 .timer-top-row {
@@ -202,11 +186,11 @@ body {
   align-items: center;
   gap: var(--title-gap);
   padding-bottom: 8px;
-  border-bottom: 1px solid var(--division-bar-color); /* 얇은 구분선 */
+  border-bottom: 1px solid var(--division-bar-color);
 }
 
 .timer-state {
-  border-right: var(--bar-width) solid var(--bar-color); /* 바 두께 적용 */
+  border-right: var(--bar-width) solid var(--bar-color);
   height: 30px;
   padding: 0 var(--title-gap) 0 calc(var(--title-gap) - var(--box-inner-padding));
   display: flex;
@@ -214,7 +198,7 @@ body {
   align-items: center;
   font-weight: 700;
   font-size: 16px;
-  position: relative; /* ::after를 위한 position */
+  position: relative;
 }
 
 .timer-time {
@@ -232,14 +216,14 @@ body {
 
 .schedule-category {
   width: var(--title-width);
-  border-right: var(--bar-width) solid var(--bar-color); /* 바 두께 적용 */
+  border-right: var(--bar-width) solid var(--bar-color);
   padding-right: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
   font-weight: 700;
   font-size: 16px;
-  position: relative; /* ::after를 위한 position */
+  position: relative;
 }
 
 .schedule-task {
@@ -259,7 +243,7 @@ body {
   padding: 7px 0;
   font-weight: 600;
   cursor: pointer;
-  border: 1px solid #ccc; /* 버튼 테두리 변경 */
+  border: 1px solid #ccc;
   border-radius: 4px;
   background-color: #fff;
   transition: background-color 0.3s ease, border-color 0.3s ease;
@@ -278,15 +262,14 @@ body {
   pointer-events: none;
 }
 
-/* 4번째 div: 분석 박스 */
 .analysis-box {
-  border-radius: var(--border-radius); /* 다시 추가 */
-  box-shadow: var(--box-shadow); /* 다시 추가 */
-  padding: 8px var(--box-inner-padding); /* padding 8px 12px 적용 */
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 8px var(--box-inner-padding);
   display: flex;
   flex-direction: column;
   user-select: none;
-  background-color: #fff; /* 배경색 추가 */
+  background-color: #fff;
   flex: 1;
 }
 
@@ -299,7 +282,7 @@ body {
 }
 
 .analysis-title {
-  border-right: var(--bar-width) solid var(--bar-color); /* 바 두께 적용 */
+  border-right: var(--bar-width) solid var(--bar-color);
   height: 30px;
   padding: 0 var(--title-gap) 0 calc(var(--title-gap) - var(--box-inner-padding));
   display: flex;
@@ -307,16 +290,16 @@ body {
   align-items: center;
   font-weight: 700;
   font-size: 16px;
-  position: relative; /* ::after를 위한 position */
+  position: relative;
 }
 
 .analysis-detail-link {
   text-decoration: none;
-  color: #000; /* 글씨색 검은색으로 변경 */
+  color: #000;
   font-weight: 600;
-  border: 1px solid #ccc; /* border 적용 */
-  border-radius: 4px; /* border-radius 적용 */
-  padding: 4px 8px; /* padding 적용 */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 4px 8px;
   background-color: #fff;
   transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
@@ -326,36 +309,30 @@ body {
   border-color: #999;
 }
 
-
-
-
 .analysis-graph-container {
   padding: 4px 5px 0 5px;
   border-top: 1px solid var(--division-bar-color);
   border-bottom: 1px solid var(--division-bar-color);
-  overflow-y: auto; /* 스크롤 가능하도록 */
+  overflow-y: auto;
   flex: 1;
-  position: relative; /* 세로 바를 위한 position */
+  position: relative;
 }
 
-/* 각 그래프 바 요소 (원상 복구) */
 .analysis-graph-container > div {
   display: flex;
   align-items: center;
   margin-bottom: 4px;
 }
 
-/* 막대 그래프 레이블 (원상 복구) */
 .analysis-graph-container span {
-  width: 60px; /* 레이블 너비 고정 */
-  text-align: left; /* 왼쪽 정렬로 원상 복구 */
+  width: 60px;
+  text-align: left;
   font-size: 12px;
   font-weight: 600;
   flex-shrink: 0;
-  margin-right: 6px; /* 원래 마진으로 원상 복구 */
+  margin-right: 6px;
 }
 
-/* 막대 그래프 바 외부 컨테이너 (원상 복구) */
 .analysis-graph-container > div > div:last-child {
   flex-grow: 1;
   height: 12px;
@@ -363,8 +340,6 @@ body {
   position: relative;
 }
 
-
-/* 5번째 div: 예외 스케줄 작성 */
 .exception-schedule-box {
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
@@ -373,7 +348,7 @@ body {
   flex-direction: column;
   gap: 6px;
   user-select: none;
-  background-color: #fff; /* 배경색 추가 */
+  background-color: #fff;
 }
 
 .exception-title {
@@ -394,7 +369,7 @@ body {
   flex-grow: 1;
   padding: 6px 8px;
   font-size: 14px;
-  border: 1px solid #ccc; /* 입력 필드 테두리 변경 */
+  border: 1px solid #ccc;
   border-radius: 4px;
 }
 
@@ -402,7 +377,7 @@ body {
   width: 70px;
   font-weight: 600;
   cursor: pointer;
-  border: 1px solid #ccc; /* 버튼 테두리 변경 */
+  border: 1px solid #ccc;
   border-radius: 4px;
   background-color: #fff;
   transition: background-color 0.3s ease, border-color 0.3s ease;
@@ -413,48 +388,38 @@ body {
   border-color: #999;
 }
 
-/* 오른쪽 영역 */
-/* .right {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  height: 600px;
-} */ /* .right에 이미 스타일이 정의되어 있으므로 중복 제거 */
-
-/* .right-separator {
+.right-separator {
   border: none;
   border-top: 1px solid #eee;
   margin-bottom: 10px;
-} */ /* 제거됨 */
+}
 
 .task-list-container {
   border-top: 1px solid #ccc;
   border-bottom: 1px solid #ccc;
   flex-grow: 1;
-  overflow-y: auto; /* 스크롤 가능하도록 */
+  overflow-y: auto;
   padding: 8px 5px;
-  background-color: #fff; /* 내부 박스 배경색 추가 */
+  background-color: #fff;
 }
 
-/* task category */
 .task-category {
-  border: 1px solid #eee; /* 얇은 구분선 */
+  border: 1px solid #eee;
   border-radius: 4px;
   margin-bottom: 10px;
   padding: 6px 8px;
   user-select: none;
-  background-color: #fdfdfd; /* 카테고리 배경색 추가 */
+  background-color: #fdfdfd;
 }
 
 .task-category > .category-title {
   font-weight: 700;
   font-size: 16px;
   margin-bottom: 6px;
-  border-bottom: 1px solid #eee; /* 얇은 구분선 */
+  border-bottom: 1px solid #eee;
   padding-bottom: 4px;
 }
 
-/* 일정 항목 */
 .task-item {
   display: flex;
   justify-content: space-between;
@@ -464,23 +429,23 @@ body {
   user-select: none;
 }
 
-/* 첫 번째 task-item을 제외한 나머지 task-item에만 border-top 적용 */
-.task-item + .task-item {
-  border-top: 1px solid var(--division-bar-color); /* 색상 변경 */
+/* 수정된 부분: 첫 번째 task-item을 제외한 모든 task-item에 border-top 적용 */
+.task-category > .task-item:not(:first-child) {
+  border-top: 1px solid var(--division-bar-color);
 }
 
 .task-name {
   font-size: 14px;
   font-weight: 600;
-  white-space: nowrap; /* 줄바꿈 방지 */
-  overflow: hidden; /* 넘치는 내용 숨김 */
-  text-overflow: ellipsis; /* 넘치는 내용 ... 처리 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .status-box {
   width: 20px;
   height: 20px;
-  border: 1px solid #ccc; /* 박스 테두리 변경 */
+  border: 1px solid #ccc;
   border-radius: 4px;
   background-color: transparent;
   transition: background-color 0.3s ease;
@@ -497,7 +462,6 @@ body {
   border-color: var(--active-color-yellow);
 }
 
-/* 클릭 시 토글되는 타이머 기록 영역 */
 .task-timer-record {
   font-size: 13px;
   padding: 4px 8px;
@@ -510,7 +474,6 @@ body {
   border-bottom-right-radius: 4px;
 }
 
-/* 일정 선택 모드일 때 테두리 빛나도록 */
 .task-list-container.selecting {
   box-shadow: 0 0 10px 3px var(--active-color-blue);
   border-color: var(--active-color-blue);
