@@ -348,6 +348,9 @@ body {
   line-height: 12px;
   flex-shrink: 0;
   margin: 2px 0;
+  display: flex;
+  justify-content: end;
+  align-items: center;
 }
 
 .analysis-bars-column {
