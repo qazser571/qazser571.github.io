@@ -51,7 +51,7 @@ async function init() {
     if (order.includes('예외 스케줄')) {
       order = order.filter(cat => cat !== '예외 스케줄');
     }
-    order.unshift('예외 스케줄'); // 항상 최상단에 추가 (Right 섹션 표시 순서)
+    order.unshift('예외 스케줄'); // Right 섹션에서 항상 최상단에 표시되도록 추가
 
     await loadSchedules();
     schedules['예외 스케줄'] = exceptionSchedules;
@@ -425,7 +425,6 @@ function renderAnalysisGraph() {
   const totalAllDaily = Object.values(dailyTotalTimes).reduce((a, b) => a + b, 0);
 
   // 모든 카테고리를 시간 순으로 정렬하여 색상 순위를 결정
-  // '예외 스케줄'도 이제 다른 범주와 동일하게 시간 순위 매김
   let categoriesForColorRanking = order.map(category => ({ category, time: dailyTotalTimes[category] || 0 }));
   categoriesForColorRanking.sort((a, b) => b.time - a.time); // 시간 총합으로 정렬
 
@@ -446,10 +445,8 @@ function renderAnalysisGraph() {
     return;
   }
 
-  // グラフ描画のための順序制御
-  // order 배열에서 '예외 스케줄'을 제외한 나머지 범주들을 가져옴
+  // グラフ描画のための順序制御: '예외 스케줄'을 제외한 나머지 범주들을 먼저 배치하고, 마지막에 '예외 스케줄' 추가
   let graphDisplayOrder = order.filter(category => category !== '예외 스케줄');
-  // '예외 스케줄' 범주를 찾아서 마지막에 추가
   const exceptionScheduleCategory = order.find(category => category === '예외 스케줄');
   if (exceptionScheduleCategory) {
       graphDisplayOrder.push(exceptionScheduleCategory);
