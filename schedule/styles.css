@@ -347,7 +347,7 @@ body {
   height: 12px;
   line-height: 12px;
   flex-shrink: 0;
-  margin: 2px 0;
+  margin: 3px 0;
   display: flex;
   justify-content: end;
   align-items: center;
@@ -363,7 +363,7 @@ body {
   height: 12px;
   position: relative;
   display: flex;
-  margin: 2px 0;
+  margin: 3px 0;
 }
 
 .analysis-bar-inner {
