@@ -107,6 +107,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding-bottom: 4px;
 }
 
 /* dday-container는 가로 배치, 앞쪽 div 너비 고정, 뒤쪽 div 나머지 차지 */
@@ -122,7 +123,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 var(--title-gap);
+  padding: 0 var(--title-gap) 0 0;
   font-weight: 700;
   font-size: 18px;
   position: relative; /* ::after를 위한 position */
@@ -192,7 +193,8 @@ body {
 
 .timer-state {
   border-right: var(--bar-width) solid var(--bar-color); /* 바 두께 적용 */
-  padding: 0 var(--title-gap);
+  height: 30px;
+  padding: 0 var(--title-gap) 0 0;
   display: flex;
   justify-content: end;
   align-items: center;
@@ -286,7 +288,8 @@ body {
 
 .analysis-title {
   border-right: var(--bar-width) solid var(--bar-color); /* 바 두께 적용 */
-  padding: 0 var(--title-gap);
+  height: 30px;
+  padding: 0 var(--title-gap) 0 0;
   display: flex;
   justify-content: end;
   align-items: center;
