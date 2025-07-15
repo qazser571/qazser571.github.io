@@ -84,6 +84,7 @@ body {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
+  gap: 10px;
   transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
@@ -97,6 +98,8 @@ body {
   font-weight: 700;
   padding-bottom: 8px;
   margin-left: 10px;
+  border-bottom: 1px solid var(--division-bar-color);
+  margin-bottom: 10px;
 }
 
 .date-dday-box {
@@ -298,53 +301,43 @@ body {
   position: relative;
 }
 
-.analysis-detail-link {
-  text-decoration: none;
-  color: #000;
+/* 새로운 총 시간 표시 스타일 */
+.total-time-display {
   font-weight: 600;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 4px 8px;
-  background-color: #fff;
-  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  font-size: 14px;
+  color: #000;
 }
 
-.analysis-detail-link:hover {
-  background-color: #eee;
-  border-color: #999;
-}
-
-/* --- 분석 그래프 컨테이너 (.analysis-graph-container) - 2열 구조 --- */
 .analysis-graph-container {
-  padding: 4px 5px; /* padding-top 0으로 변경 */
+  padding: 4px 5px 0 5px;
   border-top: 1px solid var(--division-bar-color);
   border-bottom: 1px solid var(--division-bar-color);
   overflow-y: auto;
   flex: 1;
-  display: flex; /* 2열 구조를 위한 flexbox */
+  display: flex; /* 2열 구조 */
 }
 
 .analysis-labels-column {
-  max-width: 100px; /* 고정 너비 사용 */
-  height: auto; /* 내용에 따라 높이 조절 */
+  max-width: 100px;
+  height: auto;
   display: flex;
   flex-direction: column;
-  align-items: flex-end; /* 레이블을 오른쪽으로 정렬 */
-  padding-right: var(--label-padding-right); /* 레이블과 세로 바 사이 간격 */
+  align-items: flex-end;
+  padding-right: var(--label-padding-right);
   position: relative;
-  border-right: 1.5px solid #000; /* 세로 바 */
+  border-right: 1.5px solid #000;
 }
 
 .analysis-label-item {
   font-size: 12px;
   font-weight: 600;
-  white-space: nowrap; /* 줄바꿈 방지 */
-  overflow: hidden; /* 넘치는 내용 숨김 */
-  text-overflow: ellipsis; /* 넘치는 내용 ... 처리 */
-  height: 12px; /* 막대 높이와 일치시켜 세로 정렬 맞춤 */
-  line-height: 12px; /* 텍스트를 세로 중앙에 정렬 */
-  flex-shrink: 0; /* 레이블이 줄어들지 않도록 */
-  margin-bottom: 4px; /* 막대 사이 간격과 동일하게 설정 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 12px;
+  line-height: 12px;
+  flex-shrink: 0;
+  margin-bottom: 4px;
 }
 
 .analysis-bars-column {
@@ -355,7 +348,7 @@ body {
 
 .analysis-bar-outer {
   height: 12px;
-  border: 1px solid #ccc; /* border 다시 추가 (JS에서 제거했었음) */
+  border: 1px solid #ccc;
   position: relative;
   margin-bottom: 4px;
   display: flex;
@@ -363,7 +356,6 @@ body {
 
 .analysis-bar-inner {
   height: 100%;
-  /* width와 background-color는 JS에서 설정 */
 }
 
 
