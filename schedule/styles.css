@@ -321,6 +321,7 @@ body {
 
 
 .analysis-graph-container {
+  height: 30px;
   padding: 0 5px;
   border: 1px 0 solid #000;
   overflow-y: auto; /* 스크롤 가능하도록 */
