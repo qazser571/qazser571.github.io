@@ -389,23 +389,34 @@ function renderAnalysisGraph() {
 
   const totalAllDaily = Object.values(dailyTotalTimes).reduce((a, b) => a + b, 0);
 
-  let categoriesForSorting = order.map(category => ({ category, time: dailyTotalTimes[category] || 0 }));
-  let exceptionScheduleItem = null;
+  // --- 색상 순위 결정을 위한 임시 정렬 리스트 생성 ---
+  let categoriesForColorRanking = order.map(category => ({ category, time: dailyTotalTimes[category] || 0 }));
+  let exceptionScheduleItemForColor = null;
 
-  const exceptionIndex = categoriesForSorting.findIndex(item => item.category === '예외 스케줄');
-  if (exceptionIndex !== -1) {
-      exceptionScheduleItem = categoriesForSorting.splice(exceptionIndex, 1)[0];
+  // '예외 스케줄' 항목을 색상 순위 결정 리스트에서 분리
+  const exceptionColorIndex = categoriesForColorRanking.findIndex(item => item.category === '예외 스케줄');
+  if (exceptionColorIndex !== -1) {
+      exceptionScheduleItemForColor = categoriesForColorRanking.splice(exceptionColorIndex, 1)[0];
   }
 
-  categoriesForSorting.sort((a, b) => b.time - a.time);
+  // 나머지 카테고리들을 시간 순으로 정렬 (색상 순위 결정용)
+  categoriesForColorRanking.sort((a, b) => b.time - a.time);
 
-  if (exceptionScheduleItem) {
-      categoriesForSorting.push(exceptionScheduleItem);
+  // '예외 스케줄' 항목을 색상 순위 결정 리스트의 맨 뒤에 추가
+  if (exceptionScheduleItemForColor) {
+      categoriesForColorRanking.push(exceptionScheduleItemForColor);
   }
 
-  const finalSortedCategories = categoriesForSorting;
+  // --- 카테고리별 색상 매핑 생성 ---
+  // 1등: 빨강, 2등: 주황, 3등: 노랑, 나머지: 회색
+  const rankColors = ['#d33', '#FF8C00', '#FFD700', '#B0B0B0']; // 빨강, 주황, 노랑, 회색
+  const categoryColorMap = new Map();
+  categoriesForColorRanking.forEach((item, idx) => {
+      // 3등까지는 고정 색상, 그 이후는 회색
+      categoryColorMap.set(item.category, idx < 3 ? rankColors[idx] : rankColors[3]);
+  });
+  // --- 색상 매핑 끝 ---
 
-  const colors = ['#d33', '#3366cc', '#ffcc00', '#28a745', '#6f42c1', '#fd7e14', '#17a2b8', '#dc3545'];
 
   if (order.length === 0) {
     const noDataMessage = document.createElement('div');
@@ -417,38 +428,41 @@ function renderAnalysisGraph() {
     return;
   }
 
-  // 새로운 레이아웃을 위한 두 개의 컬럼 생성
-  const labelsColumn = document.createElement('div');
-  labelsColumn.classList.add('analysis-labels-column');
-  analysisGraphContainer.appendChild(labelsColumn);
+  // --- 원래 order 배열을 기준으로 그래프 렌더링 (표시 순서 유지) ---
+  order.forEach(category => {
+    const time = dailyTotalTimes[category] || 0; // 해당 카테고리의 시간
+    const barColor = categoryColorMap.get(category) || rankColors[3]; // 매핑된 색상 사용, 매핑 안된 경우 기본 회색
 
-  const barsColumn = document.createElement('div');
-  barsColumn.classList.add('analysis-bars-column');
-  analysisGraphContainer.appendChild(barsColumn);
+    const barDiv = document.createElement('div');
+    barDiv.style.display = 'flex';
+    barDiv.style.alignItems = 'center';
+    barDiv.style.marginBottom = '4px';
 
-
-  finalSortedCategories.forEach((item, idx) => {
-    const category = item.category;
-    const time = item.time;
-
-    // 레이블 생성 및 labelsColumn에 추가
     const labelSpan = document.createElement('span');
-    labelSpan.classList.add('analysis-label-item');
     labelSpan.textContent = category;
-    labelsColumn.appendChild(labelSpan);
+    labelSpan.style.width = '60px';
+    labelSpan.style.fontSize = '12px';
+    labelSpan.style.fontWeight = '600';
+    labelSpan.style.marginRight = '6px';
+    labelSpan.style.flexShrink = '0';
 
-    // 막대그래프 생성 및 barsColumn에 추가
     const barOuter = document.createElement('div');
-    barOuter.classList.add('analysis-bar-outer');
+    barOuter.style.flexGrow = '1';
+    barOuter.style.height = '12px';
+    barOuter.style.border = '1px solid #ccc';
+    barOuter.style.position = 'relative';
 
     const barInner = document.createElement('div');
-    barInner.classList.add('analysis-bar-inner');
+    barInner.style.height = '100%';
     barInner.style.width = totalAllDaily > 0 ? `${(time / totalAllDaily) * 100}%` : '0%';
-    barInner.style.backgroundColor = colors[idx % colors.length];
+    barInner.style.backgroundColor = barColor; // 순위에 따라 결정된 색상 적용
     barInner.style.transition = 'width 0.5s ease-out';
 
     barOuter.appendChild(barInner);
-    barsColumn.appendChild(barOuter);
+    barDiv.appendChild(labelSpan);
+    barDiv.appendChild(barOuter);
+
+    analysisGraphContainer.appendChild(barDiv);
   });
 }
 
