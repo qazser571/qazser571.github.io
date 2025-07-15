@@ -230,8 +230,7 @@ function saveExceptionSchedule(text) {
 function renderTaskList() {
   taskListContainer.innerHTML = ''; // task-list-container의 내용만 초기화
 
-  const todayScheduleTitle = document.querySelector('.today-schedule-title-text');
-  // todayScheduleTitle은 HTML에 직접 있으므로, 여기서는 건드리지 않습니다.
+  // "오늘 일정" 제목은 HTML에 직접 있으므로, 여기서는 건드리지 않습니다.
 
 
   if (order.length === 0) {
@@ -449,7 +448,15 @@ function renderAnalysisGraph() {
   const totalAllDaily = Object.values(dailyTotalTimes).reduce((a, b) => a + b, 0);
 
   // 총 시간 합계 업데이트
-  totalTimeDisplay.textContent = `합계: ${formatDuration(totalAllDaily)}`;
+  totalTimeDisplay.innerHTML = ''; // 기존 내용 지우기
+  const totalTimeLabel = document.createElement('span');
+  totalTimeLabel.classList.add('total-time-label');
+  totalTimeLabel.textContent = '합계:';
+  const totalTimeValue = document.createElement('span');
+  totalTimeValue.classList.add('total-time-value');
+  totalTimeValue.textContent = formatDuration(totalAllDaily);
+  totalTimeDisplay.appendChild(totalTimeLabel);
+  totalTimeDisplay.appendChild(totalTimeValue);
 
 
   // 모든 카테고리를 시간 순으로 정렬하여 색상 순위를 결정
