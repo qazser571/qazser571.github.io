@@ -280,10 +280,6 @@ body {
   border-color: var(--active-color-blue);
 }
 
-.timer-btn-group button:hover:not(.inactive) {
-  background-color: #eee;
-  border-color: #999;
-}
 
 .timer-btn-group button.inactive {
   color: var(--inactive-color);
