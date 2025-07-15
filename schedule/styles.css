@@ -84,6 +84,7 @@ body {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
+  gap: 10px;
   transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
@@ -97,6 +98,8 @@ body {
   font-weight: 700;
   padding-bottom: 8px;
   margin-left: 10px;
+  border-bottom: 1px solid var(--division-bar-color);
+  margin-bottom: 10px;
 }
 
 .date-dday-box {
@@ -300,20 +303,29 @@ body {
 
 /* 새로운 총 시간 표시 스타일 */
 .total-time-display {
-  height: 100%;
   display: flex;
-  justify-content: center;
   align-items: center;
-  font-family: var(--font-digital);
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: 2px;
+  gap: 5px; /* "합계:"와 시간 사이 간격 */
+}
+
+.total-time-label {
+  font-weight: 600;
+  font-size: 14px;
   color: #000;
 }
 
+.total-time-value {
+  font-family: var(--font-digital);
+  font-size: 20px; /* 디지털 폰트와 어울리는 크기 */
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #000;
+}
+
+
 /* --- 분석 그래프 컨테이너 (.analysis-graph-container) - 2열 구조 --- */
 .analysis-graph-container {
-  padding: 3px 5px;
+  padding: 4px 5px;
   border-top: 1px solid var(--division-bar-color);
   border-bottom: 1px solid var(--division-bar-color);
   overflow-y: auto;
@@ -360,9 +372,10 @@ body {
 
 .analysis-bar-outer {
   height: 12px;
+  border: 1px solid #ccc;
   position: relative;
-  display: flex;
   margin: 3px 0;
+  display: flex;
 }
 
 .analysis-bar-inner {
@@ -439,11 +452,12 @@ body {
 .task-category > .category-title {
   font-weight: 700;
   font-size: 16px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid #eee;
   padding-bottom: 4px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #ddd;
 }
 
 .edit-exception-schedule-btn {
@@ -470,10 +484,10 @@ body {
   padding: 4px 6px;
   cursor: pointer;
   user-select: none;
-  border-bottom: 1px solid #ddd;
+  border-top: 1px solid #ddd;
 }
 
-.task-item:last-child{
+.task-item:first-child {
   border: none;
 }
 
