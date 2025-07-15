@@ -63,6 +63,7 @@ body {
 
 .container {
   min-width: 1000px; /* 최소 너비 설정 */
+  height: 600px;
   /* border-radius: var(--border-radius); */ /* 제거 */
   /* box-shadow: var(--container-shadow); */ /* 제거 */
   display: flex;
