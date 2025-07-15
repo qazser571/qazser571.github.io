@@ -1,4 +1,5 @@
-@font-face { 
+/* --- 폰트 정의 --- */
+@font-face {
   font-family: 'DS-DIGI';
   src: url('fonts/DS-DIGI.TTF') format('truetype');
   font-weight: normal;
@@ -23,6 +24,7 @@
   font-style: normal;
 }
 
+/* --- 초기화 및 공통 변수 --- */
 * {
   margin: 0;
   padding: 0;
@@ -48,6 +50,7 @@
   --division-bar-color: #a0a0a0;
 }
 
+/* --- body 및 전체 컨테이너 (.container) --- */
 body {
   width: 100vw;
   height: 100vh;
@@ -65,6 +68,7 @@ body {
   gap: 20px;
 }
 
+/* --- 좌측 (.left) 및 우측 (.right) 공통 스타일 --- */
 .left, .right {
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
@@ -88,21 +92,13 @@ body {
   transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
+/* --- 우측 (.right) - 일정 선택 모드 하이라이트 --- */
 .right.selecting {
   box-shadow: 0 0 5px 1px var(--active-color-blue);
   border-color: var(--active-color-blue);
 }
 
-/* "오늘 일정" 제목 스타일 (이전 right-header에서 분리) */
-.today-schedule-title-text {
-  font-size: 18px;
-  font-weight: 700;
-  padding-bottom: 8px;
-  margin-left: 10px; 
-}
-
-
-
+/* --- 좌측 (.left) - 1번째 div: 날짜 및 디데이 (.date-dday-box) --- */
 .date-dday-box {
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
@@ -151,6 +147,7 @@ body {
   background-color: #fff;
 }
 
+/* --- 좌측 (.left) - 2번째 div: 현재 시각 (.current-time-box) --- */
 .current-time-box {
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
@@ -179,6 +176,7 @@ body {
   letter-spacing: 2px;
 }
 
+/* --- 좌측 (.left) - 3번째 div: 타이머 상태 및 일정 (.timer-status-box) --- */
 .timer-status-box {
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
@@ -263,7 +261,6 @@ body {
   border-color: var(--active-color-blue);
 }
 
-
 .timer-btn-group button.inactive {
   color: var(--inactive-color);
   cursor: default;
@@ -272,6 +269,7 @@ body {
   pointer-events: none;
 }
 
+/* --- 좌측 (.left) - 4번째 div: 분석 박스 (.analysis-box) --- */
 .analysis-box {
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
@@ -351,12 +349,14 @@ body {
   position: relative;
 }
 
+/* --- 좌측 (.left) - 5번째 div: 예외 스케줄 작성 (.exception-schedule-box) --- */
 .exception-schedule-box {
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
   padding: 8px var(--box-inner-padding);
   display: flex;
   flex-direction: column;
+  gap: 6px;
   user-select: none;
   background-color: #fff;
 }
@@ -364,6 +364,7 @@ body {
 .exception-title {
   width: 100%;
   padding-bottom: 5px;
+  border-bottom: 1px solid var(--division-bar-color);
   font-weight: 700;
   font-size: 14px;
   padding-left: calc(var(--title-gap) - var(--box-inner-padding));
@@ -397,9 +398,17 @@ body {
   border-color: #999;
 }
 
+/* --- 우측 (.right) - "오늘 일정" 제목 (.today-schedule-title-text) --- */
+.today-schedule-title-text {
+  font-size: 18px;
+  font-weight: 700;
+  padding-bottom: 8px;
+  margin-left: 10px;
+  border-bottom: 1px solid var(--division-bar-color);
+  margin-bottom: 10px;
+}
 
-
-
+/* --- 우측 (.right) - 일정 목록 컨테이너 (.task-list-container) --- */
 .task-list-container {
   border-top: 1px solid var(--division-bar-color);
   border-bottom: 1px solid var(--division-bar-color);
@@ -409,13 +418,27 @@ body {
   background-color: #fff;
 }
 
+/* --- 우측 (.right) - 일정 목록 컨테이너 내 헤더 (.task-list-header) --- */
+/* HTML에서 .task-list-header를 .task-list-container 내부로 이동시켰으므로 이 스타일은 여기에 배치 */
+.task-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  margin-left: 10px; /* .task-list-container의 padding-left와 맞춤 */
+  border-bottom: 1px solid var(--division-bar-color);
+  margin-bottom: 10px; /* task-category와의 간격 */
+  padding-right: 5px; /* .task-list-container의 padding-right와 맞춤 */
+}
+
+/* --- 우측 (.right) - 개별 일정 범주 (.task-category) --- */
 .task-category {
   border: 1px solid #eee;
   border-radius: 4px;
   margin-bottom: 10px;
   padding: 6px 8px;
   user-select: none;
-  background-color: #ccc;
+  background-color: #ccc; /* 배경색 변경 */
 }
 
 .task-category > .category-title {
@@ -424,23 +447,22 @@ body {
   margin-bottom: 6px;
   border-bottom: 1px solid #eee;
   padding-bottom: 4px;
-  /* flexbox 속성 추가: 제목과 버튼을 한 줄에 배치하고 오른쪽 정렬 */
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-/* 예외 스케줄 편집 버튼 스타일 */
+/* --- 우측 (.right) - 예외 스케줄 편집 버튼 (.edit-exception-schedule-btn) --- */
 .edit-exception-schedule-btn {
   padding: 4px 8px;
-  font-size: 12px; /* 기본 편집 버튼보다 작게 */
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   border: 1px solid #ccc;
   border-radius: 4px;
   background-color: #fff;
   transition: background-color 0.3s ease, border-color 0.3s ease;
-  flex-shrink: 0; /* 공간이 부족해도 줄어들지 않도록 */
+  flex-shrink: 0;
 }
 
 .edit-exception-schedule-btn:hover {
@@ -448,7 +470,7 @@ body {
   border-color: #999;
 }
 
-
+/* --- 우측 (.right) - 개별 일정 항목 (.task-item) --- */
 .task-item {
   display: flex;
   justify-content: space-between;
@@ -456,7 +478,7 @@ body {
   padding: 4px 6px;
   cursor: pointer;
   user-select: none;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid #ddd; /* 색상 변경 */
 }
 
 .task-item:first-child{
@@ -497,6 +519,7 @@ body {
   border-color: var(--active-color-yellow);
 }
 
+/* --- 우측 (.right) - 삭제 버튼 (.delete-item-btn) --- */
 .delete-item-btn {
   padding: 2px 6px;
   font-size: 12px;
@@ -515,6 +538,7 @@ body {
   border-color: #bd2130;
 }
 
+/* --- 우측 (.right) - 타이머 기록 (.task-timer-record) --- */
 .task-timer-record {
   font-size: 13px;
   padding: 4px 8px;
