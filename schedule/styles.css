@@ -404,8 +404,6 @@ body {
   font-weight: 700;
   padding-bottom: 8px;
   margin-left: 10px;
-  border-bottom: 1px solid var(--division-bar-color);
-  margin-bottom: 10px;
 }
 
 /* --- 우측 (.right) - 일정 목록 컨테이너 (.task-list-container) --- */
