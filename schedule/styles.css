@@ -84,11 +84,12 @@ body {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
+  gap: 10px;
   transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .right.selecting {
-  box-shadow: 0 0 3px 1px var(--active-color-blue);
+  box-shadow: 0 0 5px 1px var(--active-color-blue);
   border-color: var(--active-color-blue);
 }
 
@@ -97,6 +98,8 @@ body {
   font-weight: 700;
   padding-bottom: 8px;
   margin-left: 10px;
+  border-bottom: 1px solid var(--division-bar-color);
+  margin-bottom: 10px;
 }
 
 .date-dday-box {
@@ -185,11 +188,11 @@ body {
   background-color: #fff;
 }
 
-/* --- 좌측 (.left) - 3번째 div: 타이머 상태 및 일정 (.timer-status-box) --- */
-/* ... 기존 .timer-status-box 스타일 ... */
 .timer-status-box.running-highlight {
-  box-shadow: 0 0 3px 1px var(--active-color-blue);
+  box-shadow: 0 0 5px 1px var(--active-color-blue);
 }
+
+/* .timer-schedule-row, .schedule-category, .schedule-task 관련 스타일은 제거됩니다. */
 
 .timer-top-row {
   display: flex;
@@ -219,29 +222,9 @@ body {
   letter-spacing: 2px;
 }
 
-.timer-schedule-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.schedule-category {
-  width: var(--title-width);
-  border-right: var(--bar-width) solid var(--bar-color);
-  padding-right: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: 700;
-  font-size: 16px;
-  position: relative;
-}
-
-.schedule-task {
-  font-size: 16px;
-  font-weight: 600;
-  padding-left: 8px;
-}
+/* .timer-schedule-row 관련 스타일 제거 */
+/* .schedule-category 관련 스타일 제거 */
+/* .schedule-task 관련 스타일 제거 */
 
 .timer-btn-group {
   display: flex;
@@ -304,41 +287,33 @@ body {
   position: relative;
 }
 
-/* 새로운 총 시간 표시 스타일 */
 .total-time-display {
   display: flex;
   align-items: center;
-  gap: 5px; /* "합계:"와 시간 사이 간격 */
+  gap: 5px;
 }
 
 .total-time-label {
   font-weight: 600;
-  font-size: 16px;
+  font-size: 14px;
   color: #000;
 }
 
 .total-time-value {
   font-family: var(--font-digital);
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
   color: #000;
 }
 
-
-/* --- 분석 그래프 컨테이너 (.analysis-graph-container) - 2열 구조 --- */
 .analysis-graph-container {
-  padding: 4px 5px;
+  padding: 3px 5px;
   border-top: 1px solid var(--division-bar-color);
   border-bottom: 1px solid var(--division-bar-color);
   overflow-y: auto;
   flex: 1;
-}
-
-/* 새로운 analysis-graph-inner */
-.analysis-graph-inner {
-  display: flex; /* 2열 구조를 위한 flexbox */
-  flex-grow: 1; /* 부모 컨테이너의 남은 공간을 차지 */
+  display: flex;
 }
 
 .analysis-labels-column {
@@ -349,7 +324,7 @@ body {
   align-items: flex-end;
   padding-right: var(--label-padding-right);
   position: relative;
-  border-right: 1.5px solid #000; /* 세로 바 */
+  border-right: 1.5px solid #000;
 }
 
 .analysis-label-item {
@@ -375,6 +350,7 @@ body {
 
 .analysis-bar-outer {
   height: 12px;
+  border: 1px solid #ccc;
   position: relative;
   margin: 3px 0;
   display: flex;
@@ -383,7 +359,6 @@ body {
 .analysis-bar-inner {
   height: 100%;
 }
-
 
 .exception-schedule-box {
   border-radius: var(--border-radius);
@@ -454,8 +429,9 @@ body {
 .task-category > .category-title {
   font-weight: 700;
   font-size: 16px;
-  border-bottom: 1px solid #ddd;
-  padding: 0 0 5px 4px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 4px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -482,14 +458,24 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 4px 6px 4px 10px;
+  padding: 4px 6px 4px 10px; /* padding-left 추가 */
   cursor: pointer;
   user-select: none;
   border-bottom: 1px solid #ddd;
+  transition: background-color 0.2s ease; /* 배경색 변화를 부드럽게 */
 }
 
-.task-item:last-of-type{
-  border-bottom: none;
+/* 선택된 task-item의 배경색 */
+.task-item.selected {
+  background-color: lightblue;
+}
+
+.task-item:first-child {
+  border-top: none; /* first-child의 border-top 제거 */
+}
+
+.task-item:last-child {
+  border-bottom: none; /* last-child의 border-bottom 제거 */
 }
 
 .task-name {
@@ -527,11 +513,7 @@ body {
 }
 
 .delete-item-btn {
-  height: 20px;
-  padding: 0 6px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  padding: 2px 6px;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
