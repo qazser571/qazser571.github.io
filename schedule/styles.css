@@ -464,7 +464,7 @@ body {
 }
 
 .task-item.selected {
-  background-color: #58A0C8;
+  background-color: #66C3E8; /* #58A0C8; */
 }
 /* .task-item.selected */
 .task-item.selected .status-box {
