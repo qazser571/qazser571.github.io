@@ -337,62 +337,37 @@ body {
   border-bottom: 1px solid var(--division-bar-color);
   overflow-y: auto;
   flex: 1;
-  display: flex; /* Flexbox로 변경하여 두 열을 배치 */
-  gap: 10px; /* 레이블 열과 막대 열 사이 간격 */
+  /* display: flex; */ /* 2열 레이아웃 제거 */
+  /* gap: 10px; */ /* 2열 레이아웃 제거 */
 }
 
-.analysis-labels-column {
-  width: var(--title-width); /* 레이블 열의 고정 너비 */
+/* 2열 레이아웃 관련 스타일 제거 */
+/* .analysis-labels-column, .analysis-bars-column, .analysis-labels-column::after, .analysis-label-item, .analysis-bar-outer, .analysis-bar-inner */
+/* 대신 기존 단일 행 스타일 복원 */
+
+.analysis-graph-container > div { /* 각 그래프 행 */
   display: flex;
-  flex-direction: column;
-  /* justify-content: space-around; */ /* 막대그래프와 높이 맞추기 위해 제거 */
-  align-items: flex-end; /* 레이블을 오른쪽으로 정렬 */
-  padding-right: var(--label-padding-right); /* 레이블과 세로 바 사이 간격 */
-  position: relative; /* 세로 바를 위한 position */
+  align-items: center;
+  margin-bottom: 4px;
+  position: relative;
 }
 
-.analysis-labels-column::after { /* 세로 바 */
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  width: var(--bar-width);
-  background-color: var(--bar-color);
-}
-
-.analysis-label-item {
+.analysis-graph-container > div > span { /* 레이블 */
+  width: 60px; /* 레이블 너비 고정 */
+  text-align: left; /* 왼쪽 정렬 */
   font-size: 12px;
   font-weight: 600;
-  white-space: nowrap; /* 줄바꿈 방지 */
-  overflow: hidden; /* 넘치는 내용 숨김 */
-  text-overflow: ellipsis; /* 넘치는 내용 ... 처리 */
-  height: 12px; /* 막대 높이와 일치시켜 세로 정렬 맞춤 */
-  line-height: 12px; /* 텍스트를 세로 중앙에 정렬 */
-  flex-shrink: 0; /* 레이블이 줄어들지 않도록 */
-  margin-bottom: 4px; /* 막대 사이 간격과 동일하게 설정 */
+  flex-shrink: 0;
+  margin-right: 6px; /* 막대와의 간격 */
 }
 
-.analysis-bars-column {
-  flex-grow: 1; /* 남은 공간 모두 차지 */
-  display: flex;
-  flex-direction: column;
-  /* justify-content: space-around; */ /* 레이블과 높이 맞추기 위해 제거 */
-}
-
-.analysis-bar-outer {
+.analysis-graph-container > div > div:last-child { /* 막대 외부 컨테이너 */
+  flex-grow: 1;
   height: 12px;
   border: 1px solid #ccc;
   position: relative;
-  margin-bottom: 4px; /* 막대 사이 간격 */
-  display: flex; /* 내부 막대가 채우도록 설정 */
+  /* margin-left: 0; */ /* 이전 2열 레이아웃에서 추가된 스타일 제거 */
 }
-
-.analysis-bar-inner {
-  height: 100%;
-  /* width와 background-color는 JS에서 설정 */
-}
-
 
 .exception-schedule-box {
   border-radius: var(--border-radius);
