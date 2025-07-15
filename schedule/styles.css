@@ -482,8 +482,8 @@ body {
   border-bottom: 1px solid #ddd;
 }
 
-.task-item:nth-last-of-type(1){
-  border: none;
+.task-item:last-child{
+  border-bottom: none;
 }
 
 .task-name {
