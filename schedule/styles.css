@@ -98,9 +98,7 @@ body {
   font-size: 18px;
   font-weight: 700;
   padding-bottom: 8px;
-  margin-left: 10px; /* .right padding과 맞춤 */
-  border-bottom: 1px solid var(--division-bar-color);
-  margin-bottom: 10px; /* task-list-container와의 간격 */
+  margin-left: 10px; 
 }
 
 
