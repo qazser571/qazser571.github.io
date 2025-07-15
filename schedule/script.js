@@ -262,11 +262,9 @@ function renderTaskList() {
       nameSpan.textContent = task;
       taskDiv.appendChild(nameSpan);
 
-      // --- 새로운 task-actions div 생성 및 자식 요소 추가 ---
       const taskActionsDiv = document.createElement('div');
       taskActionsDiv.classList.add('task-actions');
 
-      // 예외 스케줄일 경우 삭제 버튼 추가
       if (category === '예외 스케줄') {
         const deleteBtn = document.createElement('button');
         deleteBtn.classList.add('delete-item-btn');
@@ -287,7 +285,7 @@ function renderTaskList() {
             }
           }
         });
-        taskActionsDiv.appendChild(deleteBtn); // taskActionsDiv에 추가
+        taskActionsDiv.appendChild(deleteBtn);
       }
 
       const statusBox = document.createElement('div');
@@ -301,11 +299,9 @@ function renderTaskList() {
           statusBox.classList.add('paused');
         }
       }
-      taskActionsDiv.appendChild(statusBox); // taskActionsDiv에 추가
+      taskActionsDiv.appendChild(statusBox);
 
-      taskDiv.appendChild(taskActionsDiv); // taskDiv에 taskActionsDiv 추가
-      // --- task-actions div 끝 ---
-
+      taskDiv.appendChild(taskActionsDiv);
 
       const timerRecordDiv = document.createElement('div');
       timerRecordDiv.classList.add('task-timer-record');
