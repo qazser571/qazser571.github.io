@@ -30,6 +30,7 @@
 }
 
 :root {
+  --title-width: 80px;
   --title-gap: 15px;
   --bar-width: 2px;
   --bar-color: #000;
@@ -49,11 +50,7 @@
 
 body {
   width: 100vw;
-  min-width: 1000px;
   height: 100vh;
-  min-height: 800px;
-  overflow-x: auto;
-  overflow-y: auto;
   font-family: '맑은 고딕', Malgun Gothic, Arial, sans-serif;
   background: #f0f2f5;
   display: flex;
@@ -62,7 +59,7 @@ body {
 }
 
 .container {
-  width: 800px;
+  min-width: 1000px;
   height: 600px;
   display: flex;
   gap: 20px;
@@ -347,15 +344,18 @@ body {
   display: flex;
   align-items: center;
   margin-bottom: 4px;
+  position: relative;
 }
 
-.analysis-graph-container span {
-  width: 60px;
-  text-align: left;
+.analysis-graph-container > div > span {
+  position: absolute;
+  left: 0;
+  width: var(--title-width);
+  text-align: right;
+  padding-right: var(--label-padding-right);
   font-size: 12px;
   font-weight: 600;
   flex-shrink: 0;
-  margin-right: 6px;
 }
 
 .analysis-graph-container > div > div:last-child {
@@ -363,6 +363,7 @@ body {
   height: 12px;
   border: 1px solid #ccc;
   position: relative;
+  margin-left: 0;
 }
 
 .exception-schedule-box {
@@ -466,10 +467,10 @@ body {
   text-overflow: ellipsis;
 }
 
-.task-actions { /* 새로운 클래스 추가 */
+.task-actions {
   display: flex;
   align-items: center;
-  gap: 8px; /* 삭제 버튼과 상태 박스 사이 간격 */
+  gap: 8px;
 }
 
 .status-box {
@@ -493,12 +494,8 @@ body {
 }
 
 .delete-item-btn {
-  height: 20px;
-  padding: 0 6px;
+  padding: 2px 6px;
   font-size: 12px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   font-weight: 600;
   cursor: pointer;
   border: 1px solid #dc3545;
