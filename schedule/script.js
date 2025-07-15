@@ -55,14 +55,18 @@ async function init() {
   // 파일에서 범주 순서 및 스케줄 불러오기
   try {
     await loadOrder(); // order.txt에서 범주 순서 로드
+    // '예외 스케줄' 범주가 order 배열에 없으면 추가 (항상 최상단에 위치)
+    if (!order.includes('예외 스케줄')) {
+      order.unshift('예외 스케줄');
+    }
     await loadSchedules(); // 각 범주별 txt 파일에서 일정 로드
-    // order와 schedules가 성공적으로 로드된 후에 예외 스케줄을 schedules에 반영
+    // 로드된 schedules에 예외 스케줄 반영
     schedules['예외 스케줄'] = exceptionSchedules;
+
   } catch (error) {
     console.error("스케줄 파일을 불러오는 데 실패했습니다. 서버 환경에서 실행 중인지 확인해주세요.", error);
     alert("스케줄 파일을 불러오는 데 실패했습니다. 웹페이지에 스케줄이 표시되지 않을 수 있습니다.");
-    // 파일 로드 실패 시 order와 schedules는 빈 상태로 유지됩니다.
-    // 이 경우 '예외 스케줄'만이라도 표시되도록 수동으로 추가
+    // 파일 로드 실패 시에도 '예외 스케줄'만이라도 표시되도록
     order = ['예외 스케줄'];
     schedules['예외 스케줄'] = exceptionSchedules;
   }
@@ -259,12 +263,16 @@ function renderTaskList() {
     const tasks = schedules[category] || [];
 
     // 해당 카테고리에 일정이 없을 경우 메시지 표시
-    if (tasks.length === 0 && category !== '예외 스케줄') { // 예외 스케줄은 비어있을 수 있음
+    if (tasks.length === 0) {
       const noTaskMessage = document.createElement('div');
-      noTaskMessage.textContent = '일정 없음';
       noTaskMessage.style.textAlign = 'center';
       noTaskMessage.style.padding = '5px';
       noTaskMessage.style.color = '#aaa';
+      if (category === '예외 스케줄') {
+        noTaskMessage.textContent = '등록된 예외 스케줄이 없습니다.';
+      } else {
+        noTaskMessage.textContent = '일정 없음';
+      }
       categoryDiv.appendChild(noTaskMessage);
     }
 
