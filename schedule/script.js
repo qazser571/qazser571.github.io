@@ -22,7 +22,6 @@ const analysisGraphContainer = document.querySelector('.analysis-graph-container
 
 const exceptionInput = document.getElementById('exception-input');
 const exceptionSaveBtn = document.getElementById('exception-save-btn');
-// const editScheduleBtn = document.getElementById('editScheduleBtn'); // HTML에서 제거되었으므로 제거
 
 let timerInterval = null;
 let timerStartTime = null;
@@ -228,9 +227,11 @@ function renderTaskList() {
 
   // "오늘 일정" 제목을 taskListContainer의 첫 번째 자식으로 다시 추가 (HTML 구조 변경에 맞춤)
   const todayScheduleTitle = document.querySelector('.today-schedule-title-text');
-  if (todayScheduleTitle && todayScheduleTitle.parentNode !== taskListContainer) { // 이미 부모가 taskListContainer가 아니라면 추가
-      taskListContainer.prepend(todayScheduleTitle); // 가장 첫 번째 자식으로 추가
-  }
+  // todayScheduleTitle이 존재하고, taskListContainer의 자식이 아니라면 추가
+  // 이 로직은 .today-schedule-title-text가 task-list-container의 형제로 존재해야 하므로 제거
+  // if (todayScheduleTitle && todayScheduleTitle.parentNode !== taskListContainer) {
+  //     taskListContainer.prepend(todayScheduleTitle);
+  // }
 
 
   if (order.length === 0) {
@@ -249,7 +250,6 @@ function renderTaskList() {
 
     const titleDiv = document.createElement('div');
     titleDiv.classList.add('category-title');
-    // titleDiv.textContent = category; // 아래에서 텍스트와 버튼을 함께 추가하므로 여기서는 텍스트만 설정하지 않음
     categoryDiv.appendChild(titleDiv);
 
     // category-title 내부에 범주 이름 span과 편집 버튼을 추가
@@ -468,7 +468,7 @@ function renderAnalysisGraph() {
   analysisGraphContainer.appendChild(barsColumn);
 
 
-  order.forEach(category => { // order 배열을 기준으로 순서 유지
+  order.forEach(category => {
     const time = dailyTotalTimes[category] || 0;
     const barColor = categoryColorMap.get(category) || rankColors[3];
 
