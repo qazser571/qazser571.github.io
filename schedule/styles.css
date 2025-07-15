@@ -324,27 +324,17 @@ body {
   overflow-y: auto;
   flex: 1;
   display: flex;
-  gap: 10px;
 }
 
 .analysis-labels-column {
-  width: var(--title-width);
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   padding-right: var(--label-padding-right);
   position: relative;
+  border-right: 1.5px solid #000;
 }
 
-.analysis-labels-column::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  width: var(--bar-width);
-  background-color: var(--bar-color);
-}
 
 .analysis-label-item {
   font-size: 12px;
@@ -366,7 +356,6 @@ body {
 
 .analysis-bar-outer {
   height: 12px;
-  border: 1px solid #ccc;
   position: relative;
   margin-bottom: 4px;
   display: flex;
