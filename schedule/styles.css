@@ -47,6 +47,7 @@
   --vertical-bar-color: #000; /* 새로 추가된 세로 바 색상 */
   --label-padding-right: 8px; /* 레이블과 세로 바 사이 간격 */
   --box-inner-padding: 12px;
+  --division-bar-color: #ccc;
 }
 
 /* body 및 container */
@@ -106,7 +107,7 @@ body {
 .current-date {
   font-size: 14px;
   font-weight: 600;
-  border-bottom: 1px solid #eee; /* 얇은 구분선 */
+  border-bottom: 1px solid var(--division-bar-color); /* 얇은 구분선 */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -191,7 +192,7 @@ body {
   align-items: center;
   gap: var(--title-gap);
   padding-bottom: 8px;
-  border-bottom: 1px solid #eee; /* 얇은 구분선 */
+  border-bottom: 1px solid var(--division-bar-color); /* 얇은 구분선 */
 }
 
 .timer-state {
@@ -321,8 +322,8 @@ body {
 .analysis-graph-container {
   padding: 4px 5px 0 5px;
   box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.1);
-  border-top: 1px solid #ccc;
-  border-bottom: 1px solid #ccc;
+  border-top: 1px solid var(--division-bar-color);
+  border-bottom: 1px solid var(--division-bar-color);
   overflow-y: auto; /* 스크롤 가능하도록 */
   flex: 1;
   position: relative; /* 세로 바를 위한 position */
