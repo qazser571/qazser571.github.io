@@ -35,8 +35,8 @@
   --bar-width: 2px;
   --bar-color: #000;
   --inactive-color: #ccc;
-  --active-color-blue: #3366cc;
-  --active-color-yellow: #ffeb3b;
+  --active-color-blue: #113F67;
+  --active-color-yellow: #FDF5AA;
   --font-digital: 'DS-DIGI', monospace;
   --container-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
   --box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
@@ -464,7 +464,7 @@ body {
 }
 
 .task-item.selected {
-  background-color: rgb(166, 165, 255);
+  background-color: #58A0C8;
 }
 /* .task-item.selected */
 .task-item.selected .status-box {
