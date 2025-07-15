@@ -189,8 +189,6 @@ body {
   box-shadow: 0 0 5px 1px var(--active-color-blue);
 }
 
-/* .timer-schedule-row, .schedule-category, .schedule-task 관련 스타일은 제거됩니다. */
-
 .timer-top-row {
   display: flex;
   justify-content: start;
@@ -219,9 +217,6 @@ body {
   letter-spacing: 2px;
 }
 
-/* .timer-schedule-row 관련 스타일 제거 */
-/* .schedule-category 관련 스타일 제거 */
-/* .schedule-task 관련 스타일 제거 */
 
 .timer-btn-group {
   display: flex;
@@ -454,22 +449,26 @@ body {
 
 .task-item {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 4px 6px 4px 10px; /* padding-left 추가 */
+  flex-direction: column;
   cursor: pointer;
   user-select: none;
-  border-bottom: 1px solid #ddd;
-  transition: background-color 0.2s ease; /* 배경색 변화를 부드럽게 */
+  border-bottom: 1px solid #ccc;
+  transition: background-color 0.2s ease;
 }
 
-/* 선택된 task-item의 배경색 */
+.task-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 6px 4px 10px;
+}
+
 .task-item.selected {
   background-color: lightblue;
 }
 
 .task-item:last-of-type {
-  border-bottom: none; /* last-child의 border-bottom 제거 */
+  border-bottom: none;
 }
 
 .task-name {
@@ -507,7 +506,11 @@ body {
 }
 
 .delete-item-btn {
-  padding: 2px 6px;
+  height: 20px;
+  padding: 0px 6px 1px 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -527,7 +530,7 @@ body {
 .task-timer-record {
   font-size: 13px;
   padding: 4px 8px;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid #ddd;
   background-color: #fafafa;
   display: none;
   white-space: nowrap;
