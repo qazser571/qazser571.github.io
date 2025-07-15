@@ -321,7 +321,8 @@ body {
 
 
 .analysis-graph-container {
-  margin-top: 6px;
+  padding: 0 5px;
+  border: 1px 0 solid #000;
   overflow-y: auto; /* 스크롤 가능하도록 */
   flex-grow: 1;
   position: relative; /* 세로 바를 위한 position */
