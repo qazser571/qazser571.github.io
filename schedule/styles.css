@@ -40,8 +40,8 @@
   --active-color-blue: #3366cc;
   --active-color-yellow: #ffeb3b;
   --font-digital: 'DS-DIGI', monospace;
-  --container-shadow: 0 0 8px rgba(0, 0, 0, 0.1); /* offset-x, offset-y를 0으로 변경 */
-  --box-shadow: 0 0 4px rgba(0, 0, 0, 0.08);     /* offset-x, offset-y를 0으로 변경 */
+  --container-shadow: 0 0 8px rgba(0, 0, 0, 0.15); /* offset-x, offset-y를 0으로 변경 */
+  --box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);     /* offset-x, offset-y를 0으로 변경 */
   --border-radius: 8px;
   --vertical-bar-width: 2px; /* 새로 추가된 세로 바 두께 */
   --vertical-bar-color: #000; /* 새로 추가된 세로 바 색상 */
@@ -320,6 +320,7 @@ body {
 
 .analysis-graph-container {
   padding: 4px 5px 0 5px;
+  box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.1);
   border-top: 1px solid #ccc;
   border-bottom: 1px solid #ccc;
   overflow-y: auto; /* 스크롤 가능하도록 */
@@ -415,10 +416,9 @@ body {
 
 .task-list-container {
   flex-grow: 1;
+  box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.1);
   overflow-y: auto; /* 스크롤 가능하도록 */
-  border-radius: var(--border-radius);
-  box-shadow: var(--box-shadow);
-  padding: 8px;
+  padding: 8px 5px;
   background-color: #fff; /* 내부 박스 배경색 추가 */
 }
 
