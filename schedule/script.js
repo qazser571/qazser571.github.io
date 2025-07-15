@@ -138,6 +138,7 @@ function padZero(num) {
 function updateTimerUI() {
   const rightSection = document.querySelector('.right');
   const timerStatusBox = document.querySelector('.timer-status-box');
+  const editButtons = document.querySelectorAll('.edit-exception-schedule-btn'); // 모든 편집 버튼 선택
 
   if (!timerRunning) {
     timerStateDiv.textContent = '쉬는중';
@@ -159,6 +160,9 @@ function updateTimerUI() {
       rightSection.classList.remove('selecting');
     }
     timerStatusBox.classList.remove('running-highlight');
+
+    // 타이머가 쉬는 중이면 편집 버튼을 다시 보이게 함
+    editButtons.forEach(button => button.style.display = 'inline-block');
   } else {
     timerStateDiv.textContent = '진행중';
     btnStart.textContent = '시작';
@@ -168,13 +172,16 @@ function updateTimerUI() {
     btnComplete.classList.remove('inactive');
     rightSection.classList.remove('selecting');
     timerStatusBox.classList.add('running-highlight');
+
+    // 타이머가 진행 중이면 편집 버튼을 숨김
+    editButtons.forEach(button => button.style.display = 'none');
   }
 }
 
 function startTimerInterval() {
   if (timerInterval) clearInterval(timerInterval);
   timerInterval = setInterval(() => {
-    timerElapsed = Date.now() - timerStartTime.getTime(); // Date.now() 사용
+    timerElapsed = Date.now() - timerStartTime.getTime();
     timerTimeDiv.textContent = formatDuration(timerElapsed);
   }, 1000);
 }
@@ -194,7 +201,6 @@ function stopTimer(status) {
   timerRunning = false;
   selectingMode = false;
 
-  // 타이머가 멈출 때 localStorage에서 상태 제거
   localStorage.removeItem(STORAGE_KEYS.TIMER_STATE);
 
   const endTime = new Date();
@@ -211,7 +217,7 @@ function stopTimer(status) {
     records[currentCategory][currentTask] = [];
   }
   records[currentCategory][currentTask].push({
-    start: endTime.toISOString(), // 종료 시간 기준으로 기록
+    start: endTime.toISOString(),
     end: endTime.toISOString(),
     duration,
     status
@@ -232,7 +238,6 @@ function saveRecords() {
   localStorage.setItem(STORAGE_KEYS.records, JSON.stringify(records));
 }
 
-// 현재 타이머 상태를 localStorage에 저장하는 함수
 function saveTimerState() {
   const state = {
     timerRunning: timerRunning,
@@ -242,7 +247,6 @@ function saveTimerState() {
   localStorage.setItem(STORAGE_KEYS.TIMER_STATE, JSON.stringify(state));
 }
 
-// localStorage에서 타이머 상태를 불러와 복원하는 함수
 function loadTimerState() {
   const savedState = localStorage.getItem(STORAGE_KEYS.TIMER_STATE);
   if (savedState) {
@@ -252,13 +256,9 @@ function loadTimerState() {
     selectedSchedule = state.selectedSchedule;
 
     if (timerRunning && timerStartTime && selectedSchedule) {
-      // 복원된 타이머가 실행 중 상태라면, UI를 업데이트하고 인터벌 재개
       timerElapsed = Date.now() - timerStartTime.getTime();
       timerTimeDiv.textContent = formatDuration(timerElapsed);
 
-      // 선택된 task-item을 UI에서 찾아 하이라이트
-      // renderTaskList가 먼저 실행되어야 task-item 요소들이 DOM에 존재함
-      // 따라서 loadTimerState는 init()의 renderTaskList() 호출 이후에 실행되어야 함
       const allTaskItems = document.querySelectorAll('.task-item');
       allTaskItems.forEach(item => {
         if (item.dataset.category === selectedSchedule.category && item.dataset.task === selectedSchedule.task) {
@@ -267,9 +267,8 @@ function loadTimerState() {
         }
       });
 
-      startTimerInterval(); // 인터벌 재개
+      startTimerInterval();
     } else {
-      // 저장된 상태가 유효하지 않으면 (예: timerRunning이 false), localStorage에서 제거
       localStorage.removeItem(STORAGE_KEYS.TIMER_STATE);
     }
   }
@@ -287,12 +286,10 @@ function getStartOfCurrentDay() {
     startOfToday5AM.setHours(5, 0, 0, 0);
 
     if (now.getHours() < 5) {
-        // 현재 시간이 오전 5시 이전이면, "하루"는 어제 오전 5시에 시작
         const startOfYesterday5AM = new Date(startOfToday5AM);
         startOfYesterday5AM.setDate(startOfYesterday5AM.getDate() - 1);
         return startOfYesterday5AM;
     } else {
-        // 현재 시간이 오전 5시 이후이면, "하루"는 오늘 오전 5시에 시작
         return startOfToday5AM;
     }
 }
@@ -302,39 +299,32 @@ function checkAndInitializeDailyData() {
   const currentDayStart = getStartOfCurrentDay();
   const lastInitializedDay = localStorage.getItem(STORAGE_KEYS.LAST_INITIALIZED_DAY);
 
-  // 마지막 초기화 날짜가 없거나, 현재 날짜와 다르면 초기화 수행
   if (!lastInitializedDay || new Date(lastInitializedDay).getTime() !== currentDayStart.getTime()) {
     console.log("새로운 날이 시작되었습니다. 기록을 초기화합니다.");
 
-    // records 객체 순회하며 현재 날짜에 해당하지 않는 기록 제거
     for (const category in records) {
       for (const task in records[category]) {
         records[category][task] = records[category][task].filter(record => {
           const recordStartTime = new Date(record.start);
-          // 현재 날짜(오전 5시 기준) 이후의 기록만 유지
           return recordStartTime.getTime() >= currentDayStart.getTime();
         });
-        // 만약 특정 task의 기록이 모두 제거되었다면, 해당 task 키도 제거
         if (records[category][task].length === 0) {
           delete records[category][task];
         }
       }
-      // 만약 특정 category의 task가 모두 제거되었다면, 해당 category 키도 제거
       if (Object.keys(records[category]).length === 0) {
         delete records[category];
       }
     }
 
-    saveRecords(); // 변경된 records를 localStorage에 저장
-    localStorage.setItem(STORAGE_KEYS.LAST_INITIALIZED_DAY, currentDayStart.toISOString()); // 마지막 초기화 날짜 업데이트
+    saveRecords();
+    localStorage.setItem(STORAGE_KEYS.LAST_INITIALIZED_DAY, currentDayStart.toISOString());
 
-    // status-box 클래스 초기화 (renderTaskList가 호출될 때 반영됨)
-    // currentSelectedTaskItemElement 초기화 (만약 어제 선택된 것이 있다면)
     if (currentSelectedTaskItemElement) {
       currentSelectedTaskItemElement.classList.remove('selected');
       currentSelectedTaskItemElement = null;
     }
-    localStorage.removeItem(STORAGE_KEYS.TIMER_STATE); // 어제부터 유지되던 타이머 상태도 초기화
+    localStorage.removeItem(STORAGE_KEYS.TIMER_STATE);
   }
 }
 
@@ -391,15 +381,15 @@ function renderTaskList() {
 
     if (tasks.length === 0) {
       const noTaskMessage = document.createElement('div');
-      noTaskMessage.style.textAlign = 'center';
-      noTaskMessage.style.padding = '5px';
-      noTaskMessage.style.color = '#aaa';
+      noDataMessage.style.textAlign = 'center';
+      noDataMessage.style.padding = '5px';
+      noDataMessage.style.color = '#aaa';
       if (category === '예외 스케줄') {
-        noTaskMessage.textContent = '등록된 예외 스케줄이 없습니다.';
+        noDataMessage.textContent = '등록된 예외 스케줄이 없습니다.';
       } else {
-        noTaskMessage.textContent = '일정 없음';
+        noDataMessage.textContent = '일정 없음';
       }
-      categoryDiv.appendChild(noTaskMessage);
+      categoryDiv.appendChild(noDataMessage);
     }
 
     tasks.forEach((task, index) => {
@@ -541,162 +531,3 @@ function renderTaskList() {
     taskListContainer.appendChild(categoryDiv);
   });
 }
-
-
-function renderAnalysisGraph() {
-  analysisGraphContainer.innerHTML = '';
-
-  const startOfCurrentDay = getStartOfCurrentDay(); // 현재 "하루"의 시작 시간 (오전 5시 기준)
-  const endOfCurrentDay = new Date(startOfCurrentDay);
-  endOfCurrentDay.setDate(endOfCurrentDay.getDate() + 1); // 현재 "하루"의 끝 시간 (다음날 오전 5시)
-
-
-  const dailyTotalTimes = {};
-  order.forEach(category => {
-    dailyTotalTimes[category] = 0;
-  });
-
-  for (const category in records) {
-    for (const task in records[category]) {
-      records[category][task].forEach(r => {
-        const recordStartTime = new Date(r.start);
-        // 레코드가 현재 "하루" (오전 5시 ~ 다음날 오전 5시) 범위 내에 있는지 확인
-        if (recordStartTime.getTime() >= startOfCurrentDay.getTime() && recordStartTime.getTime() < endOfCurrentDay.getTime()) {
-          if (dailyTotalTimes[category] !== undefined) {
-            dailyTotalTimes[category] += r.duration;
-          }
-        }
-      });
-    }
-  }
-
-  const totalAllDaily = Object.values(dailyTotalTimes).reduce((a, b) => a + b, 0);
-
-  // 총 시간 합계 업데이트
-  totalTimeDisplay.innerHTML = ''; // 기존 내용 지우기
-  const totalTimeLabel = document.createElement('span');
-  totalTimeLabel.classList.add('total-time-label');
-  totalTimeLabel.textContent = '합계:';
-  const totalTimeValue = document.createElement('span');
-  totalTimeValue.classList.add('total-time-value');
-  totalTimeValue.textContent = formatDuration(totalAllDaily);
-  totalTimeDisplay.appendChild(totalTimeLabel);
-  totalTimeDisplay.appendChild(totalTimeValue);
-
-
-  // 모든 카테고리를 시간 순으로 정렬하여 색상 순위를 결정
-  let categoriesForColorRanking = order.map(category => ({ category, time: dailyTotalTimes[category] || 0 }));
-  categoriesForColorRanking.sort((a, b) => b.time - a.time); // 시간 총합으로 정렬
-
-  const rankColors = ['#d33', '#FF8C00', '#FFD700', '#B0B0B0']; // 빨강, 주황, 노랑, 회색
-  const categoryColorMap = new Map();
-  categoriesForColorRanking.forEach((item, idx) => {
-      categoryColorMap.set(item.category, idx < 3 ? rankColors[idx] : rankColors[3]);
-  });
-
-
-  if (order.length === 0) {
-    const noDataMessage = document.createElement('div');
-    noDataMessage.textContent = '분석 데이터를 불러올 수 없습니다.';
-    noDataMessage.style.textAlign = 'center';
-    noDataMessage.style.padding = '20px';
-    noDataMessage.style.color = '#888';
-    analysisGraphContainer.appendChild(noDataMessage);
-    return;
-  }
-
-  // analysis-graph-inner 생성 및 추가
-  const analysisGraphInner = document.createElement('div');
-  analysisGraphInner.classList.add('analysis-graph-inner');
-  analysisGraphContainer.appendChild(analysisGraphInner);
-
-  // 2열 구조를 위한 컬럼 생성 (analysis-graph-inner의 자식으로)
-  const labelsColumn = document.createElement('div');
-  labelsColumn.classList.add('analysis-labels-column');
-  analysisGraphInner.appendChild(labelsColumn);
-
-  const barsColumn = document.createElement('div');
-  barsColumn.classList.add('analysis-bars-column');
-  analysisGraphInner.appendChild(barsColumn);
-
-
-  // グラフ描画のための順序制御: '예외 스케줄'을 제외한 나머지 범주들을 먼저 배치하고, 마지막에 '예외 스케줄' 추가
-  let graphDisplayOrder = order.filter(category => category !== '예외 스케줄');
-  const exceptionScheduleCategory = order.find(category => category === '예외 스케줄');
-  if (exceptionScheduleCategory) {
-      graphDisplayOrder.push(exceptionScheduleCategory);
-  }
-
-
-  graphDisplayOrder.forEach(category => {
-    const time = dailyTotalTimes[category] || 0;
-    const barColor = categoryColorMap.get(category) || rankColors[3];
-
-    const labelSpan = document.createElement('span');
-    labelSpan.classList.add('analysis-label-item');
-    labelSpan.textContent = category;
-    labelsColumn.appendChild(labelSpan);
-
-    const barOuter = document.createElement('div');
-    barOuter.classList.add('analysis-bar-outer');
-    // .analysis-bar-outer의 border는 styles.css에서 제어
-
-    const barInner = document.createElement('div');
-    barInner.classList.add('analysis-bar-inner');
-    barInner.style.width = totalAllDaily > 0 ? `${(time / totalAllDaily) * 100}%` : '0%';
-    barInner.style.backgroundColor = barColor;
-    barInner.style.transition = 'width 0.5s ease-out';
-
-    barOuter.appendChild(barInner);
-    barsColumn.appendChild(barOuter);
-  });
-}
-
-function setupEventListeners() {
-  const rightSection = document.querySelector('.right');
-
-  btnStart.addEventListener('click', () => {
-    if (!timerRunning) {
-      if (!selectingMode) {
-        selectingMode = true;
-        btnStart.textContent = '일정 선택';
-        btnStart.classList.add('selecting-mode');
-        rightSection.classList.add('selecting');
-        updateTimerUI();
-      } else {
-        selectingMode = false;
-        selectedSchedule = null;
-        if (currentSelectedTaskItemElement) {
-          currentSelectedTaskItemElement.classList.remove('selected');
-          currentSelectedTaskItemElement = null;
-        }
-        btnStart.textContent = '시작';
-        btnStart.classList.remove('selecting-mode');
-        rightSection.classList.remove('selecting');
-        updateTimerUI();
-      }
-    }
-  });
-
-  btnPause.addEventListener('click', () => {
-    if (timerRunning) {
-      stopTimer('paused');
-    }
-  });
-
-  btnComplete.addEventListener('click', () => {
-    if (timerRunning) {
-      stopTimer('completed');
-    }
-  });
-
-  exceptionSaveBtn.addEventListener('click', () => {
-    const val = exceptionInput.value.trim();
-    if (val) {
-      saveExceptionSchedule(val);
-      exceptionInput.value = '';
-    }
-  });
-}
-
-window.addEventListener('DOMContentLoaded', init);
