@@ -47,11 +47,11 @@ async function init() {
 
   try {
     await loadOrder();
-    // '예외 스케줄' 범주가 order 배열에 없으면 추가 (항상 최상단이 아닌, 마지막에 위치)
+    // '예외 스케줄' 범주가 order 배열에 있다면 제거하고, 항상 최상단에 추가
     if (order.includes('예외 스케줄')) {
-      order = order.filter(cat => cat !== '예외 스케줄'); // 기존에 있으면 제거
+      order = order.filter(cat => cat !== '예외 스케줄');
     }
-    order.push('예외 스케줄'); // 항상 마지막에 추가
+    order.unshift('예외 스케줄'); // 항상 최상단에 추가
 
     await loadSchedules();
     schedules['예외 스케줄'] = exceptionSchedules;
@@ -230,10 +230,9 @@ function renderTaskList() {
   // task-list-container의 내용만 초기화. "오늘 일정" 제목은 HTML에 직접 있으므로 그대로 둠.
   taskListContainer.innerHTML = '';
 
-  // "오늘 일정" 제목을 taskListContainer의 첫 번째 자식으로 다시 추가 (HTML 구조 변경에 맞춤)
-  const todayScheduleTitle = document.querySelector('.today-schedule-title-text');
-  // todayScheduleTitle이 존재하고, taskListContainer의 자식이 아니라면 추가
-  // 이 로직은 .today-schedule-title-text가 task-list-container의 형제로 존재해야 하므로 제거
+  // "오늘 일정" 제목은 HTML에서 taskListContainer의 형제로 존재해야 하므로,
+  // 여기서는 taskListContainer에 추가하지 않습니다.
+  // const todayScheduleTitle = document.querySelector('.today-schedule-title-text');
   // if (todayScheduleTitle && todayScheduleTitle.parentNode !== taskListContainer) {
   //     taskListContainer.prepend(todayScheduleTitle);
   // }
@@ -257,20 +256,18 @@ function renderTaskList() {
     titleDiv.classList.add('category-title');
     categoryDiv.appendChild(titleDiv);
 
-    // category-title 내부에 범주 이름 span과 편집 버튼을 추가
     const categoryNameSpan = document.createElement('span');
     categoryNameSpan.textContent = category;
     titleDiv.appendChild(categoryNameSpan);
 
 
-    // 예외 스케줄일 경우 편집 버튼 추가
     if (category === '예외 스케줄') {
       const editExceptionBtn = document.createElement('button');
       editExceptionBtn.classList.add('edit-exception-schedule-btn');
       editExceptionBtn.textContent = isEditing ? '완료' : '편집';
       editExceptionBtn.addEventListener('click', () => {
-        isEditing = !isEditing; // 편집 모드 토글
-        renderTaskList(); // UI 전체 갱신 (삭제 버튼 표시/숨김)
+        isEditing = !isEditing;
+        renderTaskList();
       });
       titleDiv.appendChild(editExceptionBtn);
     }
@@ -433,9 +430,9 @@ function renderAnalysisGraph() {
   // 모든 카테고리를 시간 순으로 정렬하여 색상 순위를 결정
   // '예외 스케줄'도 이제 다른 범주와 동일하게 시간 순위 매김
   let categoriesForColorRanking = order.map(category => ({ category, time: dailyTotalTimes[category] || 0 }));
-  categoriesForColorRanking.sort((a, b) => b.time - a.time);
+  categoriesForColorRanking.sort((a, b) => b.time - a.time); // 시간 총합으로 정렬
 
-  const rankColors = ['#d33', '#FF8C00', '#FFD700', '#B0B0B0'];
+  const rankColors = ['#d33', '#FF8C00', '#FFD700', '#B0B0B0']; // 빨강, 주황, 노랑, 회색
   const categoryColorMap = new Map();
   categoriesForColorRanking.forEach((item, idx) => {
       categoryColorMap.set(item.category, idx < 3 ? rankColors[idx] : rankColors[3]);
@@ -452,38 +449,41 @@ function renderAnalysisGraph() {
     return;
   }
 
-  // 새로운 2열 구조를 위한 컬럼 생성
-  const labelsColumn = document.createElement('div');
-  labelsColumn.classList.add('analysis-labels-column');
-  analysisGraphContainer.appendChild(labelsColumn);
-
-  const barsColumn = document.createElement('div');
-  barsColumn.classList.add('analysis-bars-column');
-  analysisGraphContainer.appendChild(barsColumn);
-
-
+  // 기존 단일 행 구조로 그래프 렌더링
   order.forEach(category => { // order 배열을 기준으로 순서 유지
     const time = dailyTotalTimes[category] || 0;
     const barColor = categoryColorMap.get(category) || rankColors[3]; // 매핑된 색상 사용, 매핑 안된 경우 기본 회색
 
-    // 레이블 생성 및 labelsColumn에 추가
-    const labelSpan = document.createElement('span');
-    labelSpan.classList.add('analysis-label-item');
-    labelSpan.textContent = category;
-    labelsColumn.appendChild(labelSpan);
+    const barDiv = document.createElement('div');
+    barDiv.style.display = 'flex';
+    barDiv.style.alignItems = 'center';
+    barDiv.style.marginBottom = '4px';
 
-    // 막대그래프 생성 및 barsColumn에 추가
+    const labelSpan = document.createElement('span');
+    labelSpan.textContent = category;
+    labelSpan.style.width = '60px';
+    labelSpan.style.fontSize = '12px';
+    labelSpan.style.fontWeight = '600';
+    labelSpan.style.marginRight = '6px';
+    labelSpan.style.flexShrink = '0';
+
     const barOuter = document.createElement('div');
-    barOuter.classList.add('analysis-bar-outer');
+    barOuter.style.flexGrow = '1';
+    barOuter.style.height = '12px';
+    barOuter.style.border = '1px solid #ccc';
+    barOuter.style.position = 'relative';
 
     const barInner = document.createElement('div');
-    barInner.classList.add('analysis-bar-inner');
+    barInner.style.height = '100%';
     barInner.style.width = totalAllDaily > 0 ? `${(time / totalAllDaily) * 100}%` : '0%';
     barInner.style.backgroundColor = barColor;
     barInner.style.transition = 'width 0.5s ease-out';
 
     barOuter.appendChild(barInner);
-    barsColumn.appendChild(barOuter);
+    barDiv.appendChild(labelSpan);
+    barDiv.appendChild(barOuter);
+
+    analysisGraphContainer.appendChild(barDiv);
   });
 }
 
@@ -528,9 +528,6 @@ function setupEventListeners() {
       exceptionInput.value = '';
     }
   });
-
-  // editScheduleBtn은 이제 동적으로 생성되므로, 전역 이벤트 리스너는 필요 없음
-  // 해당 버튼은 renderTaskList 함수 내에서 생성될 때 이벤트 리스너가 추가됨
 }
 
 window.addEventListener('DOMContentLoaded', init);
