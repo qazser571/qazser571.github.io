@@ -22,7 +22,7 @@ const analysisGraphContainer = document.querySelector('.analysis-graph-container
 
 const exceptionInput = document.getElementById('exception-input');
 const exceptionSaveBtn = document.getElementById('exception-save-btn');
-const editScheduleBtn = document.getElementById('editScheduleBtn'); // 새롭게 추가된 버튼
+const editScheduleBtn = document.getElementById('editScheduleBtn');
 
 let timerInterval = null;
 let timerStartTime = null;
@@ -30,7 +30,7 @@ let timerElapsed = 0;
 let timerRunning = false;
 let selectedSchedule = null;
 let selectingMode = false;
-let isEditing = false; // 편집 모드 상태 변수
+let isEditing = false;
 
 const STORAGE_KEYS = {
   records: 'records',
@@ -250,21 +250,48 @@ function renderTaskList() {
       categoryDiv.appendChild(noTaskMessage);
     }
 
-    tasks.forEach((task, index) => { // index 추가
+    tasks.forEach((task, index) => {
       const taskDiv = document.createElement('div');
       taskDiv.classList.add('task-item');
       taskDiv.dataset.category = category;
       taskDiv.dataset.task = task;
-      taskDiv.dataset.index = index; // 인덱스 추가 (삭제 시 활용)
+      taskDiv.dataset.index = index;
 
       const nameSpan = document.createElement('span');
       nameSpan.classList.add('task-name');
       nameSpan.textContent = task;
       taskDiv.appendChild(nameSpan);
 
+      // --- 새로운 task-actions div 생성 및 자식 요소 추가 ---
+      const taskActionsDiv = document.createElement('div');
+      taskActionsDiv.classList.add('task-actions');
+
+      // 예외 스케줄일 경우 삭제 버튼 추가
+      if (category === '예외 스케줄') {
+        const deleteBtn = document.createElement('button');
+        deleteBtn.classList.add('delete-item-btn');
+        deleteBtn.textContent = '삭제';
+        deleteBtn.style.display = isEditing ? 'inline-block' : 'none';
+        deleteBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const confirmDelete = confirm(`"${task}" 일정을 정말 삭제하시겠습니까?`);
+          if (confirmDelete) {
+            const taskToDelete = e.target.closest('.task-item').dataset.task;
+            const taskIndexToDelete = parseInt(e.target.closest('.task-item').dataset.index);
+
+            if (exceptionSchedules[taskIndexToDelete] === taskToDelete) {
+                exceptionSchedules.splice(taskIndexToDelete, 1);
+                schedules['예외 스케줄'] = exceptionSchedules;
+                localStorage.setItem(STORAGE_KEYS.exceptionSchedules, JSON.stringify(exceptionSchedules));
+                renderTaskList();
+            }
+          }
+        });
+        taskActionsDiv.appendChild(deleteBtn); // taskActionsDiv에 추가
+      }
+
       const statusBox = document.createElement('div');
       statusBox.classList.add('status-box');
-
       const recs = records[category]?.[task] || [];
       if (recs.length > 0) {
         const lastRecord = recs[recs.length - 1];
@@ -274,32 +301,10 @@ function renderTaskList() {
           statusBox.classList.add('paused');
         }
       }
-      taskDiv.appendChild(statusBox);
+      taskActionsDiv.appendChild(statusBox); // taskActionsDiv에 추가
 
-      // 예외 스케줄일 경우 삭제 버튼 추가
-      if (category === '예외 스케줄') {
-        const deleteBtn = document.createElement('button');
-        deleteBtn.classList.add('delete-item-btn');
-        deleteBtn.textContent = '삭제';
-        deleteBtn.style.display = isEditing ? 'inline-block' : 'none'; // 편집 모드에 따라 표시/숨김
-        deleteBtn.addEventListener('click', (e) => {
-          e.stopPropagation(); // task-item 클릭 이벤트 방지
-          const confirmDelete = confirm(`"${task}" 일정을 정말 삭제하시겠습니까?`);
-          if (confirmDelete) {
-            // 해당 예외 스케줄 항목 삭제
-            const taskToDelete = e.target.closest('.task-item').dataset.task;
-            const taskIndexToDelete = parseInt(e.target.closest('.task-item').dataset.index);
-
-            if (exceptionSchedules[taskIndexToDelete] === taskToDelete) { // 한번 더 확인
-                exceptionSchedules.splice(taskIndexToDelete, 1);
-                schedules['예외 스케줄'] = exceptionSchedules; // schedules 객체에도 반영
-                localStorage.setItem(STORAGE_KEYS.exceptionSchedules, JSON.stringify(exceptionSchedules));
-                renderTaskList(); // UI 갱신
-            }
-          }
-        });
-        taskDiv.appendChild(deleteBtn);
-      }
+      taskDiv.appendChild(taskActionsDiv); // taskDiv에 taskActionsDiv 추가
+      // --- task-actions div 끝 ---
 
 
       const timerRecordDiv = document.createElement('div');
@@ -483,11 +488,10 @@ function setupEventListeners() {
     }
   });
 
-  // 편집 버튼 이벤트 리스너
   editScheduleBtn.addEventListener('click', () => {
-    isEditing = !isEditing; // 편집 모드 토글
-    editScheduleBtn.textContent = isEditing ? '완료' : '편집'; // 버튼 텍스트 변경
-    renderTaskList(); // task list 재렌더링하여 삭제 버튼 표시/숨김
+    isEditing = !isEditing;
+    editScheduleBtn.textContent = isEditing ? '완료' : '편집';
+    renderTaskList();
   });
 }
 
