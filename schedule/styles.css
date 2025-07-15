@@ -466,6 +466,10 @@ body {
 .task-item.selected {
   background-color: rgb(166, 165, 255);
 }
+/* .task-item.selected */
+.task-item.selected .status-box {
+  background-color: white;
+}
 
 .task-item:last-of-type {
   border-bottom: none;
