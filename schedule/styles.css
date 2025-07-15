@@ -86,12 +86,33 @@ body {
   gap: 10px;
 }
 
-.today-schedule-title {
-  font-size: 18px;
-  font-weight: 700;
+.right-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding-bottom: 8px;
   margin-left: 10px;
   border-bottom: 1px solid var(--division-bar-color);
+}
+
+.today-schedule-title-text {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.edit-schedule-btn {
+  padding: 4px 8px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.edit-schedule-btn:hover {
+  background-color: #eee;
+  border-color: #999;
 }
 
 .date-dday-box {
@@ -429,7 +450,6 @@ body {
   user-select: none;
 }
 
-/* 수정된 부분: 첫 번째 task-item을 제외한 모든 task-item에 border-top 적용 */
 .task-category > .task-item:not(:first-child) {
   border-top: 1px solid var(--division-bar-color);
 }
@@ -460,6 +480,25 @@ body {
 .status-box.paused {
   background-color: var(--active-color-yellow);
   border-color: var(--active-color-yellow);
+}
+
+.delete-item-btn {
+  padding: 2px 6px;
+  margin-left: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #dc3545; /* 삭제 버튼 색상 */
+  border-radius: 4px;
+  background-color: #dc3545;
+  color: #fff;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  display: none; /* 기본적으로 숨김 */
+}
+
+.delete-item-btn:hover {
+  background-color: #c82333;
+  border-color: #bd2130;
 }
 
 .task-timer-record {
