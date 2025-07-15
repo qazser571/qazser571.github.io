@@ -325,7 +325,6 @@ body {
   border-top: 1px solid #ccc;
   border-bottom: 1px solid #ccc;
   overflow-y: auto; /* 스크롤 가능하도록 */
-  flex-grow: 1;
   position: relative; /* 세로 바를 위한 position */
 }
 
