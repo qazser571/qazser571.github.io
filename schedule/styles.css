@@ -304,8 +304,10 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-weight: 600;
-  font-size: 20px;
+  font-family: var(--font-digital);
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 2px;
   color: #000;
 }
 
