@@ -49,7 +49,11 @@
 
 body {
   width: 100vw;
+  min-width: 1000px;
   height: 100vh;
+  min-height: 800px;
+  overflow-x: auto;
+  overflow-y: auto;
   font-family: '맑은 고딕', Malgun Gothic, Arial, sans-serif;
   background: #f0f2f5;
   display: flex;
@@ -58,7 +62,7 @@ body {
 }
 
 .container {
-  min-width: 1000px;
+  width: 800px;
   height: 600px;
   display: flex;
   gap: 20px;
