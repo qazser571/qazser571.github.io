@@ -441,8 +441,6 @@ body {
 .task-category > .category-title {
   font-weight: 700;
   font-size: 16px;
-  margin-bottom: 6px;
-  border-bottom: 1px solid #eee;
   padding-bottom: 4px;
   display: flex;
   justify-content: space-between;
@@ -476,10 +474,6 @@ body {
   cursor: pointer;
   user-select: none;
   border-top: 1px solid #ddd; /* 색상 변경 */
-}
-
-.task-item:first-child{
-  border: none;
 }
 
 .task-name {
