@@ -369,7 +369,6 @@ body {
 
 .analysis-bar-outer {
   height: 12px;
-  border: 1px solid #ccc;
   position: relative;
   margin: 3px 0;
   display: flex;
