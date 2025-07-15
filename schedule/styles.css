@@ -35,7 +35,7 @@
   --bar-width: 2px;
   --bar-color: #000;
   --inactive-color: #ccc;
-  --active-color-blue: #113F67;
+  --active-color-blue: #34699A; /* #113F67; */
   --active-color-yellow: #FDF5AA;
   --font-digital: 'DS-DIGI', monospace;
   --container-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
