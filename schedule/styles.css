@@ -166,7 +166,7 @@ body {
 
 .digital-time {
   font-family: var(--font-digital);
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 700;
   letter-spacing: 2px;
 }
@@ -175,7 +175,7 @@ body {
 .timer-status-box {
   border-radius: var(--border-radius); /* 다시 추가 */
   box-shadow: var(--box-shadow); /* 다시 추가 */
-  padding: 8px 12px; /* padding 8px 12px 적용 */
+  padding: 8px var(--box-inner-padding); /* padding 8px 12px 적용 */
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -269,7 +269,7 @@ body {
 .analysis-box {
   border-radius: var(--border-radius); /* 다시 추가 */
   box-shadow: var(--box-shadow); /* 다시 추가 */
-  padding: 8px 12px; /* padding 8px 12px 적용 */
+  padding: 8px var(--box-inner-padding); /* padding 8px 12px 적용 */
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -284,7 +284,7 @@ body {
   font-weight: 700;
   font-size: 14px;
   border-bottom: 1px solid #eee; /* 얇은 구분선 */
-  padding-bottom: 4px;
+  padding-bottom: 8px;
 }
 
 .analysis-title {
