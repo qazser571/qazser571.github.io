@@ -51,7 +51,7 @@ async function init() {
     if (order.includes('예외 스케줄')) {
       order = order.filter(cat => cat !== '예외 스케줄');
     }
-    order.unshift('예외 스케줄'); // 항상 최상단에 추가
+    order.unshift('예외 스케줄'); // 항상 최상단에 추가 (Right 섹션 표시 순서)
 
     await loadSchedules();
     schedules['예외 스케줄'] = exceptionSchedules;
@@ -227,15 +227,12 @@ function saveExceptionSchedule(text) {
 }
 
 function renderTaskList() {
-  // task-list-container의 내용만 초기화. "오늘 일정" 제목은 HTML에 직접 있으므로 그대로 둠.
   taskListContainer.innerHTML = '';
 
-  // "오늘 일정" 제목은 HTML에서 taskListContainer의 형제로 존재해야 하므로,
-  // 여기서는 taskListContainer에 추가하지 않습니다.
-  // const todayScheduleTitle = document.querySelector('.today-schedule-title-text');
-  // if (todayScheduleTitle && todayScheduleTitle.parentNode !== taskListContainer) {
-  //     taskListContainer.prepend(todayScheduleTitle);
-  // }
+  const todayScheduleTitle = document.querySelector('.today-schedule-title-text');
+  if (todayScheduleTitle && todayScheduleTitle.parentNode !== taskListContainer) {
+      taskListContainer.prepend(todayScheduleTitle);
+  }
 
 
   if (order.length === 0) {
@@ -449,41 +446,38 @@ function renderAnalysisGraph() {
     return;
   }
 
-  // 기존 단일 행 구조로 그래프 렌더링
+  // 2열 구조를 위한 컬럼 생성
+  const labelsColumn = document.createElement('div');
+  labelsColumn.classList.add('analysis-labels-column');
+  analysisGraphContainer.appendChild(labelsColumn);
+
+  const barsColumn = document.createElement('div');
+  barsColumn.classList.add('analysis-bars-column');
+  analysisGraphContainer.appendChild(barsColumn);
+
+
   order.forEach(category => { // order 배열을 기준으로 순서 유지
     const time = dailyTotalTimes[category] || 0;
     const barColor = categoryColorMap.get(category) || rankColors[3]; // 매핑된 색상 사용, 매핑 안된 경우 기본 회색
 
-    const barDiv = document.createElement('div');
-    barDiv.style.display = 'flex';
-    barDiv.style.alignItems = 'center';
-    barDiv.style.marginBottom = '4px';
-
+    // 레이블 생성 및 labelsColumn에 추가
     const labelSpan = document.createElement('span');
+    labelSpan.classList.add('analysis-label-item');
     labelSpan.textContent = category;
-    labelSpan.style.width = '60px';
-    labelSpan.style.fontSize = '12px';
-    labelSpan.style.fontWeight = '600';
-    labelSpan.style.marginRight = '6px';
-    labelSpan.style.flexShrink = '0';
+    labelsColumn.appendChild(labelSpan);
 
+    // 막대그래프 생성 및 barsColumn에 추가
     const barOuter = document.createElement('div');
-    barOuter.style.flexGrow = '1';
-    barOuter.style.height = '12px';
-    barOuter.style.border = '1px solid #ccc';
-    barOuter.style.position = 'relative';
+    barOuter.classList.add('analysis-bar-outer');
 
     const barInner = document.createElement('div');
-    barInner.style.height = '100%';
+    barInner.classList.add('analysis-bar-inner');
     barInner.style.width = totalAllDaily > 0 ? `${(time / totalAllDaily) * 100}%` : '0%';
     barInner.style.backgroundColor = barColor;
     barInner.style.transition = 'width 0.5s ease-out';
 
     barOuter.appendChild(barInner);
-    barDiv.appendChild(labelSpan);
-    barDiv.appendChild(barOuter);
-
-    analysisGraphContainer.appendChild(barDiv);
+    barsColumn.appendChild(barOuter);
   });
 }
 
