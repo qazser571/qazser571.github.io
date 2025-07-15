@@ -431,9 +431,8 @@ body {
 .task-category > .category-title {
   font-weight: 700;
   font-size: 16px;
-  margin-bottom: 6px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 4px;
+  border-bottom: 1px solid #ddd;
+  padding: 0 0 4px 5px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -472,11 +471,7 @@ body {
   background-color: lightblue;
 }
 
-.task-item:first-child {
-  border-top: none; /* first-child의 border-top 제거 */
-}
-
-.task-item:last-child {
+.task-item:last-of-type {
   border-bottom: none; /* last-child의 border-bottom 제거 */
 }
 
