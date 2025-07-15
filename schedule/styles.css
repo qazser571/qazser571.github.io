@@ -91,6 +91,16 @@ body {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
+  gap: 10px; /* gap 추가 */
+}
+
+/* "오늘 일정" 제목 스타일 */
+.today-schedule-title {
+  font-size: 18px;
+  font-weight: 700;
+  padding-bottom: 8px;
+  margin-left: 10px; /* .right padding과 맞춤 */
+  border-bottom: 1px solid var(--division-bar-color);
 }
 
 /* 1번째 div: 날짜 및 디데이 */
@@ -156,7 +166,7 @@ body {
   font-size: 18px;
   font-weight: 600;
   padding-left: 12px;
-  gap: var(--title-gap);
+  gap: calc(var(--title-gap)*2 + var(--bar-width));
   user-select: none;
 }
 
@@ -403,18 +413,18 @@ body {
 }
 
 /* 오른쪽 영역 */
-.right {
+/* .right {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  height: 600px; /* 임시 높이, 필요시 조절 */
-}
+  height: 600px;
+} */ /* .right에 이미 스타일이 정의되어 있으므로 중복 제거 */
 
-.right-separator {
+/* .right-separator {
   border: none;
-  border-top: 1px solid #eee; /* 얇은 구분선 */
+  border-top: 1px solid #eee;
   margin-bottom: 10px;
-}
+} */ /* 제거됨 */
 
 .task-list-container {
   border-top: 1px solid #ccc;
@@ -455,7 +465,7 @@ body {
 
 /* 첫 번째 task-item을 제외한 나머지 task-item에만 border-top 적용 */
 .task-item + .task-item {
-  border-top: 1px solid #f5f5f5;
+  border-top: 1px solid var(--division-bar-color); /* 색상 변경 */
 }
 
 .task-name {
