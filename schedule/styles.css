@@ -402,10 +402,6 @@ body {
   border-color: #999;
 }
 
-.right-separator {
-  border: none;
-}
-
 .task-list-container {
   border-top: 1px solid var(--division-bar-color);
   border-bottom: 1px solid var(--division-bar-color);
