@@ -240,6 +240,7 @@ body {
 .timer-btn-group {
   display: flex;
   justify-content: space-around;
+  padding-top: 8px;
 }
 
 .timer-btn-group button {
