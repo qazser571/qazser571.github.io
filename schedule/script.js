@@ -446,6 +446,16 @@ function renderAnalysisGraph() {
     return;
   }
 
+  // グラフ描画のための順序制御
+  // order 배열에서 '예외 스케줄'을 제외한 나머지 범주들을 가져옴
+  let graphDisplayOrder = order.filter(category => category !== '예외 스케줄');
+  // '예외 스케줄' 범주를 찾아서 마지막에 추가
+  const exceptionScheduleCategory = order.find(category => category === '예외 스케줄');
+  if (exceptionScheduleCategory) {
+      graphDisplayOrder.push(exceptionScheduleCategory);
+  }
+
+
   // 2열 구조를 위한 컬럼 생성
   const labelsColumn = document.createElement('div');
   labelsColumn.classList.add('analysis-labels-column');
@@ -456,7 +466,7 @@ function renderAnalysisGraph() {
   analysisGraphContainer.appendChild(barsColumn);
 
 
-  order.forEach(category => { // order 배열을 기준으로 순서 유지
+  graphDisplayOrder.forEach(category => { // graphDisplayOrder 배열을 기준으로 순서 유지
     const time = dailyTotalTimes[category] || 0;
     const barColor = categoryColorMap.get(category) || rankColors[3]; // 매핑된 색상 사용, 매핑 안된 경우 기본 회색
 
