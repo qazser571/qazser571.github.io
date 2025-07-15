@@ -1,4 +1,4 @@
-@font-face { 
+@font-face {
   font-family: 'DS-DIGI';
   src: url('fonts/DS-DIGI.TTF') format('truetype');
   font-weight: normal;
@@ -308,13 +308,19 @@ body {
   color: #000;
 }
 
+/* --- 분석 그래프 컨테이너 (.analysis-graph-container) - 2열 구조 --- */
 .analysis-graph-container {
-  padding: 4px 5px 0 5px;
+  padding: 4px 5px;
   border-top: 1px solid var(--division-bar-color);
   border-bottom: 1px solid var(--division-bar-color);
   overflow-y: auto;
   flex: 1;
-  display: flex; /* 2열 구조 */
+}
+
+/* 새로운 analysis-graph-inner */
+.analysis-graph-inner {
+  display: flex; /* 2열 구조를 위한 flexbox */
+  flex-grow: 1; /* 부모 컨테이너의 남은 공간을 차지 */
 }
 
 .analysis-labels-column {
@@ -325,7 +331,7 @@ body {
   align-items: flex-end;
   padding-right: var(--label-padding-right);
   position: relative;
-  border-right: 1.5px solid #000;
+  border-right: 1.5px solid #000; /* 세로 바 */
 }
 
 .analysis-label-item {
