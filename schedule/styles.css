@@ -433,12 +433,12 @@ body {
 
 /* --- 우측 (.right) - 개별 일정 범주 (.task-category) --- */
 .task-category {
-  border: 1px solid #eee;
+  border: 1px solid #ddd;
   border-radius: 4px;
   margin-bottom: 10px;
   padding: 6px 8px;
   user-select: none;
-  background-color: #ccc; /* 배경색 변경 */
+  background-color: #fff;
 }
 
 .task-category > .category-title {
