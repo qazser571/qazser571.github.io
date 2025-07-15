@@ -285,7 +285,6 @@ body {
   justify-content: space-between;
   font-weight: 700;
   font-size: 14px;
-  border-bottom: 1px solid #eee; /* 얇은 구분선 */
   padding-bottom: 8px;
 }
 
@@ -323,8 +322,8 @@ body {
 .analysis-graph-container {
   height: 30px;
   padding: 0 5px;
-  border-top: 1px solid #000;
-  border-bottom: 1px solid #000;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
   overflow-y: auto; /* 스크롤 가능하도록 */
   flex-grow: 1;
   position: relative; /* 세로 바를 위한 position */
