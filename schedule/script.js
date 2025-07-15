@@ -129,6 +129,8 @@ function padZero(num) {
 }
 
 function updateTimerUI() {
+  const rightSection = document.querySelector('.right'); // .right 섹션 선택
+
   if (!timerRunning) {
     timerStateDiv.textContent = '쉬는중';
     timerTimeDiv.textContent = '00:00:00';
@@ -141,8 +143,9 @@ function updateTimerUI() {
     btnComplete.classList.add('inactive');
 
     selectedSchedule = null;
+    // selectingMode가 false일 때만 하이라이트 제거
     if (!selectingMode) {
-      taskListContainer.classList.remove('selecting');
+      rightSection.classList.remove('selecting'); // .right에서 하이라이트 제거
     }
   } else {
     timerStateDiv.textContent = '진행중';
@@ -150,7 +153,7 @@ function updateTimerUI() {
     btnStart.classList.add('inactive');
     btnPause.classList.remove('inactive');
     btnComplete.classList.remove('inactive');
-    taskListContainer.classList.remove('selecting');
+    rightSection.classList.remove('selecting'); // 타이머 시작 시 .right에서 하이라이트 제거
   }
 }
 
@@ -175,7 +178,7 @@ function stopTimer(status) {
   clearInterval(timerInterval);
   timerInterval = null;
   timerRunning = false;
-  selectingMode = false;
+  selectingMode = false; // 타이머가 멈추면 선택 모드 종료
 
   const endTime = new Date();
   const duration = endTime - timerStartTime;
@@ -389,33 +392,29 @@ function renderAnalysisGraph() {
 
   const totalAllDaily = Object.values(dailyTotalTimes).reduce((a, b) => a + b, 0);
 
-  // --- 색상 순위 결정을 위한 임시 정렬 리스트 생성 ---
   let categoriesForColorRanking = order.map(category => ({ category, time: dailyTotalTimes[category] || 0 }));
   let exceptionScheduleItemForColor = null;
 
-  // '예외 스케줄' 항목을 색상 순위 결정 리스트에서 분리
   const exceptionColorIndex = categoriesForColorRanking.findIndex(item => item.category === '예외 스케줄');
   if (exceptionColorIndex !== -1) {
       exceptionScheduleItemForColor = categoriesForColorRanking.splice(exceptionColorIndex, 1)[0];
   }
 
-  // 나머지 카테고리들을 시간 순으로 정렬 (색상 순위 결정용)
   categoriesForColorRanking.sort((a, b) => b.time - a.time);
 
-  // '예외 스케줄' 항목을 색상 순위 결정 리스트의 맨 뒤에 추가
   if (exceptionScheduleItemForColor) {
       categoriesForColorRanking.push(exceptionScheduleItemForColor);
   }
 
-  // --- 카테고리별 색상 매핑 생성 ---
+  const finalSortedCategories = categoriesForColorRanking;
+
   // 1등: 빨강, 2등: 주황, 3등: 노랑, 나머지: 회색
   const rankColors = ['#d33', '#FF8C00', '#FFD700', '#B0B0B0']; // 빨강, 주황, 노랑, 회색
   const categoryColorMap = new Map();
-  categoriesForColorRanking.forEach((item, idx) => {
+  finalSortedCategories.forEach((item, idx) => {
       // 3등까지는 고정 색상, 그 이후는 회색
       categoryColorMap.set(item.category, idx < 3 ? rankColors[idx] : rankColors[3]);
   });
-  // --- 색상 매핑 끝 ---
 
 
   if (order.length === 0) {
@@ -428,10 +427,9 @@ function renderAnalysisGraph() {
     return;
   }
 
-  // --- 원래 order 배열을 기준으로 그래프 렌더링 (표시 순서 유지) ---
   order.forEach(category => {
-    const time = dailyTotalTimes[category] || 0; // 해당 카테고리의 시간
-    const barColor = categoryColorMap.get(category) || rankColors[3]; // 매핑된 색상 사용, 매핑 안된 경우 기본 회색
+    const time = dailyTotalTimes[category] || 0;
+    const barColor = categoryColorMap.get(category) || rankColors[3];
 
     const barDiv = document.createElement('div');
     barDiv.style.display = 'flex';
@@ -455,7 +453,7 @@ function renderAnalysisGraph() {
     const barInner = document.createElement('div');
     barInner.style.height = '100%';
     barInner.style.width = totalAllDaily > 0 ? `${(time / totalAllDaily) * 100}%` : '0%';
-    barInner.style.backgroundColor = barColor; // 순위에 따라 결정된 색상 적용
+    barInner.style.backgroundColor = barColor;
     barInner.style.transition = 'width 0.5s ease-out';
 
     barOuter.appendChild(barInner);
@@ -467,12 +465,22 @@ function renderAnalysisGraph() {
 }
 
 function setupEventListeners() {
+  const rightSection = document.querySelector('.right'); // .right 섹션 참조
+
   btnStart.addEventListener('click', () => {
-    if (!timerRunning && !selectingMode) {
-      selectingMode = true;
-      btnStart.textContent = '일정 선택';
-      taskListContainer.classList.add('selecting');
-      updateTimerUI();
+    if (!timerRunning) { // 타이머가 작동 중이 아닐 때만
+      if (!selectingMode) { // 현재 선택 모드가 아니라면 -> 선택 모드 진입
+        selectingMode = true;
+        btnStart.textContent = '일정 선택';
+        rightSection.classList.add('selecting'); // .right에 하이라이트 적용
+        updateTimerUI();
+      } else { // 현재 선택 모드라면 -> 선택 모드 종료
+        selectingMode = false;
+        selectedSchedule = null; // 선택된 일정 초기화
+        btnStart.textContent = '시작'; // 버튼 텍스트 '시작'으로 변경
+        rightSection.classList.remove('selecting'); // .right에서 하이라이트 제거
+        updateTimerUI(); // UI 상태 업데이트
+      }
     }
   });
 
