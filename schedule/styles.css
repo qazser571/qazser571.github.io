@@ -51,6 +51,8 @@
 
 /* body 및 container */
 body {
+  width: 100vw;
+  height: 100vh;
   font-family: '맑은 고딕', Malgun Gothic, Arial, sans-serif;
   background: #f0f2f5; /* 배경색 변경 */
   display: flex;
