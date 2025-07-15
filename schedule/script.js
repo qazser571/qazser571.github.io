@@ -157,6 +157,7 @@ function updateTimerUI() {
     if (!selectingMode) {
       rightSection.classList.remove('selecting');
     }
+    timerStatusBox.classList.remove('running-highlight'); // 타이머가 쉬는 중일 때 하이라이트 제거
   } else {
     timerStateDiv.textContent = '진행중';
     btnStart.textContent = '시작';
@@ -165,6 +166,7 @@ function updateTimerUI() {
     btnPause.classList.remove('inactive');
     btnComplete.classList.remove('inactive');
     rightSection.classList.remove('selecting');
+    timerStatusBox.classList.add('running-highlight'); // 타이머 진행 중일 때 하이라이트 추가
   }
 }
 
