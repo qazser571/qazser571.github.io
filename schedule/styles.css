@@ -464,7 +464,7 @@ body {
 }
 
 .task-item.selected {
-  background-color: rgb(190, 233, 248);
+  background-color: rgb(166, 165, 255);
 }
 
 .task-item:last-of-type {
