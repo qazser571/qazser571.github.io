@@ -9,8 +9,8 @@ const btnComplete = document.querySelector('.btn-complete');
 
 const timerStateDiv = document.querySelector('.timer-state');
 const timerTimeDiv = document.querySelector('.timer-time');
-const scheduleCategoryDiv = document.querySelector('.schedule-category');
-const scheduleTaskDiv = document.querySelector('.schedule-task');
+// const scheduleCategoryDiv = document.querySelector('.schedule-category'); // 제거됨
+// const scheduleTaskDiv = document.querySelector('.schedule-task'); // 제거됨
 
 const ampmSpan = document.querySelector('.ampm');
 const digitalTimeSpan = document.querySelector('.digital-time');
@@ -19,7 +19,7 @@ const ddayCountDiv = document.querySelector('.dday-count');
 
 const taskListContainer = document.querySelector('.task-list-container');
 const analysisGraphContainer = document.querySelector('.analysis-graph-container');
-const totalTimeDisplay = document.querySelector('.total-time-display'); // 새로 추가된 요소
+const totalTimeDisplay = document.querySelector('.total-time-display');
 
 const exceptionInput = document.getElementById('exception-input');
 const exceptionSaveBtn = document.getElementById('exception-save-btn');
@@ -28,9 +28,11 @@ let timerInterval = null;
 let timerStartTime = null;
 let timerElapsed = 0;
 let timerRunning = false;
-let selectedSchedule = null;
+let selectedSchedule = null; // { category, task }
 let selectingMode = false;
-let isEditing = false; // 예외 스케줄 편집 모드 상태
+let isEditing = false;
+
+let currentSelectedTaskItemElement = null; // 현재 선택된 task-item DOM 요소를 추적
 
 const STORAGE_KEYS = {
   records: 'records',
@@ -48,11 +50,10 @@ async function init() {
 
   try {
     await loadOrder();
-    // '예외 스케줄' 범주가 order 배열에 있다면 제거하고, 항상 최상단에 추가
     if (order.includes('예외 스케줄')) {
       order = order.filter(cat => cat !== '예외 스케줄');
     }
-    order.unshift('예외 스케줄'); // Right 섹션에서 항상 최상단에 표시되도록 추가
+    order.unshift('예외 스케줄');
 
     await loadSchedules();
     schedules['예외 스케줄'] = exceptionSchedules;
@@ -60,7 +61,6 @@ async function init() {
   } catch (error) {
     console.error("스케줄 파일을 불러오는 데 실패했습니다. 서버 환경에서 실행 중인지 확인해주세요.", error);
     alert("스케줄 파일을 불러오는 데 실패했습니다. 웹페이지에 스케줄이 표시되지 않을 수 있습니다.");
-    // 파일 로드 실패 시에도 '예외 스케줄'만이라도 표시되도록
     order = ['예외 스케줄'];
     schedules['예외 스케줄'] = exceptionSchedules;
   }
@@ -70,7 +70,7 @@ async function init() {
   setInterval(updateCurrentTime, 1000);
 
   renderTaskList();
-  renderAnalysisGraph(); // 초기 로드 시 그래프 렌더링 및 총 시간 업데이트
+  renderAnalysisGraph();
   updateTimerUI();
   setupEventListeners();
 }
@@ -83,7 +83,6 @@ async function loadOrder() {
 }
 
 async function loadSchedules() {
-  // '예외 스케줄'은 로컬 스토리지에서 관리되므로, 파일에서 불러오지 않음
   const categoriesToLoad = order.filter(category => category !== '예외 스케줄');
 
   for (const category of categoriesToLoad) {
@@ -140,8 +139,8 @@ function updateTimerUI() {
   if (!timerRunning) {
     timerStateDiv.textContent = '쉬는중';
     timerTimeDiv.textContent = '00:00:00';
-    scheduleCategoryDiv.textContent = '';
-    scheduleTaskDiv.textContent = '';
+    // scheduleCategoryDiv.textContent = ''; // 제거됨
+    // scheduleTaskDiv.textContent = ''; // 제거됨
 
     btnStart.textContent = selectingMode ? '일정 선택' : '시작';
     if (selectingMode) {
@@ -197,8 +196,13 @@ function stopTimer(status) {
   const endTime = new Date();
   const duration = endTime - timerStartTime;
 
-  const currentCategory = scheduleCategoryDiv.textContent;
-  const currentTask = scheduleTaskDiv.textContent;
+  // const currentCategory = scheduleCategoryDiv.textContent; // 제거됨
+  // const currentTask = scheduleTaskDiv.textContent; // 제거됨
+
+  // selectedSchedule에서 현재 카테고리와 태스크 정보를 가져옴
+  const currentCategory = selectedSchedule ? selectedSchedule.category : '알 수 없음';
+  const currentTask = selectedSchedule ? selectedSchedule.task : '알 수 없음';
+
 
   if (!records[currentCategory]) {
     records[currentCategory] = {};
@@ -217,6 +221,12 @@ function stopTimer(status) {
   updateTimerUI();
   renderTaskList();
   renderAnalysisGraph(); // 타이머 종료 시 그래프 렌더링 및 총 시간 업데이트
+
+  // 타이머 종료 시 선택된 task-item의 배경색 초기화
+  if (currentSelectedTaskItemElement) {
+    currentSelectedTaskItemElement.classList.remove('selected');
+    currentSelectedTaskItemElement = null;
+  }
 }
 
 function saveRecords() {
@@ -231,9 +241,9 @@ function saveExceptionSchedule(text) {
 }
 
 function renderTaskList() {
-  taskListContainer.innerHTML = ''; // task-list-container의 내용만 초기화
+  taskListContainer.innerHTML = '';
 
-  // "오늘 일정" 제목은 HTML에 직접 있으므로, 여기서는 건드리지 않습니다.
+  const todayScheduleTitle = document.querySelector('.today-schedule-title-text');
 
 
   if (order.length === 0) {
@@ -364,33 +374,38 @@ function renderTaskList() {
       taskDiv.addEventListener('click', (event) => {
         event.stopPropagation();
 
-        if (selectingMode) return;
-
-        document.querySelectorAll('.task-timer-record').forEach(div => {
-          if (div !== timerRecordDiv) {
-            div.style.display = 'none';
+        if (selectingMode) {
+          // 일정 선택 모드일 때 task-item 클릭 시
+          if (currentSelectedTaskItemElement) {
+            currentSelectedTaskItemElement.classList.remove('selected'); // 이전 선택 해제
           }
-        });
+          taskDiv.classList.add('selected'); // 현재 클릭된 task-item 선택
+          currentSelectedTaskItemElement = taskDiv; // 현재 선택된 요소 추적
 
-        if (timerRecordDiv.style.display === 'block') {
-          timerRecordDiv.style.display = 'none';
+          selectedSchedule = { category, task }; // 선택된 일정 정보 업데이트
+          // scheduleCategoryDiv.textContent = category; // 제거됨
+          // scheduleTaskDiv.textContent = task; // 제거됨
+
+          timerRunning = true;
+          timerStartTime = new Date();
+          timerElapsed = 0;
+          updateTimerUI();
+          startTimerInterval();
+
         } else {
-          timerRecordDiv.style.display = 'block';
+          // 일정 선택 모드가 아닐 때 (기존 토글 기능)
+          document.querySelectorAll('.task-timer-record').forEach(div => {
+            if (div !== timerRecordDiv) {
+              div.style.display = 'none';
+            }
+          });
+
+          if (timerRecordDiv.style.display === 'block') {
+            timerRecordDiv.style.display = 'none';
+          } else {
+            timerRecordDiv.style.display = 'block';
+          }
         }
-      });
-
-      taskDiv.addEventListener('click', () => {
-        if (!selectingMode) return;
-
-        selectedSchedule = { category, task };
-        scheduleCategoryDiv.textContent = category;
-        scheduleTaskDiv.textContent = task;
-
-        timerRunning = true;
-        timerStartTime = new Date();
-        timerElapsed = 0;
-        updateTimerUI();
-        startTimerInterval();
       });
     });
 
@@ -483,14 +498,6 @@ function renderAnalysisGraph() {
     return;
   }
 
-  // グラフ描画のための順序制御: '예외 스케줄'을 제외한 나머지 범주들을 먼저 배치하고, 마지막에 '예외 스케줄' 추가
-  let graphDisplayOrder = order.filter(category => category !== '예외 스케줄');
-  const exceptionScheduleCategory = order.find(category => category === '예외 스케줄');
-  if (exceptionScheduleCategory) {
-      graphDisplayOrder.push(exceptionScheduleCategory);
-  }
-
-
   // analysis-graph-inner 생성 및 추가
   const analysisGraphInner = document.createElement('div');
   analysisGraphInner.classList.add('analysis-graph-inner');
@@ -504,6 +511,14 @@ function renderAnalysisGraph() {
   const barsColumn = document.createElement('div');
   barsColumn.classList.add('analysis-bars-column');
   analysisGraphInner.appendChild(barsColumn);
+
+
+  // グラフ描画のための順序制御: '예외 스케줄'을 제외한 나머지 범주들을 먼저 배치하고, 마지막에 '예외 스케줄' 추가
+  let graphDisplayOrder = order.filter(category => category !== '예외 스케줄');
+  const exceptionScheduleCategory = order.find(category => category === '예외 스케줄');
+  if (exceptionScheduleCategory) {
+      graphDisplayOrder.push(exceptionScheduleCategory);
+  }
 
 
   graphDisplayOrder.forEach(category => { // graphDisplayOrder 배열을 기준으로 순서 유지
@@ -545,6 +560,11 @@ function setupEventListeners() {
       } else {
         selectingMode = false;
         selectedSchedule = null;
+        // 선택 모드 종료 시 선택된 task-item의 배경색 초기화
+        if (currentSelectedTaskItemElement) {
+          currentSelectedTaskItemElement.classList.remove('selected');
+          currentSelectedTaskItemElement = null;
+        }
         btnStart.textContent = '시작';
         btnStart.classList.remove('selecting-mode');
         rightSection.classList.remove('selecting');
