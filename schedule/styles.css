@@ -46,6 +46,7 @@
   --vertical-bar-width: 2px; /* 새로 추가된 세로 바 두께 */
   --vertical-bar-color: #000; /* 새로 추가된 세로 바 색상 */
   --label-padding-right: 8px; /* 레이블과 세로 바 사이 간격 */
+  --box-inner-padding: 12px;
 }
 
 /* body 및 container */
@@ -93,7 +94,7 @@ body {
 .date-dday-box {
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
-  padding: 8px 12px;
+  padding: 8px var(--box-inner-padding);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -123,7 +124,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 var(--title-gap) 0 0;
+  padding: 0 var(--title-width) 0 calc(width: var(--title-width) - var(--box-inner-padding));
   font-weight: 700;
   font-size: 18px;
   position: relative; /* ::after를 위한 position */
@@ -194,7 +195,7 @@ body {
 .timer-state {
   border-right: var(--bar-width) solid var(--bar-color); /* 바 두께 적용 */
   height: 30px;
-  padding: 0 var(--title-gap) 0 0;
+  padding: 0 var(--title-width) 0 calc(width: var(--title-width) - var(--box-inner-padding));
   display: flex;
   justify-content: end;
   align-items: center;
@@ -289,7 +290,7 @@ body {
 .analysis-title {
   border-right: var(--bar-width) solid var(--bar-color); /* 바 두께 적용 */
   height: 30px;
-  padding: 0 var(--title-gap) 0 0;
+  padding: 0 var(--title-width) 0 calc(width: var(--title-width) - var(--box-inner-padding));
   display: flex;
   justify-content: end;
   align-items: center;
