@@ -103,22 +103,7 @@ body {
   margin-bottom: 10px; /* task-list-container와의 간격 */
 }
 
-/* .edit-schedule-btn (이전 전역 버튼 스타일) */
-/* 이 스타일은 이제 .edit-exception-schedule-btn에 적용될 것임 */
-/* .edit-schedule-btn {
-  padding: 4px 8px;
-  font-weight: 600;
-  cursor: pointer;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #fff;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
-}
 
-.edit-schedule-btn:hover {
-  background-color: #eee;
-  border-color: #999;
-} */
 
 .date-dday-box {
   border-radius: var(--border-radius);
@@ -368,13 +353,15 @@ body {
   position: relative;
 }
 
+
+
+
 .exception-schedule-box {
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
   padding: 8px var(--box-inner-padding);
   display: flex;
   flex-direction: column;
-  gap: 6px;
   user-select: none;
   background-color: #fff;
 }
@@ -382,7 +369,6 @@ body {
 .exception-title {
   width: 100%;
   padding-bottom: 5px;
-  border-bottom: 1px solid var(--division-bar-color);
   font-weight: 700;
   font-size: 14px;
   padding-left: calc(var(--title-gap) - var(--box-inner-padding));
@@ -421,7 +407,7 @@ body {
 }
 
 .task-list-container {
-  /* top border는 task-list-header에 있음 */
+  border-top: 1px solid var(--division-bar-color);
   border-bottom: 1px solid var(--division-bar-color);
   flex-grow: 1;
   overflow-y: auto;
