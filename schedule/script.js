@@ -76,7 +76,7 @@ async function init() {
   renderTaskList();
   renderAnalysisGraph();
   loadTimerState(); // 페이지 로드 시 저장된 타이머 상태 복원
-  updateTimerUI(); // loadTimerState 후 UI 업데이트
+  updateTimerUI(); // loadTimerState 후 UI 업데이트 및 init() 마지막에서 한 번 더 호출하여 최종 UI 상태 보장
   setupEventListeners();
 }
 
@@ -142,6 +142,8 @@ function updateTimerUI() {
   const timerStatusBox = document.querySelector('.timer-status-box');
   const editButtons = document.querySelectorAll('.edit-exception-schedule-btn');
 
+  btnStart.classList.remove('inactive'); // 항상 먼저 inactive 클래스를 제거하여 버튼을 활성화 시킵니다.
+
   if (!timerRunning) {
     timerStateDiv.textContent = '쉬는중';
     timerTimeDiv.textContent = '00:00:00';
@@ -155,7 +157,6 @@ function updateTimerUI() {
       btnStart.classList.remove('selecting-mode');
     }
 
-    btnStart.classList.remove('inactive');
     btnPause.classList.add('inactive');
     btnComplete.classList.add('inactive');
 
@@ -166,10 +167,10 @@ function updateTimerUI() {
     timerStatusBox.classList.remove('running-highlight');
 
     editButtons.forEach(button => button.style.display = 'inline-block');
-  } else {
+  } else { // 타이머가 진행중일 때
     timerStateDiv.textContent = '진행중';
     btnStart.textContent = '시작';
-    btnStart.classList.add('inactive');
+    btnStart.classList.add('inactive'); // 시작 버튼 비활성화
     btnStart.classList.remove('selecting-mode');
     btnPause.classList.remove('inactive');
     btnComplete.classList.remove('inactive');
@@ -183,7 +184,7 @@ function updateTimerUI() {
 function startTimerInterval() {
   if (timerInterval) clearInterval(timerInterval);
   timerInterval = setInterval(() => {
-    timerElapsed = Date.now() - timerStartTime.getTime();
+    timerElapsed = Date.now() - timerStartTime.getTime(); // Date.now() 사용
     timerTimeDiv.textContent = formatDuration(timerElapsed);
   }, 1000);
 }
@@ -391,7 +392,7 @@ function renderTaskList() {
       } else {
         noDataMessage.textContent = '일정 없음';
       }
-      categoryDiv.appendChild(noDataMessage);
+      categoryDiv.appendChild(noTaskMessage);
     }
 
     tasks.forEach((task, index) => {
@@ -547,12 +548,10 @@ function getStartOfCurrentDay() {
     startOfToday5AM.setHours(5, 0, 0, 0);
 
     if (now.getHours() < 5) {
-        // 현재 시간이 오전 5시 이전이면, "하루"는 어제 오전 5시에 시작
         const startOfYesterday5AM = new Date(startOfToday5AM);
         startOfYesterday5AM.setDate(startOfYesterday5AM.getDate() - 1);
         return startOfYesterday5AM;
     } else {
-        // 현재 시간이 오전 5시 이후이면, "하루"는 오늘 오전 5시에 시작
         return startOfToday5AM;
     }
 }
