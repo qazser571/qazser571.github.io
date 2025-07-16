@@ -9,8 +9,8 @@ const btnComplete = document.querySelector('.btn-complete');
 
 const timerStateDiv = document.querySelector('.timer-state');
 const timerTimeDiv = document.querySelector('.timer-time');
-const scheduleCategoryDiv = document.querySelector('.schedule-category'); // 주석 해제
-const scheduleTaskDiv = document.querySelector('.schedule-task'); // 주석 해제
+const scheduleCategoryDiv = document.querySelector('.schedule-category');
+const scheduleTaskDiv = document.querySelector('.schedule-task');
 
 const ampmSpan = document.querySelector('.ampm');
 const digitalTimeSpan = document.querySelector('.digital-time');
@@ -48,7 +48,7 @@ let exceptionSchedules = [];
 
 async function init() {
   records = JSON.parse(localStorage.getItem(STORAGE_KEYS.records)) || {};
-  exceptionSchedules = JSON.parse(localStorage.getItem(STORAGE_KEYS.exceptionSchedules)) || [];
+  exceptionSchedules = JSON.parse(localStorage.getItem(STORAGE_KEYS.exceptionSchedules)) || {};
 
   checkAndInitializeDailyData(); // records 로드 후 바로 호출하여 일일 초기화 확인
 
@@ -145,8 +145,8 @@ function updateTimerUI() {
   if (!timerRunning) {
     timerStateDiv.textContent = '쉬는중';
     timerTimeDiv.textContent = '00:00:00';
-    scheduleCategoryDiv.textContent = ''; // 이제 오류 없음
-    scheduleTaskDiv.textContent = ''; // 이제 오류 없음
+    scheduleCategoryDiv.textContent = '';
+    scheduleTaskDiv.textContent = '';
 
     btnStart.textContent = selectingMode ? '일정 선택' : '시작';
     if (selectingMode) {
@@ -219,7 +219,7 @@ function stopTimer(status) {
     records[currentCategory][currentTask] = [];
   }
   records[currentCategory][currentTask].push({
-    start: endTime.toISOString(),
+    start: timerStartTime.toISOString(), // 수정된 부분: timerStartTime 사용
     end: endTime.toISOString(),
     duration,
     status
@@ -346,7 +346,7 @@ function renderTaskList() {
 
   if (order.length === 0) {
     const noDataMessage = document.createElement('div');
-    noDataMessage.textContent = '스케줄 데이터를 불러올 수 없습니다. 파일 경로를 확인해주세요.';
+    noDataMessage.textContent = '스케줄 데이터를 불러올 수 없습니다.';
     noDataMessage.style.textAlign = 'center';
     noDataMessage.style.padding = '20px';
     noDataMessage.style.color = '#888';
@@ -382,16 +382,16 @@ function renderTaskList() {
     const tasks = schedules[category] || [];
 
     if (tasks.length === 0) {
-      const noTaskMessage = document.createElement('div');
-      noTaskMessage.style.textAlign = 'center';
-      noTaskMessage.style.padding = '5px';
-      noTaskMessage.style.color = '#aaa';
+      const noDataMessage = document.createElement('div');
+      noDataMessage.style.textAlign = 'center';
+      noDataMessage.style.padding = '5px';
+      noDataMessage.style.color = '#aaa';
       if (category === '예외 스케줄') {
-        noTaskMessage.textContent = '등록된 예외 스케줄이 없습니다.';
+        noDataMessage.textContent = '등록된 예외 스케줄이 없습니다.';
       } else {
-        noTaskMessage.textContent = '일정 없음';
+        noDataMessage.textContent = '일정 없음';
       }
-      categoryDiv.appendChild(noTaskMessage);
+      categoryDiv.appendChild(noDataMessage);
     }
 
     tasks.forEach((task, index) => {
