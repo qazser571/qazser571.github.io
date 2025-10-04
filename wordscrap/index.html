@@ -9,15 +9,27 @@
 <body>
     
     <div id="container">
-        <div id="main-content-wrapper"> <!-- input-area와 버튼 그룹을 감싸는 래퍼 -->
+        <div id="main-content-wrapper">
             <div id="input-area">
-                <!-- JavaScript를 통해 .input-box들이 이곳에 동적으로 추가될 것입니다. -->
-            </div>
-            <div id="add-button-container">
-                <button id="add-box-button">+</button>
+                <!-- JavaScript -->
             </div>
         </div>
-        <button id="complete-button">완료</button>
+        
+        <div id="right-button-column">
+            <div id="div-count-display"></div>
+            <button id="add-box-button">+</button>
+            <button id="all-clear-button">전부삭제</button>
+            
+            <hr style="width: 80%; border: none; border-top: 1px solid #ddd; margin: 10px auto;">
+
+            <button id="export-json-button">데이터 내보내기</button>
+            <button id="import-json-button">데이터 가져오기</button>
+            <input type="file" id="import-file-input" accept=".json" style="display: none;">
+            
+            <hr style="width: 80%; border: none; border-top: 1px solid #ddd; margin: 10px auto;">
+
+            <button id="download-txt-button">TXT로 다운로드</button>
+        </div>
     </div>
 
     <script src="./script.js"></script>
