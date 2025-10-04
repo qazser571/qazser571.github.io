@@ -1,3 +1,6 @@
+function goToWordScraperPage() {
+    window.location.href = "./tempt/test.html";
+}
 function goToTimerPage() {
     window.location.href = "./schedule/main.html";
 }
