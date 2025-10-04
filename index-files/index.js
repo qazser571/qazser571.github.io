@@ -1,5 +1,5 @@
 function goToWordScraperPage() {
-    window.location.href = "./tempt/test.html";
+    window.location.href = "./wordscrap/index.html";
 }
 function goToTimerPage() {
     window.location.href = "./schedule/main.html";
