@@ -90,4 +90,5 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.removeChild(a);
         URL.revokeObjectURL(url); // 메모리 해제
     });
+
 });
