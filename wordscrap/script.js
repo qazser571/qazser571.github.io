@@ -22,20 +22,29 @@ document.addEventListener('DOMContentLoaded', () => {
         inputBox.appendChild(meaningInput);
         inputArea.appendChild(inputBox);
 
-        // 새롭게 추가된 input-box의 첫 번째 입력 필드에 포커스 (Enter 키 누를 경우 유용)
-        wordInput.focus(); 
+        // 이전: 새롭게 추가된 input-box의 첫 번째 입력 필드에 포커스 (Enter 키, + 버튼으로 추가될 때)
+        // wordInput.focus(); // 이 부분은 이제 Enter 키와 + 버튼으로 생성될 때만 유용하도록 직접 호출합니다.
 
-        return inputBox; // 생성된 div 반환
+        return { inputBox, wordInput, meaningInput }; // 생성된 요소들을 객체 형태로 반환
     }
 
-    // 1. 웹 페이지 로드 시 초기 5개의 input-box 생성
+    // 1. 웹 페이지 로드 시 초기 5개의 input-box 생성 및 첫 번째 박스 포커스 설정
+    const initialInputBoxes = []; // 초기 생성된 박스들을 저장할 배열
     for (let i = 0; i < 5; i++) {
-        createInputBox();
+        const { inputBox, wordInput, meaningInput } = createInputBox();
+        initialInputBoxes.push({ inputBox, wordInput, meaningInput });
     }
+
+    // 페이지 로드 후, 가장 첫 번째 input-box의 단어 입력 필드에 포커스
+    if (initialInputBoxes.length > 0) {
+        initialInputBoxes[0].wordInput.focus();
+    }
+
 
     // 2. '+' 버튼 클릭 시 input-box 추가
     addBoxButton.addEventListener('click', () => {
-        createInputBox();
+        const { wordInput } = createInputBox(); // 새로운 박스 생성 및 wordInput 반환받음
+        wordInput.focus(); // 새로 생성된 박스의 단어 입력 필드에 포커스
     });
 
     // 3. 'Enter' 키 입력 시 input-box 추가 조건 수정
@@ -49,12 +58,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const allInputBoxes = inputArea.querySelectorAll('.input-box'); // 모든 input-box 요소들
 
                 // 현재 input-box가 전체 input-box 중 가장 마지막 요소인지 확인
-                // (closest('.input-box')는 activeElement가 input-box 안에 없을 경우 null을 반환할 수 있으므로,
-                // 이를 방지하기 위해 currentInputBox가 null이 아닌 경우도 함께 확인해야 하지만
-                // 이미 위 조건에서 activeElement.classList.contains('meaning-input')으로 필터링되므로 안전합니다.)
                 if (currentInputBox === allInputBoxes[allInputBoxes.length - 1]) {
                     event.preventDefault(); // 기본 Enter 동작 (예: 줄바꿈, 폼 제출) 방지
-                    createInputBox(); // 새로운 input-box 생성
+                    const { wordInput } = createInputBox(); // 새로운 박스 생성 및 wordInput 반환받음
+                    wordInput.focus(); // 새로 생성된 박스의 단어 입력 필드에 포커스
                 }
             }
         }
@@ -90,5 +97,4 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.removeChild(a);
         URL.revokeObjectURL(url); // 메모리 해제
     });
-
 });
