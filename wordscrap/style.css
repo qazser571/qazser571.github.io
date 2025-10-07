@@ -28,7 +28,7 @@ body {
 
 /* input-area와 추가 버튼을 감싸는 래퍼 */
 #main-content-wrapper {
-    width: 600px;
+    width: 600px; /* 최종 반영된 너비 */
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -92,7 +92,14 @@ body {
     box-shadow: 0 0 2px #555;
     border-radius: 5px;
     background-color: #fff;
-    min-width: 0; /* 중요: 플렉스 아이템의 최소 너비 재설정으로 넘침 방지 */
+    min-width: 0;
+    transition: box-shadow 0.2s, border-color 0.2s; /* 부드러운 전환 효과 추가 */
+}
+
+/* --- 중복 단어 하이라이트 스타일 --- */
+.input-box.highlight-duplicate {
+    box-shadow: 0 0 2px red;
+    border: 1px solid red;
 }
 
 
@@ -236,33 +243,6 @@ body {
 }
 #export-json-button:hover, #import-json-button:hover {
     background-color: #0056b3;
-}
-
-
-/* 개별 삭제 버튼 스타일 */
-.delete-button {
-    background-color: #6c757d;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    min-width: 50px;
-    text-align: center;
-    transition: background-color 0.2s, width 0.2s;
-    white-space: nowrap;
-    flex-shrink: 0;
-}
-.delete-button:hover {
-    background-color: #5a6268;
-}
-/* '삭제' 상태일 때 버튼 색상 변경 */
-.delete-button.confirm-delete {
-    background-color: #dc3545;
-}
-.delete-button.confirm-delete:hover {
-    background-color: #c82333;
 }
 
 
