@@ -4,20 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./style.css">
-    <title>새로고침금지</title>
+    <title>워드스크랩</title>
 </head>
 <body>
     
     <div id="container">
         <div id="main-content-wrapper">
             <div id="input-area">
-                <!-- JavaScript -->
+                <!-- JavaScript를 통해 .entry-wrapper (안에 .insert-box-button과 .input-box 포함) 및 .separator-div가 동적으로 추가될 것입니다. -->
             </div>
         </div>
         
         <div id="right-button-column">
             <div id="div-count-display"></div>
-            <button id="add-box-button">+</button>
+            
+            <!-- 기존 '+' 버튼 대신, 숫자 'a'를 입력받을 필드와 설명을 추가 -->
+            <div id="interval-setting-wrapper">
+                <span style="font-size: 0.9em; color: #666;">구분 간격</span>
+                <input type="number" id="interval-input" value="20" min="1" step="1">
+            </div>
+
             <button id="all-clear-button">전부삭제</button>
             
             <hr style="width: 80%; border: none; border-top: 1px solid #ddd; margin: 10px auto;">
