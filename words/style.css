@@ -30,7 +30,7 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
+    overflow-x: hidden;
     padding: var(--stand-margin-value);
 }
 #container{
@@ -575,4 +575,5 @@ body.edit-mode-active #view-mode button[data-level]:not(#view-mode-all) {
     #edit-mode-toggle-btn{
         font-size: 12px;
     }
+
 }
