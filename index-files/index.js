@@ -10,3 +10,6 @@ function goToCodonPage() {
 function goToTestPage() {
     window.location.href = "./tempt/test.html";
 }
+function goToViewportMeasure() {
+    window.location.href = "./viewport measure/viewport.html";
+}
