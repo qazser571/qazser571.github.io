@@ -22,6 +22,11 @@
                 <div id="search">
                     <input type="text" id="search-input" placeholder="검색">
                 </div>
+                <!-- 여기부터 새로 추가된 숫자 입력 필드 부분입니다 -->
+                <div id="unit-jump">
+                    <input type="number" id="unit-number-input" placeholder="번호" min="1" max="9999">
+                </div>
+                <!-- 새로 추가된 부분 끝 -->
             </div>
             <div id="words-container" class="sub-component">
                 <!-- 단어 유닛들이 동적으로 생성될 위치 -->
@@ -30,9 +35,9 @@
         </div>
         <div id="right-component">
             <div id="right-inner">
-                <button id="data-load-btn">데이터 로드</button>
+                <button id="data-load-btn">Data 로드</button>
                 <input type="file" id="file-input" accept=".txt" style="display: none;">
-                <button id="data-save-btn">데이터 저장</button>
+                <button id="data-save-btn">Data 저장</button>
                 <button id="delete-all-btn" class="hidden">전체 삭제</button>
             </div>
             <div id="right-sep-line"></div>
