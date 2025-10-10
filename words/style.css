@@ -87,17 +87,43 @@ body{
     margin-bottom: var(--stand-margin-value);
 }
 #view-mode{
-    flex: 3;
+    width: auto;
     height: 38px;
     display: flex;
     align-items: end;
     flex-wrap: wrap;
     gap: 4px;
+    margin-right: 18px;
 }
 #search {
-    flex: 2;
+    flex: 1;
     height: 35px;
 }
+/* 유닛 점프 입력 필드 스타일 추가 */
+#unit-jump {
+    height: 35px;
+    margin-left: 5px; /* 검색창과 간격 조절 */
+    flex-shrink: 0; /* 공간이 부족해도 축소되지 않도록 설정 */
+}
+#unit-jump input[type="number"] {
+    width: 45px; /* 적절한 너비 설정 */
+    height: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 13px;
+    padding: 0 6px;
+    -moz-appearance: textfield; /* Firefox에서 숫자 입력 화살표 숨김 */
+}
+#unit-jump input[type="number"]::-webkit-outer-spin-button,
+#unit-jump input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none; /* Chrome, Safari에서 숫자 입력 화살표 숨김 */
+    margin: 0;
+}
+#unit-jump input[type="number"]:focus {
+    outline: none;
+    border: 1px solid #007bff;
+}
+
 #view-mode button {
     width: 35px;
     height: 35px;
@@ -312,7 +338,7 @@ body{
     outline: none;
     border: none;
     border-bottom: 1px solid #007bff;
-    box-shadow: 0 0.5px 0 0 #007bff; /* 파란색 box-shadow 원래대로 복원 */
+    box-shadow: 0 0.5px 0 0 #007bff;
 }
 
 .word:read-only {
@@ -527,8 +553,8 @@ body.edit-mode-active #view-mode button[data-level]:not(#view-mode-all) {
         box-shadow: none;
     }
     #view-mode{
-        flex: 5;
         height: 32px;
+        margin-right: 16px;
     }
     #view-mode button {
         width: 30px;
@@ -542,7 +568,9 @@ body.edit-mode-active #view-mode button[data-level]:not(#view-mode-all) {
         margin: 0 2px;
     }
     #search{
-        flex: 4;
+        height: 30px;
+    }
+    #unit-jump{
         height: 30px;
     }
     #words-container{
@@ -575,5 +603,4 @@ body.edit-mode-active #view-mode button[data-level]:not(#view-mode-all) {
     #edit-mode-toggle-btn{
         font-size: 12px;
     }
-
 }
