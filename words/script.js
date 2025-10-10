@@ -11,11 +11,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const knownLevelPopup = document.getElementById('known-level-popup');
     const popupContent = knownLevelPopup.querySelector('.popup-content');
     const viewModeButtons = document.querySelectorAll('#view-mode button');
-    const rightComponent = document.getElementById('right-component');
     const dataLoadButton = document.getElementById('data-load-btn');
-    const dataSaveButton = document = document.getElementById('data-save-btn');
+    const dataSaveButton = document.getElementById('data-save-btn'); // Corrected assignment
     const fileInput = document.getElementById('file-input');
     const searchInput = document.getElementById('search-input');
+    const unitNumberInput = document.getElementById('unit-number-input'); // 새로 추가된 입력 필드
     const body = document.body;
 
     /**
@@ -230,6 +230,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     targetInput.select();
                 }
             }
+        }
+        // Unit number input의 max 값 업데이트 (기능 추가)
+        if (unitNumberInput) {
+            unitNumberInput.max = filteredWords.length > 0 ? filteredWords.length : 1;
         }
     };
 
@@ -492,6 +496,53 @@ document.addEventListener('DOMContentLoaded', () => {
             activeViewMode = button.dataset.level;
             renderWords(activeViewMode, searchInput.value);
         };
+    });
+
+    /**
+     * 특정 번호의 단어로 스크롤하는 함수
+     */
+    const jumpToUnit = () => {
+        clearDeleteConfirmationState(); // 이동 기능 작동 시 삭제 확인 상태 초기화
+        const unitNum = parseInt(unitNumberInput.value, 10);
+        
+        // 현재 렌더링된 단어 유닛 목록 (검색 및 필터링된 상태)
+        const renderedUnitWrappers = wordsContainer.querySelectorAll('.unit-wrapper');
+        
+        if (isNaN(unitNum) || unitNum < 1 || unitNum > renderedUnitWrappers.length) {
+            // 유효하지 않은 번호일 경우 경고
+            if (unitNumberInput.value !== '') { // 입력값이 비어있지 않을 때만 알림
+                alert(`1에서 ${renderedUnitWrappers.length} 사이의 유효한 번호를 입력해주세요.`);
+            }
+            unitNumberInput.value = ''; // 잘못된 입력은 비움
+            return;
+        }
+
+        // 사용자가 입력한 번호(1-based)에 해당하는 렌더링된 유닛을 찾음
+        // renderedUnitWrappers는 0-based 인덱스이므로 unitNum - 1
+        const targetUnitWrapper = renderedUnitWrappers[unitNum - 1];
+        
+        if (targetUnitWrapper) {
+            targetUnitWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            // 이동 후 input 비우기
+            unitNumberInput.value = '';
+        } else {
+            // 이 경고는 사실상 위에서 걸러지겠지만, 만약을 위해 남겨둠
+            alert('해당 번호의 단어를 찾을 수 없습니다.');
+            unitNumberInput.value = '';
+        }
+    };
+
+    // unitNumberInput에서 Enter 키 눌렀을 때 jumpToUnit 함수 호출
+    unitNumberInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // 폼 제출 방지
+            jumpToUnit();
+        }
+    });
+
+    // unitNumberInput에서 focus가 해제될 때 jumpToUnit 함수 호출
+    unitNumberInput.addEventListener('blur', () => {
+        jumpToUnit();
     });
 
     /**
