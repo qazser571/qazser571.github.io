@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const unitsPerBlock = 20; // [N*unitsPerBlock]번째 유닛마다 구분 블럭 생성
+
     let words = [];
     let isEditMode = false;
     let activeViewMode = 'all';
@@ -15,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const dataSaveButton = document.getElementById('data-save-btn'); // Corrected assignment
     const fileInput = document.getElementById('file-input');
     const searchInput = document.getElementById('search-input');
-    const unitNumberInput = document.getElementById('unit-number-input'); // 새로 추가된 입력 필드
+    const unitNumberInput = document.getElementById('unit-number-input'); // 숫자 입력 필드
     const body = document.body;
 
     /**
@@ -124,6 +126,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     wordUnitElem.classList.remove('duplicate-word');
                 }
+                // 이전 has-bottom-border 클래스 제거
+                wordUnitElem.classList.remove('has-bottom-border');
+            }
+        });
+
+        // 구분 블럭 위에 있는 word-unit에 has-bottom-border 다시 적용
+        document.querySelectorAll('.separation-block-wrapper').forEach(separationBlock => {
+            if (!separationBlock) return;
+            const prevUnitWrapper = separationBlock.previousElementSibling;
+            if (prevUnitWrapper && prevUnitWrapper.classList.contains('unit-wrapper')) {
+                const prevWordUnit = prevUnitWrapper.querySelector('.word-unit');
+                if (prevWordUnit) {
+                    prevWordUnit.classList.add('has-bottom-border');
+                }
             }
         });
     };
@@ -158,6 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const message = searchTerm ? '관련 단어가 없습니다.' :
                             (filterLevel !== 'all' ? '해당 모드의 단어가 없습니다.' : '단어가 없습니다.');
             wordsContainer.innerHTML = `<div class="no-results-message">${message}</div>`;
+            if (unitNumberInput) unitNumberInput.max = 1;
             return;
         }
 
@@ -210,6 +227,24 @@ document.addEventListener('DOMContentLoaded', () => {
             unitWrapper.appendChild(unitDeleteButton); // 항상 생성하여 CSS로 표시 제어
             
             wordsContainer.appendChild(unitWrapper);
+
+            // n*unitsPerBlock번째 단어 유닛마다 구분 블럭 생성
+            if ((index + 1) % unitsPerBlock === 0 && (index + 1) < filteredWords.length) {
+                const separationBlockWrapper = document.createElement('div');
+                separationBlockWrapper.className = `separation-block-wrapper ${isEditMode ? 'edit-mode-active' : ''}`;
+                
+                // 구분 블럭 내용
+                const blockContent = document.createElement('span');
+                blockContent.textContent = `${index + 1}`;
+                separationBlockWrapper.appendChild(blockContent);
+
+                wordsContainer.appendChild(separationBlockWrapper);
+
+                // 보기 모드일 때 구분 블럭 바로 위 word-unit에 border-bottom 추가
+                if (!isEditMode && wordUnit) {
+                    wordUnit.classList.add('has-bottom-border');
+                }
+            }
         });
 
         attachUnitEventListeners(filteredWords);
@@ -231,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         }
-        // Unit number input의 max 값 업데이트 (기능 추가)
+        // Unit number input의 max 값 업데이트
         if (unitNumberInput) {
             unitNumberInput.max = filteredWords.length > 0 ? filteredWords.length : 1;
         }
@@ -533,17 +568,19 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // unitNumberInput에서 Enter 키 눌렀을 때 jumpToUnit 함수 호출
-    unitNumberInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault(); // 폼 제출 방지
-            jumpToUnit();
-        }
-    });
+    if (unitNumberInput) { // unitNumberInput이 존재할 때만 이벤트 리스너 추가
+        unitNumberInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // 폼 제출 방지
+                jumpToUnit();
+            }
+        });
 
-    // unitNumberInput에서 focus가 해제될 때 jumpToUnit 함수 호출
-    unitNumberInput.addEventListener('blur', () => {
-        jumpToUnit();
-    });
+        // unitNumberInput에서 focus가 해제될 때 jumpToUnit 함수 호출
+        unitNumberInput.addEventListener('blur', () => {
+            jumpToUnit();
+        });
+    }
 
     /**
      * 편집 모드를 토글하고 UI 상태를 업데이트합니다.
