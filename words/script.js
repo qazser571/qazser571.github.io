@@ -174,15 +174,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const message = searchTerm ? '관련 단어가 없습니다.' :
                             (filterLevel !== 'all' ? '해당 모드의 단어가 없습니다.' : '단어가 없습니다.');
             wordsContainer.innerHTML = `<div class="no-results-message">${message}</div>`;
-            if (unitNumberInput) unitNumberInput.max = 1;
+            // @@@@@ [변경 사항] unitNumberInput.max를 전체 단어 수로 유지 (원본 번호로 점프할 수 있도록)
+            if (unitNumberInput) unitNumberInput.max = words.length > 0 ? words.length : 1; 
             return;
         }
 
         // 각 단어 데이터에 대해 UI 요소 생성 및 추가
-        filteredWords.forEach((wordData, index) => {
+        filteredWords.forEach((wordData, index) => { // index는 필터링된 목록 내의 순서
             const unitWrapper = document.createElement('div');
             unitWrapper.className = `unit-wrapper ${isEditMode ? 'edit-mode' : ''}`;
-            unitWrapper.dataset.originalIndex = wordData.originalIndex;
+            unitWrapper.dataset.originalIndex = wordData.originalIndex; // 원본 인덱스 저장
 
             // '단어 추가' 버튼 생성 및 추가
             const unitAddButton = document.createElement('button');
@@ -195,7 +196,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const numDiv = document.createElement('div');
             numDiv.className = 'num';
-            numDiv.textContent = String(index + 1).padStart(4, '0');
+            // @@@@@ [변경 사항] 필터링/검색 시에도 원본 인덱스+1을 번호로 사용
+            numDiv.textContent = String(wordData.originalIndex + 1).padStart(4, '0'); 
 
             const knownLevelDiv = document.createElement('div');
             knownLevelDiv.className = 'known-level';
@@ -229,13 +231,14 @@ document.addEventListener('DOMContentLoaded', () => {
             wordsContainer.appendChild(unitWrapper);
 
             // n*unitsPerBlock번째 단어 유닛마다 구분 블럭 생성
-            if ((index + 1) % unitsPerBlock === 0 && (index + 1) < filteredWords.length) {
+            if ((wordData.originalIndex + 1) % unitsPerBlock === 0 && (wordData.originalIndex + 1) < words.length) {
+                // @@@@@ [변경 사항] 구분 블럭 생성 조건도 originalIndex를 따르도록 변경
                 const separationBlockWrapper = document.createElement('div');
                 separationBlockWrapper.className = `separation-block-wrapper ${isEditMode ? 'edit-mode-active' : ''}`;
                 
                 // 구분 블럭 내용
                 const blockContent = document.createElement('span');
-                blockContent.textContent = `${index + 1}`;
+                blockContent.textContent = `${wordData.originalIndex + 1}`; // @@@@@ [변경 사항] 구분 블럭 내용도 originalIndex로
                 separationBlockWrapper.appendChild(blockContent);
 
                 wordsContainer.appendChild(separationBlockWrapper);
@@ -252,6 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
         highlightDuplicateWords(); // 중복 단어 강조 호출
         
         if (focusAfterRender) {
+            // @@@@@ [변경 사항] focusAfterRender 로직도 originalIndex 사용
             const targetUnitWrapper = wordsContainer.querySelector(`.unit-wrapper[data-original-index="${focusAfterRender.originalIndex}"]`);
             if (targetUnitWrapper) {
                 let targetInput = null;
@@ -267,8 +271,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         // Unit number input의 max 값 업데이트
+        // @@@@@ [변경 사항] unitNumberInput.max를 전체 단어 수로 설정 (원본 번호로 점프)
         if (unitNumberInput) {
-            unitNumberInput.max = filteredWords.length > 0 ? filteredWords.length : 1;
+            unitNumberInput.max = words.length > 0 ? words.length : 1;
         }
     };
 
@@ -446,10 +451,9 @@ document.addEventListener('DOMContentLoaded', () => {
         popupContent.style.top = `${rect.top + rect.height + 5}px`;
 
         // 현재 knownLevel에 따라 팝업 내 옵션 하이라이트
-        const currentLevel = parseInt(targetElem.dataset.level);
         knownLevelPopup.querySelectorAll('.level-option').forEach(option => {
             option.classList.remove('selected');
-            if (parseInt(option.dataset.level) === currentLevel) {
+            if (parseInt(option.dataset.level) === parseInt(targetElem.dataset.level)) {
                 option.classList.add('selected');
             }
         });
@@ -538,31 +542,27 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     const jumpToUnit = () => {
         clearDeleteConfirmationState(); // 이동 기능 작동 시 삭제 확인 상태 초기화
-        const unitNum = parseInt(unitNumberInput.value, 10);
+        const unitNum = parseInt(unitNumberInput.value, 10); // 사용자가 입력한 원본 번호
         
-        // 현재 렌더링된 단어 유닛 목록 (검색 및 필터링된 상태)
-        const renderedUnitWrappers = wordsContainer.querySelectorAll('.unit-wrapper');
-        
-        if (isNaN(unitNum) || unitNum < 1 || unitNum > renderedUnitWrappers.length) {
-            // 유효하지 않은 번호일 경우 경고
-            if (unitNumberInput.value !== '') { // 입력값이 비어있지 않을 때만 알림
-                alert(`1에서 ${renderedUnitWrappers.length} 사이의 유효한 번호를 입력해주세요.`);
+        // @@@@@ [변경 사항] unitNum 유효성 검사를 전체 단어 수 기준으로 변경
+        if (isNaN(unitNum) || unitNum < 1 || unitNum > words.length) {
+            if (unitNumberInput.value !== '') {
+                alert(`1에서 ${words.length} 사이의 유효한 번호를 입력해주세요.`);
             }
-            unitNumberInput.value = ''; // 잘못된 입력은 비움
+            unitNumberInput.value = '';
             return;
         }
 
-        // 사용자가 입력한 번호(1-based)에 해당하는 렌더링된 유닛을 찾음
-        // renderedUnitWrappers는 0-based 인덱스이므로 unitNum - 1
-        const targetUnitWrapper = renderedUnitWrappers[unitNum - 1];
+        // @@@@@ [변경 사항] originalIndex를 사용하여 대상 unitWrapper를 찾습니다.
+        const targetOriginalIndex = unitNum - 1; // 원본 배열 인덱스
+        const targetUnitWrapper = wordsContainer.querySelector(`.unit-wrapper[data-original-index="${targetOriginalIndex}"]`);
         
         if (targetUnitWrapper) {
-            targetUnitWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            // 이동 후 input 비우기
+            targetUnitWrapper.scrollIntoIntoView({ behavior: 'smooth', block: 'start' });
             unitNumberInput.value = '';
         } else {
-            // 이 경고는 사실상 위에서 걸러지겠지만, 만약을 위해 남겨둠
-            alert('해당 번호의 단어를 찾을 수 없습니다.');
+            // @@@@@ [변경 사항] 해당 번호의 단어가 현재 화면에 표시되지 않는 경우 처리
+            alert('해당 번호의 단어는 현재 검색 또는 필터링으로 인해 화면에 표시되지 않습니다.');
             unitNumberInput.value = '';
         }
     };
