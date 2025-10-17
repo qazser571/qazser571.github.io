@@ -301,7 +301,7 @@ body{
 .known-level[data-level="3"] { background-color: var(--level3-color); }
 
 .word {
-    flex: 2;
+    flex: 3;
     min-width: 0;
     height: 100%;
     border: none;
@@ -318,7 +318,7 @@ body{
     font-family: 'HancomYunGothic740', Arial, sans-serif;
 }
 .mean {
-    flex: 3;
+    flex: 4;
     min-width: 0;
     height: 100%;
     border: none;
